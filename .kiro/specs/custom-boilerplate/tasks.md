@@ -118,7 +118,7 @@ UIについては Claude Skill を参照して実装してください。
 
 UIについては Claude Skill を参照して実装してください。
 
-- [ ] 7.1 RootLayoutとプロバイダー統合
+- [x] 7.1 RootLayoutとプロバイダー統合
   - `app/_layout.tsx`を拡張し、データベース初期化、Zustandストア初期化、QueryClientProvider統合を実装する
   - SplashScreenで初期化中のUXを改善し、タイムアウト（5秒）を設定する
   - 初期化エラー時のエラー画面とリトライ機能を実装する
