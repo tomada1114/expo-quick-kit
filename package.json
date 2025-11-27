@@ -13,8 +13,8 @@
     "lint": "expo lint",
     "lint:fix": "expo lint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\" --log-level warn",
-    "typecheck": "tsc --noEmit > /dev/null 2>&1 || tsc --noEmit",
-    "check": "pnpm format && pnpm lint -- --quiet && pnpm typecheck && (pnpm test --silent 2>&1 | tail -n 5)",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm format && pnpm lint && pnpm typecheck && pnpm test",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio"
   },
