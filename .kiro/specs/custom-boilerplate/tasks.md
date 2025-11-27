@@ -130,7 +130,7 @@ UIについては Claude Skill を参照して実装してください。
   - `app/(tabs)/_layout.tsx`でボトムタブバーを設定し、テーマ対応のアクティブティント色を適用する
   - タブ切り替え時の画面遷移が正しく動作することを確認する
   - `app/modal.tsx`のモーダル画面が正常に動作することを確認する
-  - `pnpm check` がパスすることを確認する
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 10.2, 10.3, 10.4_
 
 ---
@@ -146,7 +146,7 @@ UIについては Claude Skill を参照して実装してください。
   - カスタムフック（useItemList等）でTanStack Queryとの連携パターンを示す
   - `__tests__/`にリポジトリのユニットテスト（happy/sad/edge cases）を実装する
   - サンプルテストが成功することを確認する
-  - `pnpm check` がパスすることを確認する
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 12.1, 12.2, 12.3, 12.4_
 
 ---
@@ -158,7 +158,7 @@ UIについては Claude Skill を参照して実装してください。
   - 不要なサンプルコンポーネント（hello-wave.tsx等のExpoテンプレートデフォルト）を削除する
   - `app/(tabs)/index.tsx`をボイラープレート独自のホーム画面に置き換える
   - タブナビゲーションから削除したexploreタブの参照を除去する
-  - `pnpm check` がパスすることを確認する
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 13.1, 13.2, 13.3_
 
 - [ ] 9.2 (P) package.jsonスクリプトの追加
@@ -167,7 +167,7 @@ UIについては Claude Skill を参照して実装してください。
   - `format`スクリプト（Prettier実行）を追加する
   - `typecheck`スクリプト（tsc --noEmit）を追加する
   - `db:generate`、`db:studio`スクリプト（Drizzle Kit操作）を追加する
-  - `pnpm check` がパスすることを確認する
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
 
 ---
@@ -182,7 +182,7 @@ UIについては Claude Skill を参照して実装してください。
   - SQLiteへの読み書き（サンプル機能経由）が動作することを確認する
   - Zustand状態更新（isOnboarded等）が画面に反映されることを確認する
   - expo-routerのタブナビゲーション、モーダル遷移が動作することを確認する
-  - `pnpm check` がパスすることを確認する
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7_
 
 ---
