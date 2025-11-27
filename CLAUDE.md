@@ -63,6 +63,10 @@ Colors and Fonts are defined in `constants/theme.ts` with light/dark variants. A
 
 Kiro-style Spec Driven Development implementation on AI-DLC (AI Development Life Cycle)
 
+## Design System
+
+refer to `expo-design-system` Claude Skill.
+
 ## Project Context
 
 ### Paths
