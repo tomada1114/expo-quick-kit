@@ -16,7 +16,19 @@ pnpm android            # Run on Android emulator
 pnpm web                # Run on web
 
 # Code Quality
-pnpm lint               # Run ESLint (expo lint)
+pnpm lint               # Run ESLint
+pnpm lint:fix           # Run ESLint with auto-fix
+pnpm format             # Run Prettier
+pnpm typecheck          # TypeScript type check
+pnpm check              # Run all checks (format + lint + typecheck + test)
+
+# Testing
+pnpm test               # Run Jest tests
+pnpm test:coverage      # Run tests with coverage report
+
+# Database (Drizzle ORM)
+pnpm db:generate        # Generate Drizzle migrations
+pnpm db:studio          # Open Drizzle Studio
 ```
 
 ## MCP
@@ -43,19 +55,36 @@ import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 ```
 
-### Key Directories
-
-- `components/` - Reusable UI components (themed-text, themed-view, ui/)
-- `constants/theme.ts` - Colors and Fonts with light/dark mode support
-- `hooks/` - Custom hooks (use-color-scheme, use-theme-color)
-
 ### Naming Convention
 
 Files use **kebab-case**: `themed-text.tsx`, `use-color-scheme.ts`
 
-### Theming
+### Key Libraries
 
-Colors and Fonts are defined in `constants/theme.ts` with light/dark variants. Access via `useColorScheme()` hook.
+- **State Management**: Zustand
+- **Data Fetching**: TanStack Query
+- **Local Database**: Drizzle ORM + expo-sqlite
+
+### Theming (iOS System Colors)
+
+Theme is defined in `constants/theme.ts` following Apple Human Interface Guidelines.
+
+```typescript
+// Recommended: useThemedColors() for full color palette access
+import { useThemedColors } from '@/hooks/use-theme-color';
+
+const { colors, colorScheme } = useThemedColors();
+
+// Access nested colors
+<View style={{ backgroundColor: colors.background.base }} />
+<Text style={{ color: colors.text.primary }} />
+<Text style={{ color: colors.semantic.error }} />
+
+// Legacy: useThemeColor() for top-level colors only
+const tintColor = useThemeColor({}, 'tint');
+```
+
+Color structure: `primary`, `background.{base,secondary,tertiary}`, `text.{primary,secondary,tertiary,inverse}`, `semantic.{success,warning,error,info}`, `interactive.{separator,fill,fillSecondary}`
 
 ## Configuration
 
