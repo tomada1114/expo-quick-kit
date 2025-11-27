@@ -9,6 +9,9 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn().mockResolvedValue(null),
   setItem: jest.fn().mockResolvedValue(undefined),
   removeItem: jest.fn().mockResolvedValue(undefined),
+  multiGet: jest.fn().mockResolvedValue([]),
+  multiSet: jest.fn().mockResolvedValue(undefined),
+  multiRemove: jest.fn().mockResolvedValue(undefined),
 }));
 
 import { useStore } from '../index';
@@ -90,7 +93,7 @@ describe('Zustand Store', () => {
       const onboarded: boolean = state.isOnboarded;
       const premium: boolean = state.isPremium;
       const theme: 'light' | 'dark' | 'auto' = state.userPreferences.theme;
-      const language: string = state.userPreferences.language;
+      const language: 'en' | 'ja' = state.userPreferences.language;
 
       expect(typeof onboarded).toBe('boolean');
       expect(typeof premium).toBe('boolean');

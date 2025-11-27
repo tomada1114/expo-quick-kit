@@ -12,12 +12,10 @@ type SetFunction = (
     | ((state: AppState) => Partial<AppState>)
     | AppState
 ) => void;
-type GetFunction = () => AppState;
 
 describe('App Slice', () => {
   let state: Partial<AppState>;
   let set: SetFunction;
-  let get: GetFunction;
 
   beforeEach(() => {
     state = {};
@@ -29,10 +27,9 @@ describe('App Slice', () => {
         state = { ...state, ...partial };
       }
     };
-    get = () => state as AppState;
 
     // Initialize state with app slice
-    const initialState = createAppSlice(set, get);
+    const initialState = createAppSlice(set);
     state = initialState;
   });
 
