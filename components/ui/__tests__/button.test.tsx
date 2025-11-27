@@ -156,7 +156,12 @@ describe('Button', () => {
 
     it('should show title alongside loading indicator when showChildrenWhileLoading is true', () => {
       const { getByText, getByTestId } = render(
-        <Button title="Saving..." loading showChildrenWhileLoading testID="button" />
+        <Button
+          title="Saving..."
+          loading
+          showChildrenWhileLoading
+          testID="button"
+        />
       );
       expect(getByTestId('button-loading')).toBeTruthy();
       expect(getByText('Saving...')).toBeTruthy();
