@@ -95,13 +95,6 @@ module.exports = defineConfig([
 ]);
 ```
 
-### 1.4 Git フック設定
-
-```bash
-pnpm add -D husky lint-staged
-pnpm exec husky init
-```
-
 ---
 
 ## Phase 2: 開発環境
