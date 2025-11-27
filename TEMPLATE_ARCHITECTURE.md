@@ -454,6 +454,10 @@ export default function RootLayout() {
 
 ## Phase 5: 収益化準備
 
+RevenueCatは、課金機能を提供するサービスです。
+なお、すでにRevenueCatを導入しているプロジェクトのソースコードやドキュメントを `expo-subscription-monetization` という Claude Skill に格納しています。
+こちらを参考にしてください。
+
 ### 5.1 RevenueCat インストール
 
 ```bash
