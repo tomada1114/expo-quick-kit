@@ -21,7 +21,7 @@
 - **State Management**: Zustand（グローバル状態）+ TanStack Query（非同期状態）
 - **Routing**: expo-router 6.0（ファイルベースルーティング）
 - **Development**: Jest + React Native Testing Library（テスト）、ESLint Flat Config + Prettier（品質管理）
-- **UI Base**: テーマシステム（colors, fonts, spacing, typography）、共通コンポーネント（button, card, spacer, loading）
+- **UI Base**: iOS System Colors準拠テーマシステム（expo-design-system準拠）、共通コンポーネント（button, card, spacer, loading）
 
 発見プロセスは以下の領域をカバー：
 1. **Database & ORM**: Drizzle 最新ベストプラクティス
@@ -138,6 +138,35 @@
   - .prettierignore で build output, node_modules 除外
   - Husky + lint-staged で pre-commit hook 自動化（pnpm lint:fix → prettier → eslint）
 - **Implications**: eslint.config.js, .prettierrc, .prettierignore 設定ファイル必須。pnpm lint, lint:fix, format script 提供
+
+### expo-design-system（iOS System Colors準拠デザインシステム）
+
+- **Context**: Requirement 14 でデザインシステム遵守が必須。`expo-design-system` Claude Skill に定義された iOS System Colors 準拠のカラーパレットとコンポーネントパターンを反映
+- **Sources Consulted**:
+  - `.claude/skills/expo-design-system/SKILL.md` — デザインシステム概要、Quick Start
+  - `.claude/skills/expo-design-system/references/color.md` — カラーシステム詳細、NG Rules
+  - `.claude/skills/expo-design-system/references/typography.md` — San Francisco Font、Typography Scale
+  - `.claude/skills/expo-design-system/references/spacing.md` — 8pt Grid System、Safe Area
+  - `.claude/skills/expo-design-system/references/components.md` — Button/Card/Input 実装パターン
+  - [Color | Apple HIG](https://developer.apple.com/design/human-interface-guidelines/color)
+  - [Dark Mode | Apple HIG](https://developer.apple.com/design/human-interface-guidelines/dark-mode)
+- **Findings**:
+  - **Primary Colors**: アプリごとに1色のみ使用（Blue #007AFF / Green #34C759 / Orange #FF9500）
+  - **Background Colors**: 3段階（base/secondary/tertiary）で背景階層管理
+  - **Text Colors**: 4段階（primary/secondary/tertiary/inverse）で視認性確保
+  - **Semantic Colors**: 機能的な意味を持つ色（success/warning/error/info）、装飾禁止
+  - **Interactive Elements**: separator/fill/fillSecondary で操作要素を表現
+  - **Dark Mode**: Light Mode の色を +10% 明るくして Dark Mode 版を生成
+  - **NG Rules**: Indigo系・グラデーション・ネオン系・パステル系・カスタムグレー禁止
+  - **Typography Scale**: Apple HIG準拠の11段階（largeTitle 34pt 〜 footnote 11pt）
+  - **8pt Grid System**: すべてのスペーシングを 4/8/16/24/32/48pt で定義
+  - **Touch Target**: 最小 44pt x 44pt（WCAG AA準拠）
+  - **Border Radius**: sm(4)/md(8)/lg(12)/xl(16)/full(9999)
+- **Implications**:
+  - design.md の UI Theming System セクションを iOS System Colors 準拠に全面更新
+  - constants/theme.ts の Colors 型を primary/background/text/semantic/interactive 構造に変更
+  - 共通UIコンポーネント（Button, Card, Spacer, LoadingOverlay）でデザインシステムを使用
+  - Requirements Traceability に Requirement 14（デザインシステム遵守）の詳細項目を追加
 
 ### 既存コードベース 分析
 

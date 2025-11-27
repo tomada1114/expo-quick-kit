@@ -3,6 +3,8 @@
 ## Introduction
 本ドキュメントは、Expo SDK 54をベースとした自作ボイラープレートの要件を定義します。TEMPLATE_ARCHITECTURE.mdに記載された設計方針に基づき、RevenueCatを除いた基盤構築・開発環境・コア機能・UI/UX基盤を対象とします。
 
+（追記：デザインシステムの実装は、`expo-design-system` Claude Skillを参照してください。）
+
 ## Background & Motivation
 
 ### なぜ自作ボイラープレートが必要か
@@ -108,7 +110,7 @@ TEMPLATE_ARCHITECTURE.mdに書いてある内容を参考にして、自作ボ�
 1. The ボイラープレート shall `constants/theme.ts`でColors, Fonts, Spacing, Typographyを定義する
 2. The ボイラープレート shall ライトモードとダークモードの両方の色定義を含む
 3. When `useColorScheme`が呼び出される, the フック shall 現在のカラースキームを返す
-4. The ボイラープレート shall surface, border, textSecondary, success, warning, errorの色を含む
+4. The ボイラープレート shall `expo-design-system` Claude Skillで定義されたiOS System Colors準拠のカラー構造を採用する
 
 ### Requirement 9: UI/UX基盤 - 共通コンポーネント
 **Objective:** As a 開発者, I want 再利用可能なUIコンポーネントを使いたい, so that 開発速度を向上できる
@@ -156,7 +158,22 @@ TEMPLATE_ARCHITECTURE.mdに書いてある内容を参考にして、自作ボ�
 2. When ボイラープレートがセットアップされる, the ボイラープレート shall 不要なサンプルコンポーネントを削除する
 3. The ボイラープレート shall Expoテンプレートのデフォルト画面を独自実装に置き換える
 
-### Requirement 14: 品質保証 - 最終チェックリスト
+### Requirement 14: UI/UX基盤 - デザインシステム遵守
+**Objective:** As a 開発者, I want Apple Human Interface Guidelinesに準拠したデザインシステムを使いたい, so that 一貫性のあるiOSネイティブな見た目を実現できる
+
+#### Acceptance Criteria
+1. The ボイラープレート shall `constants/theme.ts`でiOS System Colors準拠のカラーパレットを定義する
+2. The ボイラープレート shall Primary Colors（Blue/Green/Orange）から1色を選択できる構造を持つ
+3. The ボイラープレート shall Background Colors（base/secondary/tertiary）の3段階を定義する
+4. The ボイラープレート shall Text Colors（primary/secondary/tertiary/inverse）の4段階を定義する
+5. The ボイラープレート shall Semantic Colors（success/warning/error/info）を定義する
+6. The ボイラープレート shall Light ModeとDark Modeの両方の色定義を含む
+7. When Dark Modeが有効な時, the カラーシステム shall iOS標準の+10%明度調整を適用する
+8. The ボイラープレート shall Interactive Elements（separator/fill/fillSecondary）を定義する
+9. The 共通UIコンポーネント shall デザインシステムのカラー定義を使用する
+10. The ボイラープレート shall Indigo系、グラデーション、ネオン系、パステル系の色を使用しない
+
+### Requirement 15: 品質保証 - 最終チェックリスト
 **Objective:** As a 開発者, I want ボイラープレートの動作を確認したい, so that 問題なく使い始められる
 
 #### Acceptance Criteria

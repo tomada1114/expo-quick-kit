@@ -248,10 +248,10 @@ graph TB
 | 7.1 | QueryClientProvider セットアップ | app/_layout.tsx | Provider wrapper | API setup |
 | 7.2 | キャッシュ管理 | TanStack Query config | QueryClient config | Auto caching |
 | 7.3 | QueryClient デフォルト設定 | lib/query-client.ts | QueryClient instance | Configuration |
-| 8.1 | constants/theme.ts 拡張 | constants/theme.ts | Theme object | Theming |
-| 8.2 | ライト/ダーク定義 | constants/theme.ts (light/dark) | Colors object | Theme variants |
+| 8.1 | constants/theme.ts 拡張 | constants/theme.ts | iOS System Colors型 | Theming |
+| 8.2 | ライト/ダーク定義 | constants/theme.ts (light/dark) | Colors.primary/background/text/semantic | Theme variants |
 | 8.3 | useColorScheme Hook | hooks/use-color-scheme.ts | Hook API | Color resolution |
-| 8.4 | 色定義（surface, border, etc.） | constants/theme.ts | Colors definition | Palette |
+| 8.4 | iOS System Colors準拠カラー構造 | constants/theme.ts | Colors.primary/background/text/semantic/interactive | expo-design-system準拠 |
 | 9.1 | button.tsx コンポーネント | components/ui/button.tsx | Button props | UI primitive |
 | 9.2 | card.tsx コンポーネント | components/ui/card.tsx | Card props | UI primitive |
 | 9.3 | spacer.tsx コンポーネント | components/ui/spacer.tsx | Spacer props | UI primitive |
@@ -273,13 +273,23 @@ graph TB
 | 13.1 | explore.tsx 削除 | app/(tabs)/explore.tsx (remove) | File deletion | Cleanup |
 | 13.2 | 不要 sample コンポーネント削除 | components/hello-wave.tsx, etc. | File deletion | Cleanup |
 | 13.3 | デフォルト画面置き換え | app/(tabs)/index.tsx | Custom implementation | Ownership |
-| 14.1 | `pnpm start` 正常起動 | app/ routing | App execution | Runtime |
-| 14.2 | `pnpm test` 成功 | jest.config.js | Test execution | Quality |
-| 14.3 | `pnpm lint` エラーなし | eslint.config.js | Linting | Code quality |
-| 14.4 | `pnpm typecheck` エラーなし | typescript | Type checking | Type safety |
-| 14.5 | SQLite 読み書き動作 | database/client.ts | DB operations | Persistence |
-| 14.6 | Zustand 状態更新動作 | store/ | State mutation | State management |
-| 14.7 | expo-router ナビゲーション動作 | app/ routes | Navigation | Routing |
+| 14.1 | iOS System Colors準拠カラーパレット | constants/theme.ts | Colors.primary/background/text/semantic/interactive | expo-design-system |
+| 14.2 | Primary Colors選択構造 | constants/theme.ts | AppPrimaryColor enum | Blue/Green/Orange |
+| 14.3 | Background Colors 3段階 | constants/theme.ts | Colors.background.base/secondary/tertiary | 背景階層 |
+| 14.4 | Text Colors 4段階 | constants/theme.ts | Colors.text.primary/secondary/tertiary/inverse | テキスト階層 |
+| 14.5 | Semantic Colors定義 | constants/theme.ts | Colors.semantic.success/warning/error/info | 機能的な色 |
+| 14.6 | Light/Dark Mode両対応 | constants/theme.ts | Colors.light/Colors.dark | +10%明度調整 |
+| 14.7 | Dark Mode +10%明度調整 | constants/theme.ts | Dark primary/semantic colors | iOS標準準拠 |
+| 14.8 | Interactive Elements定義 | constants/theme.ts | Colors.interactive.separator/fill/fillSecondary | 操作要素 |
+| 14.9 | 共通UIコンポーネントでデザインシステム使用 | components/ui/*.tsx | iOS System Colors参照 | コンポーネント実装 |
+| 14.10 | NG配色回避 | constants/theme.ts | No Indigo/gradient/neon/pastel | デザインルール |
+| 15.1 | `pnpm start` 正常起動 | app/ routing | App execution | Runtime |
+| 15.2 | `pnpm test` 成功 | jest.config.js | Test execution | Quality |
+| 15.3 | `pnpm lint` エラーなし | eslint.config.js | Linting | Code quality |
+| 15.4 | `pnpm typecheck` エラーなし | typescript | Type checking | Type safety |
+| 15.5 | SQLite 読み書き動作 | database/client.ts | DB operations | Persistence |
+| 15.6 | Zustand 状態更新動作 | store/ | State mutation | State management |
+| 15.7 | expo-router ナビゲーション動作 | app/ routes | Navigation | Routing |
 
 ## Components and Interfaces
 
@@ -291,11 +301,11 @@ graph TB
 | Database Schema | Database/Domain | Table definitions, type inference | 5.2 | drizzle-orm | Type definition |
 | Zustand Store | Store/State | Global app state (onboarded, isPremium) | 6.1, 6.2, 6.3, 6.4 | zustand | Service, State |
 | TanStack Query Config | Store/Async | QueryClient setup, cache defaults | 7.1, 7.2, 7.3 | @tanstack/react-query | Service |
-| Theme Constants | Constants/Domain | Colors, fonts, spacing, typography | 8.1, 8.2, 8.4 | react-native | Type definition |
-| Button Component | UI/Components | Primary, secondary button styles | 9.1 | themed-text | State |
-| Card Component | UI/Components | Container for content | 9.2 | styled | State |
-| Spacer Component | UI/Components | Consistent spacing | 9.3 | styled | State |
-| LoadingOverlay Component | UI/Components | Full-screen loading indicator | 9.4 | styled | State |
+| Theme Constants | Constants/Domain | iOS System Colors準拠テーマ（primary/background/text/semantic/interactive）| 8.1, 8.2, 8.4, 14.1-14.10 | expo-design-system, react-native | Type definition |
+| Button Component | UI/Components | Primary/secondary/ghost/destructive ボタン（iOS System Colors準拠）| 9.1, 14.9 | Theme Constants, TouchTarget | State |
+| Card Component | UI/Components | コンテンツコンテナ（background.secondary使用）| 9.2, 14.9 | Theme Constants | State |
+| Spacer Component | UI/Components | 8pt Grid準拠スペーシング | 9.3 | Spacing constants | State |
+| LoadingOverlay Component | UI/Components | フルスクリーンローディング（semantic.info使用）| 9.4, 14.9 | Theme Constants | State |
 | RootLayout | Routing/App | Database init, store init, provider wrapper | 5.1, 6.1, 7.1, 10.1, 14.1 | app/_layout.tsx | Route layout |
 | Tab Navigation | Routing/Navigation | Bottom tab bar setup | 10.2 | app/(tabs)/_layout.tsx | Route layout |
 | Features Module | Features/Domain | Feature-specific logic, components, services | 2.1, 12.1, 12.2, 12.3 | features/_example | Feature pattern |
@@ -2198,185 +2208,271 @@ Error tracking via:
 
 ---
 
-## UI Theming System
+## UI Theming System（iOS System Colors準拠）
 
-### Theme Constants Extension
+> **重要**: 本デザインシステムは `expo-design-system` Claude Skill に基づき、Apple Human Interface Guidelines（iOS System Colors）に準拠しています。詳細は `.claude/skills/expo-design-system/SKILL.md` を参照してください。
+
+### Design System Principles（設計原則）
+
+1. **機能優先**: 色は情報・状態を伝えるために使用。装飾は最小限
+2. **一貫性**: すべての色がiOS標準に準拠
+3. **Dark Mode対応**: Light/Dark両モードで視認性確保
+4. **アクセシビリティ**: WCAG AA基準（4.5:1）を満たす
+
+### NG Rules（絶対禁止の配色）
+
+- **Indigo系（#6366F1等）禁止**: SaaSスタートアップ臭、差別化不可
+- **グラデーション禁止**: パフォーマンス低下、装飾過多
+- **ネオン・ビビッド系（#FF00FF等）禁止**: 目に刺激的すぎ
+- **パステル系（#FFB3D9等）禁止**: ビジネス層に不向き
+- **カスタムグレー（#F5F5F5等）禁止**: iOS標準グレーで十分
+
+### Theme Constants Extension（iOS System Colors準拠）
 
 ```typescript
-// constants/theme.ts
-import { useColorScheme } from '@react-native-appearance';
+// constants/theme.ts - iOS System Colors準拠
+import { useColorScheme } from '@/hooks/use-color-scheme';
+
+// Primary Color選択: アプリごとに1色のみ
+export enum AppPrimaryColor {
+  blue = 'blue',     // Decision Journal - 理性的、信頼感
+  green = 'green',   // Energy Tracker - 健康、エネルギー
+  orange = 'orange', // 12 Week Year - 緊急性、実行
+}
+export const PRIMARY_COLOR = AppPrimaryColor.blue;
 
 export const Colors = {
   light: {
-    // Primary
-    primary: '#0a7ea4',
-    primaryLight: '#4fa8c5',
-    primaryDark: '#003d5c',
+    // Primary Colors（アプリで1色のみ使用）
+    primary: {
+      blue: '#007AFF',    // iOS Blue
+      green: '#34C759',   // iOS Green
+      orange: '#FF9500',  // iOS Orange
+    },
 
-    // Semantic
-    success: '#10b981',
-    warning: '#f59e0b',
-    error: '#ef4444',
-    info: '#3b82f6',
+    // Background Colors（3段階）
+    background: {
+      base: '#FFFFFF',        // 画面全体の基本背景
+      secondary: '#F2F2F7',   // カード、セクション背景
+      tertiary: '#FFFFFF',    // モーダル、オーバーレイ背景
+    },
 
-    // Neutral
-    text: '#000',
-    textSecondary: '#666',
-    textTertiary: '#999',
-    background: '#fff',
-    surface: '#f9fafb',
-    border: '#e5e7eb',
+    // Text Colors（4段階）
+    text: {
+      primary: '#000000',     // メインテキスト、見出し
+      secondary: '#3C3C43',   // サブタイトル、説明文（~60% opacity相当）
+      tertiary: '#8E8E93',    // プレースホルダー、非活性テキスト
+      inverse: '#FFFFFF',     // Dark背景上のテキスト
+    },
 
-    // Component-specific
-    tint: '#0a7ea4',
-    tabIconDefault: '#687076',
-    tabIconSelected: '#0a7ea4',
+    // Semantic Colors（機能的な意味を持つ色）
+    semantic: {
+      success: '#34C759',  // iOS Green - 成功、完了
+      warning: '#FF9500',  // iOS Orange - 注意、警告
+      error: '#FF3B30',    // iOS Red - エラー、削除
+      info: '#007AFF',     // iOS Blue - 情報、ヒント
+    },
+
+    // Interactive Elements（操作要素）
+    interactive: {
+      separator: '#C6C6C8',      // 区切り線、ボーダー
+      fill: '#787880',           // アイコン、非活性要素
+      fillSecondary: '#BCBCC0',  // 副次的な塗りつぶし
+    },
+
+    // Legacy compatibility（既存コードとの互換性）
+    tint: '#007AFF',
+    tabIconDefault: '#787880',
+    tabIconSelected: '#007AFF',
+    icon: '#687076',
   },
   dark: {
-    // Primary
-    primary: '#4fa8c5',
-    primaryLight: '#7ec8dd',
-    primaryDark: '#0a7ea4',
+    // Primary Colors - +10% brightness調整
+    primary: {
+      blue: '#0A84FF',      // #007AFF + 10%
+      green: '#30D158',     // #34C759 + 10%
+      orange: '#FF9F0A',    // #FF9500 + 10%
+    },
 
-    // Semantic
-    success: '#34d399',
-    warning: '#fbbf24',
-    error: '#f87171',
-    info: '#60a5fa',
+    // Background Colors - 黒ベース
+    background: {
+      base: '#000000',           // Pure black
+      secondary: '#1C1C1E',      // iOS Dark Gray
+      tertiary: '#2C2C2E',       // Elevated surface
+    },
 
-    // Neutral
-    text: '#ecedee',
-    textSecondary: '#999',
-    textTertiary: '#666',
-    background: '#151718',
-    surface: '#1f2937',
-    border: '#374151',
+    // Text Colors - 白ベース
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#EBEBF5',      // 60% opacity white相当
+      tertiary: '#8E8E93',       // Light Mode と同じ
+      inverse: '#000000',
+    },
 
-    // Component-specific
-    tint: '#fff',
-    tabIconDefault: '#9ca3af',
-    tabIconSelected: '#fff',
+    // Semantic Colors - +10% brightness調整
+    semantic: {
+      success: '#30D158',
+      warning: '#FF9F0A',
+      error: '#FF453A',
+      info: '#0A84FF',
+    },
+
+    // Interactive Elements - 暗い背景用
+    interactive: {
+      separator: '#38383A',
+      fill: '#787880',
+      fillSecondary: '#48484A',
+    },
+
+    // Legacy compatibility
+    tint: '#FFFFFF',
+    tabIconDefault: '#8E8E93',
+    tabIconSelected: '#FFFFFF',
+    icon: '#9BA1A6',
   },
 };
 
-// Spacing scale (commonly used in layouts)
+// Spacing scale - 8pt Grid System
 export const Spacing = {
-  xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
-  '2xl': 24,
-  '3xl': 32,
-  '4xl': 40,
-  '5xl': 48,
+  xs: 4,     // 1/2 grid
+  sm: 8,     // 1 grid
+  md: 16,    // 2 grid
+  lg: 24,    // 3 grid
+  xl: 32,    // 4 grid
+  '2xl': 48, // 6 grid
 } as const;
 
-// Typography system
+// Typography system - Apple HIG準拠
 export const Typography = {
-  // Headings
-  h1: {
-    fontSize: 32,
-    fontWeight: '700' as const,
-    lineHeight: 40,
+  // Large Title (34pt)
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: '400' as const,
+    lineHeight: 41,
   },
-  h2: {
+  // Title 1 (28pt)
+  title1: {
     fontSize: 28,
-    fontWeight: '700' as const,
-    lineHeight: 36,
+    fontWeight: '400' as const,
+    lineHeight: 34,
   },
-  h3: {
-    fontSize: 24,
-    fontWeight: '600' as const,
-    lineHeight: 32,
+  // Title 2 (22pt)
+  title2: {
+    fontSize: 22,
+    fontWeight: '400' as const,
+    lineHeight: 26,
   },
-
-  // Body
-  body: {
-    fontSize: 16,
+  // Title 3 (20pt)
+  title3: {
+    fontSize: 20,
     fontWeight: '400' as const,
     lineHeight: 24,
   },
-  bodySmall: {
-    fontSize: 14,
+  // Headline (17pt semibold)
+  headline: {
+    fontSize: 17,
+    fontWeight: '600' as const,
+    lineHeight: 22,
+  },
+  // Body (17pt)
+  body: {
+    fontSize: 17,
+    fontWeight: '400' as const,
+    lineHeight: 22,
+  },
+  // Callout (16pt)
+  callout: {
+    fontSize: 16,
+    fontWeight: '400' as const,
+    lineHeight: 21,
+  },
+  // Subheadline (15pt)
+  subheadline: {
+    fontSize: 15,
     fontWeight: '400' as const,
     lineHeight: 20,
   },
-  bodyXSmall: {
-    fontSize: 12,
+  // Caption 1 (13pt)
+  caption1: {
+    fontSize: 13,
     fontWeight: '400' as const,
     lineHeight: 16,
   },
-
-  // Caption
-  caption: {
+  // Caption 2 (12pt)
+  caption2: {
     fontSize: 12,
-    fontWeight: '500' as const,
-    lineHeight: 16,
+    fontWeight: '400' as const,
+    lineHeight: 15,
   },
-  captionSmall: {
-    fontSize: 10,
-    fontWeight: '500' as const,
-    lineHeight: 14,
+  // Footnote (11pt - 最小サイズ)
+  footnote: {
+    fontSize: 11,
+    fontWeight: '400' as const,
+    lineHeight: 13,
   },
 } as const;
 
-// Font family (if using custom fonts)
-export const Fonts = {
-  regular: 'System',
-  medium: 'System',
-  bold: 'System',
-} as const;
+// Font family
+export const Fonts = Platform.select({
+  ios: { sans: 'system-ui', serif: 'ui-serif' },
+  default: { sans: 'normal', serif: 'serif' },
+  web: { sans: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif' },
+});
 
 // Border radius system
 export const BorderRadius = {
-  xs: 4,
-  sm: 6,
-  md: 8,
-  lg: 12,
-  xl: 16,
-  full: 9999,
+  sm: 4,      // 軽い丸み
+  md: 8,      // 標準的な丸み（推奨）
+  lg: 12,     // より丸い
+  xl: 16,     // かなり丸い
+  full: 9999, // サークル
 } as const;
 
 // Shadow system (for elevation)
 export const Shadows = {
-  xs: {
+  none: {},
+  sm: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
   },
-  sm: {
+  md: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
-  md: {
+  lg: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 4,
   },
-  lg: {
+  xl: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.2,
-    shadowRadius: 16,
+    shadowRadius: 12,
     elevation: 8,
   },
 } as const;
+
+// Touch target minimum (WCAG AA)
+export const TouchTarget = {
+  min: 44, // 最小タッチターゲット 44pt x 44pt
+} as const;
 ```
 
-### Usage in Components
+### Usage in Components（iOS System Colors準拠パターン）
 
 ```typescript
-// hooks/use-theme-color.ts (already exists, show extended usage)
+// hooks/use-theme-color.ts (extended usage)
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors, Spacing, Typography } from '@/constants/theme';
+import { Colors, Spacing, Typography, PRIMARY_COLOR } from '@/constants/theme';
 
 export function useThemedStyles() {
   const colorScheme = useColorScheme();
@@ -2384,32 +2480,85 @@ export function useThemedStyles() {
 
   return {
     colors,
+    // アプリで選択したPrimary Color
+    primaryColor: colors.primary[PRIMARY_COLOR],
     spacing: Spacing,
     typography: Typography,
   };
 }
 
-// Example component usage
+// Example: Card component using iOS System Colors
 export function ThemedCard() {
-  const { colors, spacing } = useThemedStyles();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
 
   return (
     <View
       style={{
-        backgroundColor: colors.surface,
-        borderColor: colors.border,
-        borderWidth: 1,
+        backgroundColor: colors.background.secondary,
         borderRadius: BorderRadius.md,
-        padding: spacing.lg,
+        padding: Spacing.md,
       }}
     >
-      <Text style={[Typography.h3, { color: colors.text }]}>
+      <Text style={[Typography.headline, { color: colors.text.primary }]}>
         Card Title
       </Text>
-      <Text style={[Typography.body, { color: colors.textSecondary }]}>
+      <Text style={[Typography.body, { color: colors.text.secondary }]}>
         Card description
       </Text>
     </View>
+  );
+}
+
+// Example: Semantic message
+export function ResultMessage({ type, message }: {
+  type: 'success' | 'error' | 'warning' | 'info';
+  message: string;
+}) {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+  const semanticColor = colors.semantic[type];
+
+  return (
+    <View
+      style={{
+        backgroundColor: colors.background.secondary,
+        paddingHorizontal: Spacing.sm,
+        paddingVertical: Spacing.xs,
+        borderLeftWidth: 4,
+        borderLeftColor: semanticColor,
+        borderRadius: BorderRadius.md,
+      }}
+    >
+      <Text style={{ color: semanticColor, fontWeight: '600' }}>
+        {message}
+      </Text>
+    </View>
+  );
+}
+
+// Example: Primary Button
+export function PrimaryButton({ title, onPress }: { title: string; onPress: () => void }) {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+
+  return (
+    <Pressable
+      style={{
+        backgroundColor: colors.primary[PRIMARY_COLOR],
+        minHeight: TouchTarget.min, // 44pt
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: BorderRadius.md,
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.sm,
+      }}
+      onPress={onPress}
+    >
+      <Text style={[Typography.headline, { color: colors.text.inverse }]}>
+        {title}
+      </Text>
+    </Pressable>
   );
 }
 ```
