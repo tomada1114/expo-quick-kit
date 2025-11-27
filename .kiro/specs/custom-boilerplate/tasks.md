@@ -8,7 +8,7 @@
 
 ## Task 1. 開発環境セットアップ（ESLint/Prettier/Jest）
 
-- [ ] 1.1 (P) ESLintとPrettier設定の構築
+- [x] 1.1 (P) ESLintとPrettier設定の構築
   - Prettierパッケージをインストールし、`.prettierrc`設定ファイルを作成する
   - `.prettierignore`でビルド成果物（build/, dist/）とnode_modulesを除外する
   - ESLint Flat Config形式で`eslint.config.js`を設定し、Prettier連携（eslint-config-prettier）を有効化する
@@ -121,7 +121,7 @@
 
 ## Task 8. サンプル機能実装
 
-- [ ] 8.1 features/_example/サンプル機能の作成
+- [ ] 8.1 features/\_example/サンプル機能の作成
   - `features/_example/`ディレクトリに機能別モジュールのリファレンス実装を作成する
   - `components/`、`hooks/`、`services/`のサブディレクトリ構造を示す
   - `services/repository.ts`でDrizzle ORMを使用したDB操作パターン（CRUD）を実装する
@@ -167,50 +167,56 @@
 
 ## Requirements Coverage Matrix
 
-| Requirement | Task(s) | Description |
-|-------------|---------|-------------|
-| 1.1, 1.2, 1.3, 1.4 | 1.1 | ESLint + Prettier設定 |
-| 2.1-2.7 | 2.1 | フォルダ構造 |
-| 3.1-3.3 | 2.2 | パスエイリアス |
-| 4.1-4.4 | 1.2 | テスト環境 |
-| 5.1-5.4 | 3.1, 7.1 | SQLite + Drizzle |
-| 6.1-6.4 | 4.1, 7.1 | Zustand |
-| 7.1-7.3 | 4.2, 7.1 | TanStack Query |
-| 8.1-8.4 | 5.1 | テーマシステム |
-| 9.1-9.5 | 6.1 | 共通コンポーネント |
-| 10.1-10.4 | 7.1, 7.2 | ナビゲーション |
-| 11.1-11.5 | 9.2 | pnpmスクリプト |
-| 12.1-12.4 | 8.1 | サンプル機能 |
-| 13.1-13.3 | 9.1 | 不要ファイル削除 |
-| 14.1-14.10 | 5.1, 6.1 | デザインシステム |
-| 15.1-15.7 | 10.1 | 最終チェック |
+| Requirement        | Task(s)  | Description           |
+| ------------------ | -------- | --------------------- |
+| 1.1, 1.2, 1.3, 1.4 | 1.1      | ESLint + Prettier設定 |
+| 2.1-2.7            | 2.1      | フォルダ構造          |
+| 3.1-3.3            | 2.2      | パスエイリアス        |
+| 4.1-4.4            | 1.2      | テスト環境            |
+| 5.1-5.4            | 3.1, 7.1 | SQLite + Drizzle      |
+| 6.1-6.4            | 4.1, 7.1 | Zustand               |
+| 7.1-7.3            | 4.2, 7.1 | TanStack Query        |
+| 8.1-8.4            | 5.1      | テーマシステム        |
+| 9.1-9.5            | 6.1      | 共通コンポーネント    |
+| 10.1-10.4          | 7.1, 7.2 | ナビゲーション        |
+| 11.1-11.5          | 9.2      | pnpmスクリプト        |
+| 12.1-12.4          | 8.1      | サンプル機能          |
+| 13.1-13.3          | 9.1      | 不要ファイル削除      |
+| 14.1-14.10         | 5.1, 6.1 | デザインシステム      |
+| 15.1-15.7          | 10.1     | 最終チェック          |
 
 ## Parallel Execution Guide
 
 以下のタスクは相互依存がなく、並列実行可能です：
 
 **Phase 1（並列）:**
+
 - 1.1 ESLint/Prettier設定
 - 1.2 Jest設定
 
 **Phase 2（順次）:**
+
 - 2.1 フォルダ構造 → 2.2 パスエイリアス検証
 
 **Phase 3（並列）:**
+
 - 3.1 Drizzle基盤
 - 4.1 Zustand
 - 4.2 TanStack Query
 - 5.1 テーマ構築
 
 **Phase 4（順次、Phase 3完了後）:**
+
 - 6.1 UIコンポーネント（テーマに依存）
 - 7.1 RootLayout（DB, Store, Queryに依存）
 - 7.2 タブナビゲーション
 
 **Phase 5（並列、Phase 4完了後）:**
+
 - 8.1 サンプル機能
 - 9.1 不要ファイル削除
 - 9.2 スクリプト整備
 
 **Phase 6（最後）:**
+
 - 10.1 最終検証
