@@ -20,4 +20,7 @@ export type { SpacerProps, SpacerSize, SpacerDirection } from './spacer';
 
 // LoadingOverlay
 export { LoadingOverlay } from './loading-overlay';
-export type { LoadingOverlayProps } from './loading-overlay';
+export type {
+  LoadingOverlayProps,
+  LoadingOverlayAnimationType,
+} from './loading-overlay';

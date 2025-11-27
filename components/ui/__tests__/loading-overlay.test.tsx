@@ -58,6 +58,27 @@ describe('LoadingOverlay', () => {
       );
       expect(getByTestId('loading')).toBeTruthy();
     });
+
+    it('should accept animationType prop with fade (default)', () => {
+      const { getByTestId } = render(
+        <LoadingOverlay visible testID="loading" animationType="fade" />
+      );
+      expect(getByTestId('loading')).toBeTruthy();
+    });
+
+    it('should accept animationType prop with none', () => {
+      const { getByTestId } = render(
+        <LoadingOverlay visible testID="loading" animationType="none" />
+      );
+      expect(getByTestId('loading')).toBeTruthy();
+    });
+
+    it('should accept animationType prop with slide', () => {
+      const { getByTestId } = render(
+        <LoadingOverlay visible testID="loading" animationType="slide" />
+      );
+      expect(getByTestId('loading')).toBeTruthy();
+    });
   });
 
   describe('accessibility', () => {

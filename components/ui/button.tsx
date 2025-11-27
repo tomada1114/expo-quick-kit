@@ -41,6 +41,8 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
   disabled?: boolean;
   /** Loading state */
   loading?: boolean;
+  /** Show children alongside loading indicator (default: false) */
+  showChildrenWhileLoading?: boolean;
   /** Custom children (overrides title) */
   children?: React.ReactNode;
   /** Custom button style */
@@ -76,6 +78,7 @@ export function Button({
   size = 'md',
   disabled = false,
   loading = false,
+  showChildrenWhileLoading = false,
   children,
   style,
   textStyle,
@@ -166,28 +169,31 @@ export function Button({
       ]}
       {...props}
     >
-      {loading ? (
+      {loading && (
         <ActivityIndicator
           testID={testID ? `${testID}-loading` : 'button-loading'}
           size="small"
           color={textColor}
+          style={showChildrenWhileLoading ? styles.loadingIndicator : undefined}
         />
-      ) : children ? (
-        children
-      ) : (
-        <Text
-          style={[
-            styles.text,
-            {
-              color: textColor,
-              fontSize: sizeConfig.fontSize,
-            },
-            textStyle,
-          ]}
-        >
-          {title}
-        </Text>
       )}
+      {(!loading || showChildrenWhileLoading) &&
+        (children ? (
+          children
+        ) : (
+          <Text
+            style={[
+              styles.text,
+              {
+                color: textColor,
+                fontSize: sizeConfig.fontSize,
+              },
+              textStyle,
+            ]}
+          >
+            {title}
+          </Text>
+        ))}
     </Pressable>
   );
 }
@@ -202,5 +208,8 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: '600',
     textAlign: 'center',
+  },
+  loadingIndicator: {
+    marginRight: Spacing.sm,
   },
 });

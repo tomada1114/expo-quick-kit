@@ -45,7 +45,13 @@ describe('Card', () => {
           <Text>Elevated card</Text>
         </Card>
       );
-      expect(getByTestId('card')).toBeTruthy();
+      const card = getByTestId('card');
+      expect(card).toBeTruthy();
+      const style = card.props.style;
+      const flattenedStyle = Array.isArray(style)
+        ? style.reduce((acc: Record<string, unknown>, s: Record<string, unknown>) => ({ ...acc, ...s }), {})
+        : style;
+      expect(flattenedStyle.shadowOpacity).toBeDefined();
     });
 
     it('should render outlined variant with border', () => {

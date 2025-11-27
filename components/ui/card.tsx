@@ -22,6 +22,21 @@ import {
 import { BorderRadius, Shadows, Spacing } from '@/constants/theme';
 import { useThemedColors } from '@/hooks/use-theme-color';
 
+const DarkModeShadows = {
+  sm: {
+    ...Shadows.sm,
+    shadowOpacity: 0.3,
+  },
+  md: {
+    ...Shadows.md,
+    shadowOpacity: 0.4,
+  },
+  lg: {
+    ...Shadows.lg,
+    shadowOpacity: 0.5,
+  },
+} as const;
+
 export type CardVariant = 'flat' | 'elevated' | 'outlined';
 
 export interface CardProps extends ViewProps {
@@ -47,7 +62,7 @@ export function Card({
   accessibilityLabel,
   ...props
 }: CardProps) {
-  const { colors } = useThemedColors();
+  const { colors, colorScheme } = useThemedColors();
 
   const getBackgroundColor = (): string => {
     switch (variant) {
@@ -64,7 +79,7 @@ export function Card({
 
   const getShadowStyle = (): ViewStyle => {
     if (variant === 'elevated') {
-      return Shadows.md;
+      return colorScheme === 'dark' ? DarkModeShadows.md : Shadows.md;
     }
     return {};
   };

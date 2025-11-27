@@ -5,6 +5,8 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 
+import { TouchTarget } from '@/constants/theme';
+
 import { Button } from '../button';
 
 describe('Button', () => {
@@ -128,8 +130,11 @@ describe('Button', () => {
         <Button title="Accessible" testID="button" size="md" />
       );
       const button = getByTestId('button');
-      // Button should exist and have proper accessibility
-      expect(button).toBeTruthy();
+      const style = button.props.style;
+      const flattenedStyle = Array.isArray(style)
+        ? style.reduce((acc, s) => ({ ...acc, ...s }), {})
+        : style;
+      expect(flattenedStyle.minHeight).toBeGreaterThanOrEqual(TouchTarget.min);
     });
 
     it('should apply accessibilityLabel when provided', () => {
@@ -137,6 +142,24 @@ describe('Button', () => {
         <Button title="Save" accessibilityLabel="Save changes" />
       );
       expect(getByLabelText('Save changes')).toBeTruthy();
+    });
+  });
+
+  describe('showChildrenWhileLoading', () => {
+    it('should hide title when loading by default', () => {
+      const { queryByText, getByTestId } = render(
+        <Button title="Save" loading testID="button" />
+      );
+      expect(getByTestId('button-loading')).toBeTruthy();
+      expect(queryByText('Save')).toBeNull();
+    });
+
+    it('should show title alongside loading indicator when showChildrenWhileLoading is true', () => {
+      const { getByText, getByTestId } = render(
+        <Button title="Saving..." loading showChildrenWhileLoading testID="button" />
+      );
+      expect(getByTestId('button-loading')).toBeTruthy();
+      expect(getByText('Saving...')).toBeTruthy();
     });
   });
 });

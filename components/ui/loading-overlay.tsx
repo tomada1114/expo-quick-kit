@@ -20,11 +20,15 @@ import {
 import { Spacing, Typography } from '@/constants/theme';
 import { useThemedColors } from '@/hooks/use-theme-color';
 
+export type LoadingOverlayAnimationType = 'none' | 'slide' | 'fade';
+
 export interface LoadingOverlayProps {
   /** Whether the overlay is visible */
   visible: boolean;
   /** Optional loading message */
   message?: string;
+  /** Animation type for modal transition (default: 'fade') */
+  animationType?: LoadingOverlayAnimationType;
   /** Custom style for the overlay */
   style?: StyleProp<ViewStyle>;
   /** Test ID for testing */
@@ -36,6 +40,7 @@ export interface LoadingOverlayProps {
 export function LoadingOverlay({
   visible,
   message,
+  animationType = 'fade',
   style,
   testID,
   accessibilityLabel = 'Loading',
@@ -47,7 +52,7 @@ export function LoadingOverlay({
   }
 
   return (
-    <Modal transparent visible={visible} animationType="fade">
+    <Modal transparent visible={visible} animationType={animationType}>
       <View
         testID={testID}
         accessibilityLabel={accessibilityLabel}
