@@ -16,10 +16,11 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
 - [ ] 1.2 (P) Jestテスト環境の構築
-  - Jest、jest-expo、React Native Testing Library、jest-nativeをインストールする
+  - Jest、jest-expo、React Native Testing Library、jest-native、@types/jestをインストールする
   - `jest.config.js`でjest-expoプリセット、`@/`パスエイリアス解決、カバレッジ設定を構成する
   - `jest.setup.js`でexpo-sqlite、AsyncStorageのモックを設定し、テスト環境を初期化する
   - expo-sqlite、expo関連モジュールのトランスフォーム設定を追加する
+  - `tsconfig.json`の`exclude`から`__tests__`を削除する（@types/jestインストール後、型エラーが解消されるため）
   - `pnpm test`でテストが実行できることを確認する
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
