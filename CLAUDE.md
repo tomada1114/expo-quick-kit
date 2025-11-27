@@ -19,6 +19,10 @@ pnpm web                # Run on web
 pnpm lint               # Run ESLint (expo lint)
 ```
 
+## MCP
+
+When getting the latest information about libraries, refer to Context7 MCP.
+
 ## Architecture
 
 ### File-Based Routing (expo-router)
