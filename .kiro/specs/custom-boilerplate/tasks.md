@@ -75,7 +75,7 @@
   - `pnpm check` がパスすることを確認する
   - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 4.2 (P) TanStack Query設定
+- [x] 4.2 (P) TanStack Query設定
   - @tanstack/react-queryをインストールする
   - `lib/query-client.ts`でQueryClientインスタンスを作成し、staleTime、gcTime、retry設定を定義する
   - キャッシュ管理のデフォルト設定（refetchOnWindowFocus, refetchOnReconnect）を構成する
