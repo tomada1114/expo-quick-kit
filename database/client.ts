@@ -4,7 +4,7 @@
  * Drizzle ORM client initialization for expo-sqlite
  */
 
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
 import { openDatabaseSync, SQLiteDatabase } from 'expo-sqlite';
 import * as schema from './schema';
 
@@ -27,9 +27,16 @@ export class DatabaseInitError extends Error {
 }
 
 /**
- * Initialize SQLite database with error handling
+ * Track initialization state
  */
-function initializeDatabase(): SQLiteDatabase {
+let isInitialized = false;
+let expoDb: SQLiteDatabase | null = null;
+let drizzleDb: ExpoSQLiteDatabase<typeof schema> | null = null;
+
+/**
+ * Initialize SQLite database synchronously with error handling
+ */
+function openDatabase(): SQLiteDatabase {
   try {
     return openDatabaseSync(DATABASE_NAME, {
       enableChangeListener: true,
@@ -43,12 +50,35 @@ function initializeDatabase(): SQLiteDatabase {
 }
 
 /**
- * SQLite database instance with change listener enabled for live queries
+ * Async database initialization for use in app startup
+ * This allows parallel initialization with other services
+ *
+ * @throws DatabaseInitError if initialization fails
  */
-const expoDb = initializeDatabase();
+export async function initializeDatabase(): Promise<void> {
+  if (isInitialized) {
+    return;
+  }
+
+  try {
+    // Open the database
+    expoDb = openDatabase();
+
+    // Create Drizzle instance
+    drizzleDb = drizzle(expoDb, { schema });
+
+    // Run any pending migrations (placeholder for future migration support)
+    // await runMigrations(drizzleDb);
+
+    isInitialized = true;
+  } catch (error) {
+    throw new DatabaseInitError('Database initialization failed', error);
+  }
+}
 
 /**
- * Drizzle ORM database instance
+ * Get the Drizzle ORM database instance
+ * Must call initializeDatabase() first
  *
  * Usage:
  * ```typescript
@@ -62,4 +92,29 @@ const expoDb = initializeDatabase();
  * db.insert(items).values({ title: 'New Item' }).run();
  * ```
  */
-export const db = drizzle(expoDb, { schema });
+export const db = new Proxy({} as ExpoSQLiteDatabase<typeof schema>, {
+  get(_, prop) {
+    if (!drizzleDb) {
+      throw new DatabaseInitError(
+        'Database not initialized. Call initializeDatabase() first.'
+      );
+    }
+    return drizzleDb[prop as keyof typeof drizzleDb];
+  },
+});
+
+/**
+ * Check if database is initialized
+ */
+export function isDatabaseInitialized(): boolean {
+  return isInitialized;
+}
+
+/**
+ * Reset database state (for testing purposes)
+ */
+export function resetDatabaseState(): void {
+  isInitialized = false;
+  expoDb = null;
+  drizzleDb = null;
+}
