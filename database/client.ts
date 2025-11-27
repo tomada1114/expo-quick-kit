@@ -5,7 +5,7 @@
  */
 
 import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { openDatabaseSync } from 'expo-sqlite';
+import { openDatabaseSync, SQLiteDatabase } from 'expo-sqlite';
 import * as schema from './schema';
 
 /**
@@ -14,11 +14,38 @@ import * as schema from './schema';
 export const DATABASE_NAME = 'app.db';
 
 /**
+ * Database initialization error
+ */
+export class DatabaseInitError extends Error {
+  constructor(
+    message: string,
+    public readonly cause?: unknown
+  ) {
+    super(message);
+    this.name = 'DatabaseInitError';
+  }
+}
+
+/**
+ * Initialize SQLite database with error handling
+ */
+function initializeDatabase(): SQLiteDatabase {
+  try {
+    return openDatabaseSync(DATABASE_NAME, {
+      enableChangeListener: true,
+    });
+  } catch (error) {
+    throw new DatabaseInitError(
+      `Failed to open database "${DATABASE_NAME}"`,
+      error
+    );
+  }
+}
+
+/**
  * SQLite database instance with change listener enabled for live queries
  */
-const expoDb = openDatabaseSync(DATABASE_NAME, {
-  enableChangeListener: true,
-});
+const expoDb = initializeDatabase();
 
 /**
  * Drizzle ORM database instance

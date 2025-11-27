@@ -3,8 +3,8 @@
  * SQLite + Drizzle ORM client and schemas
  */
 
-// Database client
-export { db, DATABASE_NAME } from './client';
+// Database client and errors
+export { db, DATABASE_NAME, DatabaseInitError } from './client';
 
 // Schema definitions and types
 export { items } from './schema';
