@@ -1,6 +1,6 @@
 import { StyleSheet, Text, type TextProps } from 'react-native';
 
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useThemedColors } from '@/hooks/use-theme-color';
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
@@ -15,12 +15,23 @@ export function ThemedText({
   type = 'default',
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const { colors, colorScheme } = useThemedColors();
+
+  // Determine text color based on type and custom color props
+  const getColor = () => {
+    const customColor = colorScheme === 'light' ? lightColor : darkColor;
+    if (customColor) return customColor;
+
+    // Link type uses semantic.info color (iOS Blue)
+    if (type === 'link') return colors.semantic.info;
+
+    return colors.text.primary;
+  };
 
   return (
     <Text
       style={[
-        { color },
+        { color: getColor() },
         type === 'default' ? styles.default : undefined,
         type === 'title' ? styles.title : undefined,
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
@@ -55,6 +66,6 @@ const styles = StyleSheet.create({
   link: {
     lineHeight: 30,
     fontSize: 16,
-    color: '#0a7ea4',
+    // color is applied dynamically via getColor() to support theming
   },
 });

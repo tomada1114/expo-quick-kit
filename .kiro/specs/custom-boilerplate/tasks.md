@@ -86,7 +86,7 @@
 
 ## Task 5. デザインシステムとテーマ
 
-- [ ] 5.1 iOS System Colors準拠のテーマ構築
+- [x] 5.1 iOS System Colors準拠のテーマ構築
   - `constants/theme.ts`を拡張し、expo-design-system Skillに準拠したカラー構造を実装する
   - Primary Colors（Blue/Green/Orange選択可能）、Background Colors（base/secondary/tertiary）、Text Colors（primary/secondary/tertiary/inverse）を定義する
   - Semantic Colors（success/warning/error/info）とInteractive Elements（separator/fill/fillSecondary）を定義する
@@ -99,6 +99,8 @@
 ---
 
 ## Task 6. 共通UIコンポーネント
+
+UIについては Claude Skill を参照して実装してください。
 
 - [ ] 6.1 UIコンポーネントの実装
   - `components/ui/button.tsx`でprimary/secondary/ghost/destructiveバリアントのボタンを実装する（タッチターゲット44pt以上確保）
@@ -113,6 +115,8 @@
 ---
 
 ## Task 7. ナビゲーションとアプリ起動フロー
+
+UIについては Claude Skill を参照して実装してください。
 
 - [ ] 7.1 RootLayoutとプロバイダー統合
   - `app/_layout.tsx`を拡張し、データベース初期化、Zustandストア初期化、QueryClientProvider統合を実装する
@@ -132,6 +136,8 @@
 ---
 
 ## Task 8. サンプル機能実装
+
+UIについては Claude Skill を参照して実装してください。
 
 - [ ] 8.1 features/\_example/サンプル機能の作成
   - `features/_example/`ディレクトリに機能別モジュールのリファレンス実装を作成する
