@@ -48,7 +48,7 @@
 
 ## Task 3. データベース層（SQLite + Drizzle）
 
-- [ ] 3.1 Drizzle ORM基盤の構築
+- [x] 3.1 Drizzle ORM基盤の構築
   - drizzle-orm、drizzle-kit、expo-sqliteをインストールする
   - `database/client.ts`でDrizzleクライアントを初期化し、enableChangeListenerを有効化する
   - `database/schema.ts`でサンプルテーブル（items）のスキーマを定義し、型推論をエクスポートする
