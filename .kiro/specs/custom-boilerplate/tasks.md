@@ -86,7 +86,7 @@
 
 ## Task 5. デザインシステムとテーマ
 
-- [ ] 5.1 iOS System Colors準拠のテーマ構築
+- [x] 5.1 iOS System Colors準拠のテーマ構築
   - `constants/theme.ts`を拡張し、expo-design-system Skillに準拠したカラー構造を実装する
   - Primary Colors（Blue/Green/Orange選択可能）、Background Colors（base/secondary/tertiary）、Text Colors（primary/secondary/tertiary/inverse）を定義する
   - Semantic Colors（success/warning/error/info）とInteractive Elements（separator/fill/fillSecondary）を定義する
