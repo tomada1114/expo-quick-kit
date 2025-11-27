@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import {
   DarkTheme,
@@ -12,6 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemedColors } from '@/hooks/use-theme-color';
 import { initializeDatabase } from '@/database/client';
 import { useStore } from '@/store';
 import { queryClient } from '@/lib/query-client';
@@ -38,12 +39,25 @@ function ErrorScreen({
   error: Error;
   onRetry: () => void;
 }) {
+  const { colors } = useThemedColors();
+
   return (
-    <View style={styles.errorContainer}>
-      <Text style={styles.errorTitle}>Something went wrong</Text>
-      <Text style={styles.errorMessage}>{error.message}</Text>
-      <Pressable style={styles.retryButton} onPress={onRetry}>
-        <Text style={styles.retryButtonText}>Try Again</Text>
+    <View
+      style={[styles.errorContainer, { backgroundColor: colors.background.base }]}
+    >
+      <Text style={[styles.errorTitle, { color: colors.text.primary }]}>
+        Something went wrong
+      </Text>
+      <Text style={[styles.errorMessage, { color: colors.text.secondary }]}>
+        {error.message}
+      </Text>
+      <Pressable
+        style={[styles.retryButton, { backgroundColor: colors.primary }]}
+        onPress={onRetry}
+      >
+        <Text style={[styles.retryButtonText, { color: colors.text.inverse }]}>
+          Try Again
+        </Text>
       </Pressable>
     </View>
   );
@@ -54,17 +68,18 @@ export default function RootLayout() {
   const [appReady, setAppReady] = useState(false);
   const [initError, setInitError] = useState<Error | null>(null);
 
-  const initializeApp = async () => {
+  const initializeApp = useCallback(async () => {
     setInitError(null);
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     try {
-      // Create timeout promise
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(
+      // Create timeout promise with cleanup capability
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(
           () => reject(new Error('Initialization timeout')),
           INIT_TIMEOUT_MS
-        )
-      );
+        );
+      });
 
       // Database initialization with timeout
       const dbInitPromise = Promise.race([
@@ -84,13 +99,17 @@ export default function RootLayout() {
       setInitError(error as Error);
       setAppReady(true);
     } finally {
+      // Clean up timeout to prevent memory leak
+      if (timeoutId !== undefined) {
+        clearTimeout(timeoutId);
+      }
       await SplashScreen.hideAsync();
     }
-  };
+  }, []);
 
   useEffect(() => {
     initializeApp();
-  }, []);
+  }, [initializeApp]);
 
   // Show nothing while initializing (splash screen is visible)
   if (!appReady) {
@@ -137,12 +156,10 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     fontSize: 14,
-    color: '#666',
     textAlign: 'center',
     marginBottom: 24,
   },
   retryButton: {
-    backgroundColor: '#007AFF',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
@@ -150,7 +167,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   retryButtonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },

@@ -50,6 +50,34 @@ jest.mock('@/hooks/use-color-scheme', () => ({
   useColorScheme: () => 'light',
 }));
 
+// Mock useThemedColors
+jest.mock('@/hooks/use-theme-color', () => ({
+  useThemedColors: () => ({
+    colors: {
+      primary: '#007AFF',
+      background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
+      text: {
+        primary: '#000000',
+        secondary: '#3C3C43',
+        tertiary: '#8E8E93',
+        inverse: '#FFFFFF',
+      },
+      semantic: {
+        success: '#34C759',
+        warning: '#FF9500',
+        error: '#FF3B30',
+        info: '#007AFF',
+      },
+      interactive: {
+        separator: '#C6C6C8',
+        fill: '#787880',
+        fillSecondary: '#BCBCC0',
+      },
+    },
+    colorScheme: 'light',
+  }),
+}));
+
 // Mock database client
 jest.mock('@/database/client', () => ({
   initializeDatabase: jest.fn().mockResolvedValue(undefined),
