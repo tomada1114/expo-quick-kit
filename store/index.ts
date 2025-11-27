@@ -13,7 +13,7 @@ import type { AppState } from './types';
  * Main application store with AsyncStorage persistence
  */
 export const useStore = create<AppState>()(
-  persist((set, get) => createAppSlice(set, get), {
+  persist((set) => createAppSlice(set), {
     name: 'app-store',
     version: 1,
     storage: createJSONStorage(() => AsyncStorage),
@@ -27,4 +27,4 @@ export const useStore = create<AppState>()(
 );
 
 // Re-export types
-export type { AppState, UserPreferences } from './types';
+export type { AppState, UserPreferences, SupportedLanguage } from './types';

@@ -15,7 +15,6 @@ const defaultUserPreferences: UserPreferences = {
 /**
  * Creates the app slice for Zustand store
  * @param set - Zustand set function
- * @param get - Zustand get function
  * @returns App slice state and actions
  */
 export const createAppSlice = (
@@ -24,8 +23,7 @@ export const createAppSlice = (
       | Partial<AppState>
       | ((state: AppState) => Partial<AppState>)
       | AppState
-  ) => void,
-  _get: () => AppState
+  ) => void
 ): AppState => ({
   // Initial state
   isOnboarded: false,

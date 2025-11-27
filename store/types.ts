@@ -4,11 +4,16 @@
  */
 
 /**
+ * Supported languages for the application
+ */
+export type SupportedLanguage = 'en' | 'ja';
+
+/**
  * User preferences for the application
  */
 export interface UserPreferences {
   theme: 'light' | 'dark' | 'auto';
-  language: string;
+  language: SupportedLanguage;
 }
 
 /**
