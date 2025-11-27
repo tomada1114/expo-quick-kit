@@ -1,0 +1,28 @@
+# Dependencies
+node_modules
+
+# Build outputs
+build
+dist
+.expo
+.next
+out
+
+# Cache
+.cache
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+
+# Generated files
+coverage
+*.tsbuildinfo
+
+# Markdown files
+*.md
