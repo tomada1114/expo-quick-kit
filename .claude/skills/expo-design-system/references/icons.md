@@ -59,6 +59,7 @@ settings      // 開いた外枠アイコン
 ```
 
 **用途:**
+
 - 通常状態
 - 非選択状態
 - 標準的なアイコン表示
@@ -70,6 +71,7 @@ settings.fill  // 塗りつぶされたアイコン
 ```
 
 **用途:**
+
 - 選択状態
 - アクティブ状態
 - 強調表示
@@ -79,31 +81,31 @@ settings.fill  // 塗りつぶされたアイコン
 ## Symbol Weights（太さ）
 
 ```typescript
-weight: 'thin' | 'light' | 'regular' | 'medium' | 'semibold' | 'bold' | 'heavy'
+weight: 'thin' | 'light' | 'regular' | 'medium' | 'semibold' | 'bold' | 'heavy';
 ```
 
-| Weight | Use Cases |
-|--------|-----------|
-| thin | 装飾的なアイコン |
-| light | 補足的なアイコン |
-| regular | 標準（推奨） |
-| semibold | 強調アイコン |
-| bold | より強調 |
-| heavy | 特に強調 |
+| Weight   | Use Cases        |
+| -------- | ---------------- |
+| thin     | 装飾的なアイコン |
+| light    | 補足的なアイコン |
+| regular  | 標準（推奨）     |
+| semibold | 強調アイコン     |
+| bold     | より強調         |
+| heavy    | 特に強調         |
 
 ---
 
 ## Symbol Scales
 
 ```typescript
-scale: 'small' | 'medium' | 'large'
+scale: 'small' | 'medium' | 'large';
 ```
 
-| Scale | Size Range | Use Cases |
-|-------|------------|-----------|
-| small | 16-18pt | ツールバー、タブバー |
-| medium | 20-24pt | リスト項目、ナビゲーション（標準） |
-| large | 28-32pt | ヘッダーアイコン、FAB |
+| Scale  | Size Range | Use Cases                          |
+| ------ | ---------- | ---------------------------------- |
+| small  | 16-18pt    | ツールバー、タブバー               |
+| medium | 20-24pt    | リスト項目、ナビゲーション（標準） |
+| large  | 28-32pt    | ヘッダーアイコン、FAB              |
 
 ---
 

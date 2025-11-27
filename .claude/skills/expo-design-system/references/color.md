@@ -9,6 +9,7 @@ Apple Human Interface Guidelinesに基づいた、機能的で一貫性のある
 iOS System Colorsは、Apple設計のセマンティックカラーシステムです。
 
 **特徴：**
+
 - **機能優先** - 色は情報を伝えるために使用。装飾は最小限。
 - **一貫性** - すべての色がiOS標準に準拠
 - **Dark Mode対応** - Light/Dark両モードで視認性確保
@@ -31,12 +32,14 @@ primary: {
 ```
 
 **使用方針：**
+
 - ✅ 主要アクション（記録ボタン、送信ボタン、主CTA）に使用
 - ✅ アプリのブランドカラーとして一貫使用
 - ❌ 複数のprimary colorを同一画面で混在使用
 - ❌ 単なる装飾目的での使用
 
 **選択時のポイント：**
+
 - Blue（#007AFF）：ビジネス、情報系アプリ向け（信頼感、落ち着き）
 - Green（#34C759）：健康、フィットネス系向け（成長、活動）
 - Orange（#FF9500）：生産性、アクション系向け（緊急性、実行感）
@@ -54,12 +57,14 @@ background: {
 ```
 
 **使用方針：**
+
 - ✅ `base`：画面全体、最外層の背景
 - ✅ `secondary`：カード、リスト項目、グループ化されたコンテンツ
 - ✅ `tertiary`：モーダル、ポップオーバー、オーバーレイ
 - ❌ 3段階以上の背景階層を作らない（複雑化防止）
 
 **実装例：**
+
 ```typescript
 // 画面全体
 <View style={{ backgroundColor: colors.background.base }}>
@@ -94,14 +99,15 @@ text: {
 
 **使用方針：**
 
-| Color | Font Size | Use Cases | Example |
-|-------|-----------|-----------|---------|
-| primary | 17pt+ | 見出し、本文、重要な情報 | ページタイトル、リスト項目本文 |
-| secondary | 15-17pt | サブタイトル、説明文、メタ情報 | リスト副説明、日時、詳細情報 |
-| tertiary | 12-15pt | プレースホルダー、ヒント、非活性状態 | 入力フィールドプレースホルダー、無効化ボタン |
-| inverse | 17pt+ | Dark背景上のコンテンツ | プライマリボタンテキスト、Dark section |
+| Color     | Font Size | Use Cases                            | Example                                      |
+| --------- | --------- | ------------------------------------ | -------------------------------------------- |
+| primary   | 17pt+     | 見出し、本文、重要な情報             | ページタイトル、リスト項目本文               |
+| secondary | 15-17pt   | サブタイトル、説明文、メタ情報       | リスト副説明、日時、詳細情報                 |
+| tertiary  | 12-15pt   | プレースホルダー、ヒント、非活性状態 | 入力フィールドプレースホルダー、無効化ボタン |
+| inverse   | 17pt+     | Dark背景上のコンテンツ               | プライマリボタンテキスト、Dark section       |
 
 **実装例：**
+
 ```typescript
 <Text style={{ color: colors.text.primary, fontSize: 20, fontWeight: '600' }}>
   Main Title
@@ -132,14 +138,15 @@ semantic: {
 
 **使用方針：**
 
-| Color | Meaning | Use Cases |
-|-------|---------|-----------|
-| success | 成功、完了、確認 | チェックマーク、完了メッセージ、保存成功 |
-| warning | 注意、警告、予防的な情報 | 警告アイコン、注意メッセージ、確認ダイアログ |
-| error | エラー、失敗、削除予定 | エラーメッセージ、削除ボタン、入力エラーの下線 |
-| info | 情報、ヒント、補足 | 情報アイコン、ヒントテキスト、案内メッセージ |
+| Color   | Meaning                  | Use Cases                                      |
+| ------- | ------------------------ | ---------------------------------------------- |
+| success | 成功、完了、確認         | チェックマーク、完了メッセージ、保存成功       |
+| warning | 注意、警告、予防的な情報 | 警告アイコン、注意メッセージ、確認ダイアログ   |
+| error   | エラー、失敗、削除予定   | エラーメッセージ、削除ボタン、入力エラーの下線 |
+| info    | 情報、ヒント、補足       | 情報アイコン、ヒントテキスト、案内メッセージ   |
 
 **ルール：**
+
 - ✅ 必ず意味に沿った使用（成功=緑、エラー=赤）
 - ✅ トースト、アラート、バリデーションメッセージに使用
 - ✅ ユーザーのアクション結果を伝えるに最適
@@ -147,6 +154,7 @@ semantic: {
 - ❌ semantic colorをprimaryの代替として使用
 
 **実装例：**
+
 ```typescript
 // 成功メッセージ
 <Text style={{ color: colors.semantic.success }}>✓ 保存完了しました</Text>
@@ -175,19 +183,21 @@ interactive: {
 
 **使用方針：**
 
-| Element | Color | Use Cases |
-|---------|-------|-----------|
-| separator | #C6C6C8 | リスト区切り線、カード境界線、セクション区切り |
-| fill | #787880 | アイコン、チェックボックス非選択、スイッチoff |
-| fillSecondary | #BCBCC0 | グレーアウト状態、無効化要素、バッジ背景 |
+| Element       | Color   | Use Cases                                      |
+| ------------- | ------- | ---------------------------------------------- |
+| separator     | #C6C6C8 | リスト区切り線、カード境界線、セクション区切り |
+| fill          | #787880 | アイコン、チェックボックス非選択、スイッチoff  |
+| fillSecondary | #BCBCC0 | グレーアウト状態、無効化要素、バッジ背景       |
 
 **ルール：**
+
 - ✅ separator：細い線（1pt）で視覚的な区切りを作成
 - ✅ fill：アイコンの通常状態（選択されていない）
 - ❌ 境界線に色付き（primaryなど）を使用しない
 - ❌ separator を強調目的で使用しない
 
 **実装例：**
+
 ```typescript
 // リスト区切り線
 <View style={{
@@ -283,6 +293,7 @@ const colors = Colors[colorScheme ?? 'light'];
 ### 🚫 Indigo系（#6366F1, #818CF8, #4F46E5等）
 
 **色コード例：**
+
 ```typescript
 const BAD_INDIGO = {
   indigo400: '#818CF8',
@@ -292,6 +303,7 @@ const BAD_INDIGO = {
 ```
 
 **理由：**
+
 - SaaSスタートアップ臭（2020年代の流行カラー）
 - Apple標準色ではなく、流行に乗っているだけ
 - 差別化できない（多数のアプリが使用）
@@ -305,6 +317,7 @@ const BAD_INDIGO = {
 ### 🚫 グラデーション
 
 **例：**
+
 ```typescript
 const BAD_GRADIENT = `
   linear-gradient(135deg, #667eea 0%, #764ba2 100%)
@@ -313,6 +326,7 @@ const BAD_GRADIENT = `
 ```
 
 **理由：**
+
 - パフォーマンス低下（特にモバイル）
 - 装飾過多（情報量が増える）
 - メンテナンス困難（複数の色パターン管理）
@@ -336,6 +350,7 @@ style={{
 ### 🚫 ネオン・ビビッド系（#FF00FF, #00FF00, #00FFFF等）
 
 **色コード例：**
+
 ```typescript
 const BAD_VIVID = {
   neonPink: '#FF00FF',
@@ -345,12 +360,14 @@ const BAD_VIVID = {
 ```
 
 **理由：**
+
 - 目に刺激的すぎる
 - 長時間の使用に不向き（疲労増加）
 - ビジネスアプリに不適切
 
 **代替：**
 iOS標準色から選択。十分に視認性があります：
+
 - Red：#FF3B30（ネオンより濃い）
 - Orange：#FF9500
 - Green：#34C759
@@ -360,6 +377,7 @@ iOS標準色から選択。十分に視認性があります：
 ### 🚫 パステル系（#FFB3D9, #B3D9FF, #B3FFB3等）
 
 **色コード例：**
+
 ```typescript
 const BAD_PASTEL = {
   pastelPink: '#FFB3D9',
@@ -369,6 +387,7 @@ const BAD_PASTEL = {
 ```
 
 **理由：**
+
 - 可愛い系アプリと誤認（意図しないブランドイメージ）
 - ビジネス層に不向き
 - コントラスト不足の可能性（白背景上で見づらい）
@@ -381,6 +400,7 @@ iOS標準色で十分。パステルほど淡くない自然な明るさ。
 ### 🚫 カスタムグレー（#F5F5F5, #E0E0E0, #9E9E9E等）
 
 **色コード例：**
+
 ```typescript
 const BAD_GRAY = {
   customGray1: '#F5F5F5',
@@ -390,6 +410,7 @@ const BAD_GRAY = {
 ```
 
 **理由：**
+
 - iOS標準グレーで十分（複数段階用意されている）
 - カスタムグレーを追加するとシステムの一貫性が崩れる
 - Dark Mode対応の手間が増える
@@ -397,6 +418,7 @@ const BAD_GRAY = {
 
 **代替：**
 iOS標準グレーを使用：
+
 - Light背景：`background.secondary` (#F2F2F7)
 - Dark：`background.secondary` (#1C1C1E)
 - Separator：`interactive.separator` (#C6C6C8)
@@ -411,24 +433,25 @@ iOS標準グレーを使用：
 
 **Light Mode コントラスト比：**
 
-| Foreground | Background | Contrast Ratio | Status |
-|------------|------------|-----------------|--------|
-| text.primary (#000000) | background.base (#FFFFFF) | 21.00:1 | ✅ PASS |
-| text.primary (#000000) | background.secondary (#F2F2F7) | 20.30:1 | ✅ PASS |
-| text.secondary (#3C3C43) | background.base (#FFFFFF) | 8.25:1 | ✅ PASS |
-| text.tertiary (#8E8E93) | background.base (#FFFFFF) | 4.54:1 | ✅ PASS |
-| semantic.error (#FF3B30) | background.base (#FFFFFF) | 3.99:1 | ⚠️ FAIL |
-| semantic.error (#FF3B30) | background.secondary (#F2F2F7) | 3.87:1 | ⚠️ FAIL |
+| Foreground               | Background                     | Contrast Ratio | Status  |
+| ------------------------ | ------------------------------ | -------------- | ------- |
+| text.primary (#000000)   | background.base (#FFFFFF)      | 21.00:1        | ✅ PASS |
+| text.primary (#000000)   | background.secondary (#F2F2F7) | 20.30:1        | ✅ PASS |
+| text.secondary (#3C3C43) | background.base (#FFFFFF)      | 8.25:1         | ✅ PASS |
+| text.tertiary (#8E8E93)  | background.base (#FFFFFF)      | 4.54:1         | ✅ PASS |
+| semantic.error (#FF3B30) | background.base (#FFFFFF)      | 3.99:1         | ⚠️ FAIL |
+| semantic.error (#FF3B30) | background.secondary (#F2F2F7) | 3.87:1         | ⚠️ FAIL |
 
 **Dark Mode コントラスト比：**
 
-| Foreground | Background | Contrast Ratio | Status |
-|------------|------------|-----------------|--------|
-| text.primary (#FFFFFF) | background.base (#000000) | 21.00:1 | ✅ PASS |
-| text.primary (#FFFFFF) | background.secondary (#1C1C1E) | 19.80:1 | ✅ PASS |
-| semantic.error (#FF453A) | background.base (#000000) | 5.89:1 | ✅ PASS |
+| Foreground               | Background                     | Contrast Ratio | Status  |
+| ------------------------ | ------------------------------ | -------------- | ------- |
+| text.primary (#FFFFFF)   | background.base (#000000)      | 21.00:1        | ✅ PASS |
+| text.primary (#FFFFFF)   | background.secondary (#1C1C1E) | 19.80:1        | ✅ PASS |
+| semantic.error (#FF453A) | background.base (#000000)      | 5.89:1         | ✅ PASS |
 
 **ルール：**
+
 - ✅ 標準テキスト（17pt以上）：4.5:1以上
 - ✅ 大きいテキスト（18pt以上、太字）：3:1以上
 - ✅ UIコンポーネント（ボタン、アイコン）：3:1以上

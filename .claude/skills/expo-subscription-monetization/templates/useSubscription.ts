@@ -85,7 +85,8 @@ export interface UseSubscriptionReturn {
 export function useSubscription(): UseSubscriptionReturn {
   const subscriptionService = useRef(getSubscriptionService());
 
-  const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] =
+    useState<SubscriptionStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [purchaseLoading, setPurchaseLoading] = useState(false);
@@ -105,7 +106,9 @@ export function useSubscription(): UseSubscriptionReturn {
       setSubscriptionStatus(status);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'Failed to load subscription status';
+        err instanceof Error
+          ? err.message
+          : 'Failed to load subscription status';
       setError(errorMessage);
       setSubscriptionStatus(null);
       console.error('Failed to load subscription status:', err);
@@ -117,27 +120,30 @@ export function useSubscription(): UseSubscriptionReturn {
   /**
    * Loads available subscription packages
    */
-  const loadAvailablePackages = useCallback(async (): Promise<PackagesResult> => {
-    setPackagesLoading(true);
-    try {
-      const result = await subscriptionService.current.getAvailablePackages();
-      setPackages(result.packages);
-      setPackagesError(result.error ?? null);
-      return result;
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to load subscription packages';
-      console.error('Failed to load available packages:', err);
-      setPackages([]);
-      setPackagesError(errorMessage);
-      return {
-        packages: [],
-        error: errorMessage,
-      };
-    } finally {
-      setPackagesLoading(false);
-    }
-  }, []);
+  const loadAvailablePackages =
+    useCallback(async (): Promise<PackagesResult> => {
+      setPackagesLoading(true);
+      try {
+        const result = await subscriptionService.current.getAvailablePackages();
+        setPackages(result.packages);
+        setPackagesError(result.error ?? null);
+        return result;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : 'Failed to load subscription packages';
+        console.error('Failed to load available packages:', err);
+        setPackages([]);
+        setPackagesError(errorMessage);
+        return {
+          packages: [],
+          error: errorMessage,
+        };
+      } finally {
+        setPackagesLoading(false);
+      }
+    }, []);
 
   /**
    * Purchases a subscription package
@@ -148,7 +154,8 @@ export function useSubscription(): UseSubscriptionReturn {
       setError(null);
 
       try {
-        const result = await subscriptionService.current.purchasePackage(packageId);
+        const result =
+          await subscriptionService.current.purchasePackage(packageId);
 
         if (result.success) {
           await loadSubscriptionStatus();
@@ -158,7 +165,8 @@ export function useSubscription(): UseSubscriptionReturn {
 
         return result;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Purchase failed';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Purchase failed';
         setError(errorMessage);
         return {
           success: false,
@@ -169,7 +177,7 @@ export function useSubscription(): UseSubscriptionReturn {
         setPurchaseLoading(false);
       }
     },
-    [loadSubscriptionStatus],
+    [loadSubscriptionStatus]
   );
 
   /**
@@ -190,7 +198,8 @@ export function useSubscription(): UseSubscriptionReturn {
 
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Restore failed';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Restore failed';
       setError(errorMessage);
       return {
         success: false,
@@ -205,9 +214,10 @@ export function useSubscription(): UseSubscriptionReturn {
   /**
    * Gets available packages
    */
-  const getAvailablePackages = useCallback(async (): Promise<PackagesResult> => {
-    return await loadAvailablePackages();
-  }, [loadAvailablePackages]);
+  const getAvailablePackages =
+    useCallback(async (): Promise<PackagesResult> => {
+      return await loadAvailablePackages();
+    }, [loadAvailablePackages]);
 
   /**
    * Checks if user can access a specific feature level
@@ -216,20 +226,23 @@ export function useSubscription(): UseSubscriptionReturn {
     (featureLevel: FeatureLevel): boolean => {
       return subscriptionStatus?.canAccessFeature(featureLevel) ?? false;
     },
-    [subscriptionStatus],
+    [subscriptionStatus]
   );
 
   /**
    * Checks if user has a specific entitlement
    */
-  const hasEntitlement = useCallback(async (entitlementId: string): Promise<boolean> => {
-    try {
-      return await subscriptionService.current.hasEntitlement(entitlementId);
-    } catch (err) {
-      console.error('Failed to check entitlement:', err);
-      return false;
-    }
-  }, []);
+  const hasEntitlement = useCallback(
+    async (entitlementId: string): Promise<boolean> => {
+      try {
+        return await subscriptionService.current.hasEntitlement(entitlementId);
+      } catch (err) {
+        console.error('Failed to check entitlement:', err);
+        return false;
+      }
+    },
+    []
+  );
 
   // Load subscription status on mount
   useEffect(() => {

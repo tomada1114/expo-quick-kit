@@ -29,6 +29,7 @@ expo-quick-kit/
 ## Naming Convention
 
 **kebab-case** for all file names:
+
 - Components: `themed-text.tsx`, `icon-symbol.tsx`
 - Hooks: `use-color-scheme.ts`, `use-theme-color.ts`
 - Not CamelCase: `ThemedText.tsx` (incorrect)
@@ -65,6 +66,7 @@ export function ThemedText({ lightColor, darkColor, ...props }) {
 ```
 
 **Pattern**:
+
 1. Accept optional `lightColor` / `darkColor` props
 2. Use `useThemeColor()` to resolve to current scheme
 3. Default to theme palette (e.g., 'text' → resolves to Colors[scheme].text)
@@ -72,6 +74,7 @@ export function ThemedText({ lightColor, darkColor, ...props }) {
 ### Routing Structure
 
 **File-based routing** (expo-router):
+
 - `app/` = routes
 - `app/_layout.tsx` = root layout (wraps all routes)
 - `app/(tabs)/` = route group for tab UI
@@ -79,6 +82,7 @@ export function ThemedText({ lightColor, darkColor, ...props }) {
 - Nested files become nested routes
 
 **Grouping with parentheses** doesn't create URL segments:
+
 - `app/(tabs)/index.tsx` → `/` (not `/(tabs)`)
 - `app/(tabs)/explore.tsx` → `/explore`
 
@@ -100,6 +104,7 @@ export const Fonts = Platform.select({
 ```
 
 **Access Pattern**:
+
 ```typescript
 const colorScheme = useColorScheme(); // 'light' | 'dark' | null
 const color = Colors[colorScheme ?? 'light'].text;
@@ -110,21 +115,25 @@ const color = Colors[colorScheme ?? 'light'].text;
 ## Code Patterns
 
 ### 1. Hook-Based Theme Access
+
 - Use `useColorScheme()` to subscribe to theme changes
 - Use `useThemeColor()` helper to resolve named colors
 - Re-export hooks from `hooks/` for consistent API
 
 ### 2. StyleSheet for All Styling
+
 - No CSS or inline style libraries
 - Platform variants via `Platform.select()`
 - Example: Fonts defined as `Platform.select({ ios: {...}, default: {...}, web: {...} })`
 
 ### 3. Component Composition
+
 - Prefer small, focused components (e.g., ThemedText, ThemedView)
 - Reuse via props, not creation of dozens of variants
 - Export type props for component contract clarity
 
 ### 4. Tab Navigation Pattern
+
 - Use `(tabs)` route group with `_layout.tsx` for tab bar
 - Define screens in tab layout, not as separate routes
 - Access `colorScheme` in tab layout to set tint colors dynamically

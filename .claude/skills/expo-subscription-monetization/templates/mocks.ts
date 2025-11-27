@@ -49,10 +49,12 @@ export { mockPurchases };
 /**
  * Creates a mock CustomerInfo object for testing
  */
-export function createMockCustomerInfo(options: {
-  isPremium?: boolean;
-  entitlements?: string[];
-} = {}) {
+export function createMockCustomerInfo(
+  options: {
+    isPremium?: boolean;
+    entitlements?: string[];
+  } = {}
+) {
   const { isPremium = false, entitlements = [] } = options;
 
   const activeEntitlements: Record<string, { isActive: boolean }> = {};
@@ -86,12 +88,14 @@ export function createMockCustomerInfo(options: {
 /**
  * Creates a mock package for testing
  */
-export function createMockPackage(options: {
-  identifier?: string;
-  price?: number;
-  priceString?: string;
-  title?: string;
-} = {}) {
+export function createMockPackage(
+  options: {
+    identifier?: string;
+    price?: number;
+    priceString?: string;
+    title?: string;
+  } = {}
+) {
   const {
     identifier = '$rc_monthly',
     price = 9.99,
@@ -116,11 +120,25 @@ export function createMockPackage(options: {
 /**
  * Creates mock offerings for testing
  */
-export function createMockOfferings(packages: ReturnType<typeof createMockPackage>[] = []) {
-  const defaultPackages = packages.length > 0 ? packages : [
-    createMockPackage({ identifier: '$rc_monthly', price: 9.99, priceString: '$9.99' }),
-    createMockPackage({ identifier: '$rc_annual', price: 79.99, priceString: '$79.99', title: 'Annual Subscription' }),
-  ];
+export function createMockOfferings(
+  packages: ReturnType<typeof createMockPackage>[] = []
+) {
+  const defaultPackages =
+    packages.length > 0
+      ? packages
+      : [
+          createMockPackage({
+            identifier: '$rc_monthly',
+            price: 9.99,
+            priceString: '$9.99',
+          }),
+          createMockPackage({
+            identifier: '$rc_annual',
+            price: 79.99,
+            priceString: '$79.99',
+            title: 'Annual Subscription',
+          }),
+        ];
 
   return {
     current: {
@@ -142,7 +160,9 @@ export function createMockOfferings(packages: ReturnType<typeof createMockPackag
  * Sets up mock for free user
  */
 export function setupFreeUserMock() {
-  mockPurchases.getCustomerInfo.mockResolvedValue(createMockCustomerInfo({ isPremium: false }));
+  mockPurchases.getCustomerInfo.mockResolvedValue(
+    createMockCustomerInfo({ isPremium: false })
+  );
   mockPurchases.getOfferings.mockResolvedValue(createMockOfferings());
 }
 
@@ -150,7 +170,9 @@ export function setupFreeUserMock() {
  * Sets up mock for premium user
  */
 export function setupPremiumUserMock() {
-  mockPurchases.getCustomerInfo.mockResolvedValue(createMockCustomerInfo({ isPremium: true }));
+  mockPurchases.getCustomerInfo.mockResolvedValue(
+    createMockCustomerInfo({ isPremium: true })
+  );
   mockPurchases.getOfferings.mockResolvedValue(createMockOfferings());
 }
 

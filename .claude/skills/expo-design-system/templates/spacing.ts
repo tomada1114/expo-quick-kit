@@ -61,8 +61,8 @@ export const SpacingAliases = {
 
 export const SafeAreaInsets = {
   // 標準的な Safe Area（Dynamic Island非対応時）
-  topDefault: 20,      // Status bar高さ
-  bottomDefault: 21,   // Home Indicator高さ
+  topDefault: 20, // Status bar高さ
+  bottomDefault: 21, // Home Indicator高さ
 
   // Dynamic Island対応（iPhone 14+）
   topDynamicIsland: 54,
@@ -260,7 +260,7 @@ export function createMargin(
  */
 export const ListItemPadding = createPadding(
   Spacing.md, // top/bottom
-  Spacing.md, // left/right
+  Spacing.md // left/right
 );
 
 /**
@@ -294,9 +294,10 @@ export const VerticalMargin = {
 // ============================================================
 
 export type Spacing = typeof Spacing;
-export type SpacingValue = typeof Spacing[keyof typeof Spacing];
+export type SpacingValue = (typeof Spacing)[keyof typeof Spacing];
 export type BorderRadius = typeof BorderRadius;
-export type BorderRadiusValue = typeof BorderRadius[keyof typeof BorderRadius];
+export type BorderRadiusValue =
+  (typeof BorderRadius)[keyof typeof BorderRadius];
 export type ZIndex = typeof ZIndex;
-export type ZIndexValue = typeof ZIndex[keyof typeof ZIndex];
-export type Shadow = typeof Shadows[keyof typeof Shadows];
+export type ZIndexValue = (typeof ZIndex)[keyof typeof ZIndex];
+export type Shadow = (typeof Shadows)[keyof typeof Shadows];

@@ -5,7 +5,10 @@
  * This is the main integration point with RevenueCat.
  */
 
-import Purchases, { type CustomerInfo, type PurchasesPackage } from 'react-native-purchases';
+import Purchases, {
+  type CustomerInfo,
+  type PurchasesPackage,
+} from 'react-native-purchases';
 import { ensureRevenueCatConfigured } from './sdk';
 import {
   type Subscription,
@@ -33,7 +36,10 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
       const customerInfo = await Purchases.getCustomerInfo();
       return this.mapCustomerInfoToSubscription(customerInfo);
     } catch (error) {
-      throw this.mapErrorToDomainError(error, 'Failed to get current subscription');
+      throw this.mapErrorToDomainError(
+        error,
+        'Failed to get current subscription'
+      );
     }
   }
 
@@ -49,18 +55,18 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
       if (!currentOffering) {
         throw new SubscriptionError(
           'No current offering available',
-          SubscriptionErrorCode.INVALID_PACKAGE,
+          SubscriptionErrorCode.INVALID_PACKAGE
         );
       }
 
       const packageToPurchase = currentOffering.availablePackages.find(
-        (pkg) => pkg.identifier === packageId,
+        (pkg) => pkg.identifier === packageId
       );
 
       if (!packageToPurchase) {
         throw new SubscriptionError(
           `Package with identifier ${packageId} not found`,
-          SubscriptionErrorCode.INVALID_PACKAGE,
+          SubscriptionErrorCode.INVALID_PACKAGE
         );
       }
 
@@ -79,7 +85,7 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
           throw new SubscriptionError(
             'Cannot purchase: No products configured in RevenueCat dashboard',
             SubscriptionErrorCode.CONFIGURATION_ERROR,
-            error instanceof Error ? error : undefined,
+            error instanceof Error ? error : undefined
           );
         }
       }
@@ -113,7 +119,9 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
         return [];
       }
 
-      return currentOffering.availablePackages.map((pkg) => this.mapToSubscriptionPackage(pkg));
+      return currentOffering.availablePackages.map((pkg) =>
+        this.mapToSubscriptionPackage(pkg)
+      );
     } catch (error) {
       // Handle configuration errors gracefully (e.g., no products configured in dashboard)
       if (this.isRevenueCatError(error)) {
@@ -124,12 +132,15 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
         ) {
           console.warn(
             '[RevenueCatSubscriptionRepository] Configuration warning:',
-            error.message ?? 'No products configured',
+            error.message ?? 'No products configured'
           );
           return [];
         }
       }
-      throw this.mapErrorToDomainError(error, 'Failed to get available packages');
+      throw this.mapErrorToDomainError(
+        error,
+        'Failed to get available packages'
+      );
     }
   }
 
@@ -150,7 +161,8 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
    * Maps RevenueCat CustomerInfo to domain Subscription entity
    */
   mapCustomerInfoToSubscription(customerInfo: CustomerInfo): Subscription {
-    const hasActiveEntitlements = Object.keys(customerInfo.entitlements.active).length > 0;
+    const hasActiveEntitlements =
+      Object.keys(customerInfo.entitlements.active).length > 0;
     const tier = hasActiveEntitlements ? 'premium' : 'free';
 
     return {
@@ -189,7 +201,10 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
   /**
    * Maps errors to domain subscription errors
    */
-  mapErrorToDomainError(error: unknown, defaultMessage: string): SubscriptionError {
+  mapErrorToDomainError(
+    error: unknown,
+    defaultMessage: string
+  ): SubscriptionError {
     if (this.isRevenueCatError(error)) {
       switch (error.code) {
         case 'purchaseCancelledError':
@@ -197,7 +212,7 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
           return new SubscriptionError(
             'Purchase was cancelled by user',
             SubscriptionErrorCode.PURCHASE_CANCELLED,
-            error instanceof Error ? error : undefined,
+            error instanceof Error ? error : undefined
           );
 
         case 'purchaseNotAllowedError':
@@ -207,7 +222,7 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
           return new SubscriptionError(
             'Purchase is not allowed or invalid',
             SubscriptionErrorCode.PURCHASE_FAILED,
-            error instanceof Error ? error : undefined,
+            error instanceof Error ? error : undefined
           );
 
         case 'networkError':
@@ -215,7 +230,7 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
           return new SubscriptionError(
             'Network error occurred during purchase',
             SubscriptionErrorCode.NETWORK_ERROR,
-            error instanceof Error ? error : undefined,
+            error instanceof Error ? error : undefined
           );
 
         case 'configurationError':
@@ -223,14 +238,14 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
           return new SubscriptionError(
             'RevenueCat configuration error',
             SubscriptionErrorCode.CONFIGURATION_ERROR,
-            error instanceof Error ? error : undefined,
+            error instanceof Error ? error : undefined
           );
 
         default:
           return new SubscriptionError(
             error.message ?? defaultMessage,
             SubscriptionErrorCode.PURCHASE_FAILED,
-            error instanceof Error ? error : undefined,
+            error instanceof Error ? error : undefined
           );
       }
     }
@@ -239,17 +254,22 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
       return new SubscriptionError(
         error.message ?? defaultMessage,
         SubscriptionErrorCode.UNKNOWN_ERROR,
-        error,
+        error
       );
     }
 
-    return new SubscriptionError(defaultMessage, SubscriptionErrorCode.UNKNOWN_ERROR);
+    return new SubscriptionError(
+      defaultMessage,
+      SubscriptionErrorCode.UNKNOWN_ERROR
+    );
   }
 
   /**
    * Type guard to check if error is a RevenueCat error
    */
-  isRevenueCatError(error: unknown): error is { code: string; message?: string } {
+  isRevenueCatError(
+    error: unknown
+  ): error is { code: string; message?: string } {
     return (
       typeof error === 'object' &&
       error !== null &&

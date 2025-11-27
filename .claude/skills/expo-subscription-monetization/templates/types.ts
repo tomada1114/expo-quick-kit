@@ -95,7 +95,7 @@ export class SubscriptionError extends Error {
   constructor(
     message: string,
     public readonly code: SubscriptionErrorCode,
-    public readonly cause?: Error,
+    public readonly cause?: Error
   ) {
     super(message);
     this.name = 'SubscriptionError';

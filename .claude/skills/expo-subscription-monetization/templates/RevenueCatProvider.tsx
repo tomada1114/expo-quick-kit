@@ -35,7 +35,9 @@ export interface RevenueCatContextValue {
   retry: () => Promise<void>;
 }
 
-export const RevenueCatContext = createContext<RevenueCatContextValue | undefined>(undefined);
+export const RevenueCatContext = createContext<
+  RevenueCatContextValue | undefined
+>(undefined);
 
 /**
  * Type guard for Error
@@ -47,7 +49,9 @@ function isError(error: unknown): error is Error {
 /**
  * Type guard for RevenueCat errors
  */
-function isRevenueCatError(error: unknown): error is { code: string; message?: string } {
+function isRevenueCatError(
+  error: unknown
+): error is { code: string; message?: string } {
   return (
     typeof error === 'object' &&
     error !== null &&
@@ -67,29 +71,36 @@ function mapRevenueCatError(error: unknown): SubscriptionError {
         return new SubscriptionError(
           error.message ?? 'Network error',
           SubscriptionErrorCode.NETWORK_ERROR,
-          isError(error) ? error : undefined,
+          isError(error) ? error : undefined
         );
       case 'CONFIGURATION_ERROR':
       case 'INVALID_API_KEY':
         return new SubscriptionError(
           error.message ?? 'Configuration error',
           SubscriptionErrorCode.CONFIGURATION_ERROR,
-          isError(error) ? error : undefined,
+          isError(error) ? error : undefined
         );
       default:
         return new SubscriptionError(
           error.message ?? 'Unknown RevenueCat error',
           SubscriptionErrorCode.UNKNOWN_ERROR,
-          isError(error) ? error : undefined,
+          isError(error) ? error : undefined
         );
     }
   }
 
   if (error instanceof Error) {
-    return new SubscriptionError(error.message, SubscriptionErrorCode.UNKNOWN_ERROR, error);
+    return new SubscriptionError(
+      error.message,
+      SubscriptionErrorCode.UNKNOWN_ERROR,
+      error
+    );
   }
 
-  return new SubscriptionError('Unknown error', SubscriptionErrorCode.UNKNOWN_ERROR);
+  return new SubscriptionError(
+    'Unknown error',
+    SubscriptionErrorCode.UNKNOWN_ERROR
+  );
 }
 
 /**
@@ -130,7 +141,8 @@ export const RevenueCatProvider = ({ children }: PropsWithChildren) => {
       if (signal.aborted) return;
 
       const listenerResult = Purchases.addCustomerInfoUpdateListener(listener);
-      removeListener = typeof listenerResult === 'function' ? listenerResult : undefined;
+      removeListener =
+        typeof listenerResult === 'function' ? listenerResult : undefined;
       const currentInfo = await Purchases.getCustomerInfo();
 
       if (signal.aborted) return;
@@ -148,22 +160,24 @@ export const RevenueCatProvider = ({ children }: PropsWithChildren) => {
         console.warn(
           `[RevenueCatProvider] Initialization failed: ${mappedError.message}`,
           { code: mappedError.code, retryable: true },
-          err,
+          err
         );
         setRetryAvailable(true);
-      } else if (mappedError.code === SubscriptionErrorCode.CONFIGURATION_ERROR) {
+      } else if (
+        mappedError.code === SubscriptionErrorCode.CONFIGURATION_ERROR
+      ) {
         // Configuration error: fatal, operate as free tier
         console.error(
           `[RevenueCatProvider] Initialization failed: ${mappedError.message}`,
           { code: mappedError.code, fallbackToFree: true },
-          err,
+          err
         );
       } else {
         // Other errors: log and operate as free tier
         console.error(
           `[RevenueCatProvider] Initialization failed: ${mappedError.message}`,
           { code: mappedError.code, fallbackToFree: true },
-          err,
+          err
         );
       }
 

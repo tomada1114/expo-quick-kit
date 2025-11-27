@@ -17,12 +17,12 @@ Apple HIG準拠のボタンコンポーネント。
 <Button variant="destructive" title="Delete" onPress={onDelete} />
 ```
 
-| Variant | Background | Text Color | Use Cases |
-|---------|------------|-----------|-----------|
-| primary | Primary Color | Inverse（white） | Main action、Save、Submit |
-| secondary | Secondary | Primary | Alternate action |
-| ghost | Transparent | Primary | Tertiary action、Links |
-| destructive | Error | Inverse（white） | Delete、Confirm destructive |
+| Variant     | Background    | Text Color       | Use Cases                   |
+| ----------- | ------------- | ---------------- | --------------------------- |
+| primary     | Primary Color | Inverse（white） | Main action、Save、Submit   |
+| secondary   | Secondary     | Primary          | Alternate action            |
+| ghost       | Transparent   | Primary          | Tertiary action、Links      |
+| destructive | Error         | Inverse（white） | Delete、Confirm destructive |
 
 ### Sizes
 
@@ -32,11 +32,11 @@ Apple HIG準拠のボタンコンポーネント。
 <Button size="lg" title="Large" onPress={onPress} />
 ```
 
-| Size | Height | Padding | Use Cases |
-|------|--------|---------|-----------|
-| sm | 36pt | 8pt | Inline buttons、Confirmations |
-| md | 44pt | 16pt | Primary buttons（標準） |
-| lg | 48pt | 24pt | Full-width buttons、Hero buttons |
+| Size | Height | Padding | Use Cases                        |
+| ---- | ------ | ------- | -------------------------------- |
+| sm   | 36pt   | 8pt     | Inline buttons、Confirmations    |
+| md   | 44pt   | 16pt    | Primary buttons（標準）          |
+| lg   | 48pt   | 24pt    | Full-width buttons、Hero buttons |
 
 ### States
 
@@ -89,10 +89,10 @@ Apple HIG準拠のボタンコンポーネント。
 <Input variant="filled" placeholder="Filled input" />
 ```
 
-| Variant | Style | Use Cases |
-|---------|-------|-----------|
-| default | Border only | 標準入力（推奨） |
-| filled | Background fill | Compact layouts |
+| Variant | Style           | Use Cases        |
+| ------- | --------------- | ---------------- |
+| default | Border only     | 標準入力（推奨） |
+| filled  | Background fill | Compact layouts  |
 
 ### Error State
 

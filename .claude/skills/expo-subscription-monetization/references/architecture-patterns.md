@@ -23,6 +23,7 @@ src/
 ## Domain Layer Implementation
 
 ### entities.ts
+
 ```typescript
 /**
  * Subscription entity representing user's subscription status
@@ -34,6 +35,7 @@ export interface Subscription {
 ```
 
 ### value-objects.ts
+
 ```typescript
 /**
  * Usage limits based on subscription tier
@@ -46,6 +48,7 @@ export interface UsageLimits {
 ```
 
 ### repository.ts
+
 ```typescript
 /**
  * Subscription package from store
@@ -93,7 +96,7 @@ export class SubscriptionError extends Error {
   constructor(
     message: string,
     public readonly code: SubscriptionErrorCode,
-    public readonly cause?: Error,
+    public readonly cause?: Error
   ) {
     super(message);
     this.name = 'SubscriptionError';
@@ -102,6 +105,7 @@ export class SubscriptionError extends Error {
 ```
 
 ### services.ts
+
 ```typescript
 import { type Subscription } from './entities';
 import { type UsageLimits } from './value-objects';
@@ -134,7 +138,10 @@ export class SubscriptionService {
   /**
    * Check if subscription can access a feature level
    */
-  static canAccessFeature(subscription: Subscription, featureLevel: FeatureLevel): boolean {
+  static canAccessFeature(
+    subscription: Subscription,
+    featureLevel: FeatureLevel
+  ): boolean {
     if (featureLevel === 'basic') {
       return true;
     }
@@ -158,6 +165,7 @@ export class SubscriptionService {
 ## Application Layer Implementation
 
 ### SubscriptionApplicationService.ts
+
 ```typescript
 import type { SubscriptionRepository } from '../../domain/subscription/repository';
 import { SubscriptionService } from '../../domain/subscription/services';
@@ -197,7 +205,7 @@ export interface PackagesResult {
 export class SubscriptionApplicationService {
   constructor(
     private readonly repository: SubscriptionRepository,
-    private readonly domainService = SubscriptionService,
+    private readonly domainService = SubscriptionService
   ) {}
 
   async getSubscriptionStatus(): Promise<SubscriptionStatus> {
@@ -261,7 +269,8 @@ export class SubscriptionApplicationService {
     } catch (error) {
       return {
         packages: [],
-        error: error instanceof Error ? error.message : 'Failed to load packages',
+        error:
+          error instanceof Error ? error.message : 'Failed to load packages',
       };
     }
   }
@@ -280,6 +289,7 @@ export class SubscriptionApplicationService {
 ## Infrastructure Layer Implementation
 
 ### RevenueCatSubscriptionRepository.ts
+
 ```typescript
 import Purchases, { CustomerInfo } from 'react-native-purchases';
 import type {
@@ -287,7 +297,10 @@ import type {
   SubscriptionPackage,
 } from '../../domain/subscription/repository';
 import type { Subscription } from '../../domain/subscription/entities';
-import { SubscriptionError, SubscriptionErrorCode } from '../../domain/subscription/repository';
+import {
+  SubscriptionError,
+  SubscriptionErrorCode,
+} from '../../domain/subscription/repository';
 import { ensureRevenueCatConfigured } from '../revenuecat/configuration';
 
 /**
@@ -317,16 +330,18 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
       if (!currentOffering) {
         throw new SubscriptionError(
           'No current offering available',
-          SubscriptionErrorCode.STORE_ERROR,
+          SubscriptionErrorCode.STORE_ERROR
         );
       }
 
-      const pkg = currentOffering.availablePackages.find((p) => p.identifier === packageId);
+      const pkg = currentOffering.availablePackages.find(
+        (p) => p.identifier === packageId
+      );
 
       if (!pkg) {
         throw new SubscriptionError(
           `Package ${packageId} not found`,
-          SubscriptionErrorCode.INVALID_PACKAGE,
+          SubscriptionErrorCode.INVALID_PACKAGE
         );
       }
 
@@ -389,8 +404,11 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
     }
   }
 
-  private mapCustomerInfoToSubscription(customerInfo: CustomerInfo): Subscription {
-    const hasActiveEntitlements = Object.keys(customerInfo.entitlements.active).length > 0;
+  private mapCustomerInfoToSubscription(
+    customerInfo: CustomerInfo
+  ): Subscription {
+    const hasActiveEntitlements =
+      Object.keys(customerInfo.entitlements.active).length > 0;
     return {
       isActive: hasActiveEntitlements,
       tier: hasActiveEntitlements ? 'premium' : 'free',
@@ -401,19 +419,37 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
     if (this.isRevenueCatError(error)) {
       switch (error.code) {
         case 'purchaseCancelledError':
-          return new SubscriptionError(message, SubscriptionErrorCode.PURCHASE_CANCELLED, error);
+          return new SubscriptionError(
+            message,
+            SubscriptionErrorCode.PURCHASE_CANCELLED,
+            error
+          );
         case 'networkError':
-          return new SubscriptionError(message, SubscriptionErrorCode.NETWORK_ERROR, error);
+          return new SubscriptionError(
+            message,
+            SubscriptionErrorCode.NETWORK_ERROR,
+            error
+          );
         case 'storeProblemError':
-          return new SubscriptionError(message, SubscriptionErrorCode.STORE_ERROR, error);
+          return new SubscriptionError(
+            message,
+            SubscriptionErrorCode.STORE_ERROR,
+            error
+          );
         default:
-          return new SubscriptionError(message, SubscriptionErrorCode.UNKNOWN_ERROR, error);
+          return new SubscriptionError(
+            message,
+            SubscriptionErrorCode.UNKNOWN_ERROR,
+            error
+          );
       }
     }
     return new SubscriptionError(message, SubscriptionErrorCode.UNKNOWN_ERROR);
   }
 
-  private isRevenueCatError(error: unknown): error is { code: string; message: string } {
+  private isRevenueCatError(
+    error: unknown
+  ): error is { code: string; message: string } {
     return typeof error === 'object' && error !== null && 'code' in error;
   }
 }
@@ -422,6 +458,7 @@ export class RevenueCatSubscriptionRepository implements SubscriptionRepository 
 ## Presentation Layer Implementation
 
 ### hooks/useSubscription.ts
+
 ```typescript
 import { useState, useEffect, useCallback } from 'react';
 import { useSubscriptionService } from '../provider/ServiceProvider';
@@ -443,7 +480,11 @@ export function useSubscription() {
       const status = await subscriptionService.getSubscriptionStatus();
       setSubscriptionStatus(status);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load subscription status');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to load subscription status'
+      );
       setSubscriptionStatus(null);
     } finally {
       setLoading(false);
@@ -460,7 +501,7 @@ export function useSubscription() {
       }
       return result;
     },
-    [subscriptionService, loadSubscriptionStatus],
+    [subscriptionService, loadSubscriptionStatus]
   );
 
   const restorePurchases = useCallback(async () => {
@@ -479,7 +520,11 @@ export function useSubscription() {
 
   return {
     subscription: subscriptionStatus?.subscription,
-    usageLimits: subscriptionStatus?.usageLimits ?? { maxItems: 10, maxExports: 1, hasAds: true },
+    usageLimits: subscriptionStatus?.usageLimits ?? {
+      maxItems: 10,
+      maxExports: 1,
+      hasAds: true,
+    },
     isSubscribed: subscriptionStatus?.isSubscribed ?? false,
     isPremium: subscriptionStatus?.isPremium ?? false,
     isFree: subscriptionStatus?.isFree ?? true,
@@ -487,7 +532,8 @@ export function useSubscription() {
     error,
     purchasePackage,
     restorePurchases,
-    canAccessFeature: (level: FeatureLevel) => subscriptionStatus?.canAccessFeature(level) ?? false,
+    canAccessFeature: (level: FeatureLevel) =>
+      subscriptionStatus?.canAccessFeature(level) ?? false,
     refresh: loadSubscriptionStatus,
   };
 }
@@ -496,6 +542,7 @@ export function useSubscription() {
 ## Dependency Injection Pattern
 
 ### provider/ServiceProvider.tsx
+
 ```typescript
 import React, { createContext, useContext, useMemo } from 'react';
 import { SubscriptionApplicationService } from '../application/subscription/SubscriptionApplicationService';

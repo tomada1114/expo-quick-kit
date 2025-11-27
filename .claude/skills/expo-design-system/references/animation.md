@@ -126,15 +126,15 @@ Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 
 ### 使用タイミング
 
-| Feedback | Use Cases |
-|----------|-----------|
-| Light | ボタンタップ、軽い操作 |
-| Medium | リスト項目選択、フォーム入力 |
-| Heavy | 削除確認、重要なアクション |
+| Feedback  | Use Cases                        |
+| --------- | -------------------------------- |
+| Light     | ボタンタップ、軽い操作           |
+| Medium    | リスト項目選択、フォーム入力     |
+| Heavy     | 削除確認、重要なアクション       |
 | Selection | ピッカー選択、スクロール位置変更 |
-| Success | 保存完了、アップロード完了 |
-| Warning | 警告メッセージ、限界値到達 |
-| Error | エラー発生、失敗した操作 |
+| Success   | 保存完了、アップロード完了       |
+| Warning   | 警告メッセージ、限界値到達       |
+| Error     | エラー発生、失敗した操作         |
 
 ### 実装例
 

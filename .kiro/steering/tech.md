@@ -29,15 +29,15 @@
 
 ## Key Decisions
 
-| Decision | Rationale |
-|----------|-----------|
-| **File-based routing** | Reduces boilerplate, familiar mental model (like Next.js) |
-| **Centralized theming in constants/theme.ts** | Single source of truth, easy dark mode support |
-| **Hook-based color access** | Reactive theme switching, no context prop drilling |
-| **React Compiler enabled** | Automatic memoization, better performance without manual optimization |
-| **No CSS framework** | StyleSheet sufficient for mobile; reduces dependencies |
-| **TypeScript strict mode** | Catches errors at compile time; paths alias for clean imports |
-| **pnpm hoisted linker** | Reduces node_modules bloat compared to npm/yarn |
+| Decision                                      | Rationale                                                             |
+| --------------------------------------------- | --------------------------------------------------------------------- |
+| **File-based routing**                        | Reduces boilerplate, familiar mental model (like Next.js)             |
+| **Centralized theming in constants/theme.ts** | Single source of truth, easy dark mode support                        |
+| **Hook-based color access**                   | Reactive theme switching, no context prop drilling                    |
+| **React Compiler enabled**                    | Automatic memoization, better performance without manual optimization |
+| **No CSS framework**                          | StyleSheet sufficient for mobile; reduces dependencies                |
+| **TypeScript strict mode**                    | Catches errors at compile time; paths alias for clean imports         |
+| **pnpm hoisted linker**                       | Reduces node_modules bloat compared to npm/yarn                       |
 
 ## Platform Support
 

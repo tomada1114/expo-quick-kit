@@ -9,7 +9,14 @@
  */
 
 import React from 'react';
-import { Pressable, Text, StyleSheet, ViewStyle, TextStyle, useColorScheme } from 'react-native';
+import {
+  Pressable,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  useColorScheme,
+} from 'react-native';
 import { Colors } from '../theme';
 import { Typography } from '../typography';
 import { Spacing, BorderRadius } from '../spacing';
@@ -130,9 +137,7 @@ export function Button({
   };
 
   // 無効化時のスタイル
-  const disabledStyle = disabled || loading
-    ? { opacity: 0.5 }
-    : {};
+  const disabledStyle = disabled || loading ? { opacity: 0.5 } : {};
 
   return (
     <Pressable

@@ -19,11 +19,11 @@ Web Content Accessibility Guidelines（WCAG）2.1 AA準拠のアクセシビリ�
 
 ### 要件
 
-| Text Type | Minimum Ratio |
-|-----------|--------------|
-| Normal text（< 18pt） | 4.5:1 |
-| Large text（≥ 18pt） | 3:1 |
-| UI components（borders, icons） | 3:1 |
+| Text Type                       | Minimum Ratio |
+| ------------------------------- | ------------- |
+| Normal text（< 18pt）           | 4.5:1         |
+| Large text（≥ 18pt）            | 3:1           |
+| UI components（borders, icons） | 3:1           |
 
 ### 検証方法
 

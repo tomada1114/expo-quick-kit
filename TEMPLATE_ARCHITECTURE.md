@@ -60,13 +60,14 @@ pnpm add -D prettier eslint-plugin-prettier eslint-config-prettier
 
 **作成ファイル:**
 
-| ファイル | 目的 |
-|---------|------|
+| ファイル           | 目的                       |
+| ------------------ | -------------------------- |
 | `eslint.config.js` | ESLint Flat Config（既存） |
-| `.prettierrc` | Prettier設定 |
-| `.prettierignore` | Prettier除外 |
+| `.prettierrc`      | Prettier設定               |
+| `.prettierignore`  | Prettier除外               |
 
 **.prettierrc:**
+
 ```json
 {
   "semi": true,
@@ -78,6 +79,7 @@ pnpm add -D prettier eslint-plugin-prettier eslint-config-prettier
 ```
 
 **eslint.config.js の拡張例:**
+
 ```javascript
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
@@ -160,6 +162,7 @@ expo-boilerplate/
 ### 2.2 パスエイリアス設定
 
 **tsconfig.json:**
+
 ```json
 {
   "extends": "expo/tsconfig.base",
@@ -174,6 +177,7 @@ expo-boilerplate/
 ```
 
 **使用例:**
+
 ```typescript
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -187,24 +191,25 @@ pnpm add -D jest jest-expo @testing-library/react-native @types/jest
 ```
 
 **jest.config.js:**
+
 ```javascript
 module.exports = {
   preset: 'jest-expo',
   setupFilesAfterEnv: ['./jest.setup.js'],
   testPathIgnorePatterns: ['/node_modules/', '/android/', '/ios/'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg)'
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg)',
   ],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1'
+    '^@/(.*)$': '<rootDir>/$1',
   },
   collectCoverageFrom: [
     '**/*.{ts,tsx}',
     '!**/*.d.ts',
     '!**/index.ts',
     '!**/node_modules/**',
-    '!**/.expo/**'
-  ]
+    '!**/.expo/**',
+  ],
 };
 ```
 
@@ -239,6 +244,7 @@ pnpm expo install expo-secure-store expo-notifications
 ### 3.2 SQLite + Drizzle 設定
 
 **database/client.ts:**
+
 ```typescript
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { openDatabaseSync } from 'expo-sqlite';
@@ -249,6 +255,7 @@ export const db = drizzle(expo, { schema });
 ```
 
 **database/schema.ts:**
+
 ```typescript
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
@@ -257,14 +264,19 @@ export const settings = sqliteTable('settings', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   key: text('key').notNull().unique(),
   value: text('value'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date()),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$defaultFn(() => new Date()),
+  createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$defaultFn(
+    () => new Date()
+  ),
 });
 ```
 
 ### 3.3 Zustand 設定
 
 **store/index.ts:**
+
 ```typescript
 import { create } from 'zustand';
 import { createAppSlice, AppSlice } from './slices/app-slice';
@@ -277,6 +289,7 @@ export const useStore = create<RootStore>()((...a) => ({
 ```
 
 **store/slices/app-slice.ts:**
+
 ```typescript
 import { StateCreator } from 'zustand';
 
@@ -300,6 +313,7 @@ export const createAppSlice: StateCreator<AppSlice> = (set) => ({
 既存の `constants/theme.ts` を拡張:
 
 **constants/theme.ts（拡張版）:**
+
 ```typescript
 import { Platform, TextStyle } from 'react-native';
 
@@ -355,7 +369,8 @@ export const Fonts = Platform.select({
   web: {
     sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
+    rounded:
+      "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });
@@ -406,18 +421,19 @@ export const Typography = {
 
 **作成するコンポーネント:**
 
-| コンポーネント | 用途 |
-|---------------|------|
-| `themed-text.tsx` | 統一されたテキスト表示（既存） |
-| `themed-view.tsx` | テーマ対応コンテナ（既存） |
-| `components/ui/button.tsx` | プライマリ/セカンダリボタン |
-| `components/ui/card.tsx` | カード型コンテナ |
-| `components/ui/spacer.tsx` | スペーシング |
-| `components/ui/loading-overlay.tsx` | ローディング表示 |
+| コンポーネント                      | 用途                           |
+| ----------------------------------- | ------------------------------ |
+| `themed-text.tsx`                   | 統一されたテキスト表示（既存） |
+| `themed-view.tsx`                   | テーマ対応コンテナ（既存）     |
+| `components/ui/button.tsx`          | プライマリ/セカンダリボタン    |
+| `components/ui/card.tsx`            | カード型コンテナ               |
+| `components/ui/spacer.tsx`          | スペーシング                   |
+| `components/ui/loading-overlay.tsx` | ローディング表示               |
 
 ### 4.2 ナビゲーション構造
 
-**app/_layout.tsx:**
+**app/\_layout.tsx:**
+
 ```typescript
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
@@ -468,6 +484,7 @@ pnpm expo install expo-dev-client
 ### 5.2 RevenueCat 初期化
 
 **services/revenue-cat.ts:**
+
 ```typescript
 import Purchases, { LOG_LEVEL } from 'react-native-purchases';
 import { Platform } from 'react-native';
@@ -531,12 +548,12 @@ export const checkPremiumStatus = async (): Promise<boolean> => {
 
 **作成するファイル:**
 
-| ファイル | 内容 |
-|---------|------|
-| `README.md` | 概要、セットアップ手順 |
-| `docs/ARCHITECTURE.md` | アーキテクチャ説明 |
-| `docs/CONVENTIONS.md` | コーディング規約 |
-| `docs/TESTING.md` | テスト方針 |
+| ファイル               | 内容                   |
+| ---------------------- | ---------------------- |
+| `README.md`            | 概要、セットアップ手順 |
+| `docs/ARCHITECTURE.md` | アーキテクチャ説明     |
+| `docs/CONVENTIONS.md`  | コーディング規約       |
+| `docs/TESTING.md`      | テスト方針             |
 
 ### 6.3 サンプル機能
 
@@ -599,18 +616,18 @@ expo-boilerplate/
 
 ## 技術スタック サマリー
 
-| カテゴリ | 採用技術 | 理由 |
-|---------|---------|------|
-| フレームワーク | Expo SDK 54 | 公式、安定 |
-| 言語 | TypeScript | 型安全 |
-| パッケージマネージャー | pnpm | 高速、ディスク効率 |
-| ルーティング | expo-router | ファイルベース |
-| 状態管理 | Zustand | シンプル、学習コスト低 |
-| 非同期状態 | TanStack Query | キャッシュ管理 |
-| DB | expo-sqlite + Drizzle | ローカル完結、型安全 |
-| スタイリング | StyleSheet + テーマ定数 | テスト安全 |
-| バリデーション | Zod | 型推論 |
-| 日付処理 | date-fns | 軽量 |
-| 課金 | RevenueCat | 業界標準 |
-| テスト | Jest + RNTL | Expo公式推奨 |
-| リント | ESLint (Flat Config) + Prettier | 品質管理 |
+| カテゴリ               | 採用技術                        | 理由                   |
+| ---------------------- | ------------------------------- | ---------------------- |
+| フレームワーク         | Expo SDK 54                     | 公式、安定             |
+| 言語                   | TypeScript                      | 型安全                 |
+| パッケージマネージャー | pnpm                            | 高速、ディスク効率     |
+| ルーティング           | expo-router                     | ファイルベース         |
+| 状態管理               | Zustand                         | シンプル、学習コスト低 |
+| 非同期状態             | TanStack Query                  | キャッシュ管理         |
+| DB                     | expo-sqlite + Drizzle           | ローカル完結、型安全   |
+| スタイリング           | StyleSheet + テーマ定数         | テスト安全             |
+| バリデーション         | Zod                             | 型推論                 |
+| 日付処理               | date-fns                        | 軽量                   |
+| 課金                   | RevenueCat                      | 業界標準               |
+| テスト                 | Jest + RNTL                     | Expo公式推奨           |
+| リント                 | ESLint (Flat Config) + Prettier | 品質管理               |

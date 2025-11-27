@@ -43,7 +43,8 @@ export class SubscriptionService {
   async getSubscriptionStatus(): Promise<SubscriptionStatus | null> {
     try {
       const subscription =
-        (await this.repository.getCurrentSubscription()) ?? getFreeSubscription();
+        (await this.repository.getCurrentSubscription()) ??
+        getFreeSubscription();
 
       const usageLimits = getUsageLimits(subscription);
       const subscribed = isPremium(subscription);
@@ -61,7 +62,9 @@ export class SubscriptionService {
       };
     } catch (error) {
       console.error('Failed to get subscription status:', error);
-      throw error instanceof Error ? error : new Error('Failed to get subscription status');
+      throw error instanceof Error
+        ? error
+        : new Error('Failed to get subscription status');
     }
   }
 
@@ -78,7 +81,8 @@ export class SubscriptionService {
         subscription,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Purchase failed';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Purchase failed';
       console.error('Purchase failed:', error);
 
       return {
@@ -101,7 +105,8 @@ export class SubscriptionService {
         subscription,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Restore failed';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Restore failed';
       console.error('Restore purchases failed:', error);
 
       return {
@@ -120,7 +125,8 @@ export class SubscriptionService {
       const packages = await this.repository.getAvailablePackages();
       return { packages };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to get packages';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to get packages';
       console.error('Failed to get available packages:', error);
 
       return {
@@ -148,7 +154,8 @@ export class SubscriptionService {
   async getUsageLimits() {
     try {
       const subscription =
-        (await this.repository.getCurrentSubscription()) ?? getFreeSubscription();
+        (await this.repository.getCurrentSubscription()) ??
+        getFreeSubscription();
 
       return getUsageLimits(subscription);
     } catch (error) {

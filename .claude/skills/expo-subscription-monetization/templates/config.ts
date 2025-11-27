@@ -59,7 +59,7 @@ export function getUsageLimits(subscription: Subscription): UsageLimits {
  */
 export function canAccessFeature(
   subscription: Subscription,
-  featureLevel: FeatureLevel,
+  featureLevel: FeatureLevel
 ): boolean {
   // Basic features are always available
   if (featureLevel === 'basic') {
@@ -96,7 +96,9 @@ export function getFreeSubscription(): Subscription {
 /**
  * Creates a new subscription entity
  */
-export function createSubscription(tier: 'free' | 'premium' = 'free'): Subscription {
+export function createSubscription(
+  tier: 'free' | 'premium' = 'free'
+): Subscription {
   return {
     isActive: true,
     tier,

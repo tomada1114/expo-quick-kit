@@ -6,7 +6,10 @@
  */
 
 import { useContext } from 'react';
-import { RevenueCatContext, type RevenueCatContextValue } from './RevenueCatProvider';
+import {
+  RevenueCatContext,
+  type RevenueCatContextValue,
+} from './RevenueCatProvider';
 
 /**
  * Hook to access RevenueCat context.

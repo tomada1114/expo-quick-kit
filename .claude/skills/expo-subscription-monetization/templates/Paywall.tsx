@@ -5,7 +5,9 @@
  * This provides a ready-to-use paywall that matches your RevenueCat dashboard configuration.
  */
 
-import RevenueCatUI, { type FullScreenPaywallViewOptions } from 'react-native-purchases-ui';
+import RevenueCatUI, {
+  type FullScreenPaywallViewOptions,
+} from 'react-native-purchases-ui';
 import { View, StyleSheet } from 'react-native';
 import type {
   CustomerInfo,
@@ -47,7 +49,11 @@ export interface PaywallProps {
   onRestoreStarted?: () => void;
 
   /** Called when restore completes */
-  onRestoreCompleted?: ({ customerInfo }: { customerInfo: CustomerInfo }) => void;
+  onRestoreCompleted?: ({
+    customerInfo,
+  }: {
+    customerInfo: CustomerInfo;
+  }) => void;
 
   /** Called when restore fails */
   onRestoreError?: ({ error }: { error: PurchasesError }) => void;
@@ -70,7 +76,11 @@ export interface PaywallProps {
  * Note: You need to configure your paywall in the RevenueCat dashboard:
  * https://app.revenuecat.com/
  */
-const Paywall = ({ onClose, onPurchaseError, ...paywallProps }: PaywallProps) => {
+const Paywall = ({
+  onClose,
+  onPurchaseError,
+  ...paywallProps
+}: PaywallProps) => {
   const handlePurchaseError = ({ error }: { error: PurchasesError }) => {
     console.error('[Paywall] Purchase error:', error);
     onPurchaseError?.({ error });

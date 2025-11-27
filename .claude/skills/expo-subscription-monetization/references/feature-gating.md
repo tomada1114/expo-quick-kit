@@ -13,7 +13,10 @@ Feature gating restricts access to premium features based on subscription status
 export type FeatureLevel = 'basic' | 'premium';
 
 export class SubscriptionService {
-  static canAccessFeature(subscription: Subscription, featureLevel: FeatureLevel): boolean {
+  static canAccessFeature(
+    subscription: Subscription,
+    featureLevel: FeatureLevel
+  ): boolean {
     // Basic features are always available
     if (featureLevel === 'basic') {
       return true;
@@ -174,7 +177,7 @@ async function addItem(item: Item) {
         [
           { text: 'Upgrade', onPress: () => showPaywall() },
           { text: 'Cancel', style: 'cancel' },
-        ],
+        ]
       );
       return;
     }
@@ -319,12 +322,16 @@ describe('SubscriptionService.canAccessFeature', () => {
 
   it('blocks premium features for free users', () => {
     const freeSub = { isActive: false, tier: 'free' };
-    expect(SubscriptionService.canAccessFeature(freeSub, 'premium')).toBe(false);
+    expect(SubscriptionService.canAccessFeature(freeSub, 'premium')).toBe(
+      false
+    );
   });
 
   it('allows premium features for premium users', () => {
     const premiumSub = { isActive: true, tier: 'premium' };
-    expect(SubscriptionService.canAccessFeature(premiumSub, 'premium')).toBe(true);
+    expect(SubscriptionService.canAccessFeature(premiumSub, 'premium')).toBe(
+      true
+    );
   });
 });
 ```

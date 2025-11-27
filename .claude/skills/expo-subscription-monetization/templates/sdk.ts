@@ -53,7 +53,7 @@ export async function ensureRevenueCatConfigured(): Promise<void> {
 
   if (!apiKey) {
     throw new Error(
-      'RevenueCat API key is missing. Please set EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE / EXPO_PUBLIC_REVENUE_CAT_API_KEY_GOOGLE.',
+      'RevenueCat API key is missing. Please set EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE / EXPO_PUBLIC_REVENUE_CAT_API_KEY_GOOGLE.'
     );
   }
 

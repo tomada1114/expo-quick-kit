@@ -73,6 +73,7 @@ export function MyComponent() {
 iOS System Colorsは、Apple設計のセマンティックカラーシステムです。Light/Dark Modeに自動対応し、機能優先の設計原則に従います。
 
 **特徴：**
+
 - **機能優先** - 色は意味を伝えるために使用
 - **装飾最小限** - SaaSのようなIndigo、グラデーション、ネオン系は不採用
 - **一貫性** - すべての色がiOS標準に準拠
@@ -140,6 +141,7 @@ text: {
 ```
 
 **配置例：**
+
 - primary：段落、ボタンテキスト、リスト項目
 - secondary：メタ情報、説明、補足テキスト
 - tertiary：プレースホルダー、無効状態、ヒント
@@ -219,6 +221,7 @@ dark: {
 ```
 
 **自動切り替えの仕組み：**
+
 ```typescript
 const colorScheme = useColorScheme();
 const colors = Colors[colorScheme ?? 'light'];
@@ -454,7 +457,7 @@ cp .claude/skills/expo-design-system/templates/theme.ts constants/theme.ts
 
 ### ユーザーが詳細情報を求めた時
 
-- リファレンスドキュメント（references/*.md）をSKILL.mdから提示
+- リファレンスドキュメント（references/\*.md）をSKILL.mdから提示
 - Apple HIG詳細が必要な場合は WebFetch で最新情報を取得
 - コンポーネント実装パターンは references/components.md を参照
 

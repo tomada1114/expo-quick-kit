@@ -39,19 +39,19 @@ export function Spacer({
   flex = false,
 }: SpacerProps) {
   // サイズ値を取得
-  const spaceValue: number = typeof size === 'number'
-    ? size
-    : Spacing[size as keyof typeof Spacing];
+  const spaceValue: number =
+    typeof size === 'number' ? size : Spacing[size as keyof typeof Spacing];
 
-  const style = direction === 'vertical'
-    ? {
-        height: spaceValue,
-        width: flex ? '100%' : undefined,
-      }
-    : {
-        width: spaceValue,
-        height: flex ? '100%' : undefined,
-      };
+  const style =
+    direction === 'vertical'
+      ? {
+          height: spaceValue,
+          width: flex ? '100%' : undefined,
+        }
+      : {
+          width: spaceValue,
+          height: flex ? '100%' : undefined,
+        };
 
   return <View style={[style, flex && { flex: 1 }]} />;
 }

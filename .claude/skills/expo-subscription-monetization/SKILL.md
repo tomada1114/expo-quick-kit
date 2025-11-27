@@ -76,7 +76,8 @@ export default function RootLayout() {
 import { useSubscription } from '@/hooks/useSubscription';
 
 function MyComponent() {
-  const { isPremium, usageLimits, purchasePackage, packages } = useSubscription();
+  const { isPremium, usageLimits, purchasePackage, packages } =
+    useSubscription();
 
   if (!isPremium && items.length >= usageLimits.maxItems) {
     return <UpgradePrompt />;
@@ -100,9 +101,9 @@ interface Subscription {
 
 ```typescript
 interface UsageLimits {
-  maxItems: number;      // 例: 最大アイテム数
-  maxExports: number;    // 例: 月間エクスポート数
-  hasAds: boolean;       // 広告表示フラグ
+  maxItems: number; // 例: 最大アイテム数
+  maxExports: number; // 例: 月間エクスポート数
+  hasAds: boolean; // 広告表示フラグ
 }
 
 // Free tier
@@ -125,26 +126,26 @@ const PREMIUM_TIER_LIMITS: UsageLimits = {
 ```typescript
 const {
   // Status
-  isPremium,           // boolean: プレミアムユーザーか
-  isFree,              // boolean: 無料ユーザーか
-  usageLimits,         // UsageLimits: 現在の制限
-  subscription,        // Subscription: 詳細情報
+  isPremium, // boolean: プレミアムユーザーか
+  isFree, // boolean: 無料ユーザーか
+  usageLimits, // UsageLimits: 現在の制限
+  subscription, // Subscription: 詳細情報
 
   // Loading
-  loading,             // boolean: 初期ロード中
-  purchaseLoading,     // boolean: 購入処理中
-  restoreLoading,      // boolean: 復元処理中
+  loading, // boolean: 初期ロード中
+  purchaseLoading, // boolean: 購入処理中
+  restoreLoading, // boolean: 復元処理中
 
   // Error
-  error,               // string | null
+  error, // string | null
 
   // Actions
-  purchasePackage,     // (id: string) => Promise<PurchaseResult>
-  restorePurchases,    // () => Promise<RestoreResult>
-  canAccessFeature,    // (level: FeatureLevel) => boolean
+  purchasePackage, // (id: string) => Promise<PurchaseResult>
+  restorePurchases, // () => Promise<RestoreResult>
+  canAccessFeature, // (level: FeatureLevel) => boolean
 
   // Packages
-  packages,            // SubscriptionPackage[]
+  packages, // SubscriptionPackage[]
 } = useSubscription();
 ```
 
@@ -175,7 +176,10 @@ function ItemList() {
 
   const handleAdd = () => {
     if (!canAddItem) {
-      Alert.alert('Upgrade Required', `Free plan: max ${usageLimits.maxItems} items`);
+      Alert.alert(
+        'Upgrade Required',
+        `Free plan: max ${usageLimits.maxItems} items`
+      );
       return;
     }
     // Add item...
@@ -199,7 +203,8 @@ function AdBanner() {
 
 ```tsx
 function UpgradeScreen() {
-  const { packages, purchasePackage, purchaseLoading, error } = useSubscription();
+  const { packages, purchasePackage, purchaseLoading, error } =
+    useSubscription();
 
   const handlePurchase = async (packageId: string) => {
     const result = await purchasePackage(packageId);
@@ -211,7 +216,7 @@ function UpgradeScreen() {
 
   return (
     <View>
-      {packages.map(pkg => (
+      {packages.map((pkg) => (
         <TouchableOpacity
           key={pkg.identifier}
           onPress={() => handlePurchase(pkg.identifier)}
@@ -306,10 +311,10 @@ interface Subscription {
 
 // config.ts
 const TIER_LIMITS: Record<Subscription['tier'], UsageLimits> = {
-  free: { maxProjects: 1, /* ... */ },
-  basic: { maxProjects: 5, /* ... */ },
-  pro: { maxProjects: 20, /* ... */ },
-  enterprise: { maxProjects: Infinity, /* ... */ },
+  free: { maxProjects: 1 /* ... */ },
+  basic: { maxProjects: 5 /* ... */ },
+  pro: { maxProjects: 20 /* ... */ },
+  enterprise: { maxProjects: Infinity /* ... */ },
 };
 ```
 
@@ -340,15 +345,18 @@ describe('Subscription', () => {
 ## Troubleshooting
 
 ### "RevenueCat API key is missing"
+
 - `.env.local` に `EXPO_PUBLIC_REVENUE_CAT_API_KEY_*` を設定
 - Metro を再起動: `npx expo start --clear`
 
 ### "No current offering available"
+
 - RevenueCat Dashboard で Offerings を設定
 - Products を Entitlements に紐付け
 - Sandbox テスターでテスト
 
 ### iOS Simulator で購入できない
+
 - 実機でテスト、または StoreKit Configuration File を使用
 - Sandbox テスターアカウントを設定
 
@@ -368,6 +376,7 @@ describe('Subscription', () => {
 - [templates/mocks.ts](templates/mocks.ts) - テストモック
 
 詳細は [references/](references/) ディレクトリを参照:
+
 - `references/revenuecat-setup.md` - RevenueCat ダッシュボード設定
 - `references/architecture-patterns.md` - Clean Architecture パターン
 - `references/feature-gating.md` - 機能制限パターン

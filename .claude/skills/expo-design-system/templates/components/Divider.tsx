@@ -48,19 +48,20 @@ export function Divider({
   const colors = Colors[colorScheme ?? 'light'];
   const color = colorProp ?? colors.interactive.separator;
 
-  const dividerStyle: ViewStyle = direction === 'horizontal'
-    ? {
-        height: thickness,
-        width: '100%',
-        backgroundColor: color,
-        marginVertical: margin,
-      }
-    : {
-        width: thickness,
-        height: '100%',
-        backgroundColor: color,
-        marginHorizontal: margin,
-      };
+  const dividerStyle: ViewStyle =
+    direction === 'horizontal'
+      ? {
+          height: thickness,
+          width: '100%',
+          backgroundColor: color,
+          marginVertical: margin,
+        }
+      : {
+          width: thickness,
+          height: '100%',
+          backgroundColor: color,
+          marginHorizontal: margin,
+        };
 
   return <View style={[dividerStyle, style]} />;
 }

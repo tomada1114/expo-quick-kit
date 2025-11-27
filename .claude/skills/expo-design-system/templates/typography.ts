@@ -23,17 +23,17 @@ interface TextStyle {
 }
 
 interface TypographyScale {
-  largeTitle: TextStyle;  // 34pt - H1
-  title1: TextStyle;      // 28pt - H2
-  title2: TextStyle;      // 22pt - H3
-  title3: TextStyle;      // 20pt - H4
-  headline: TextStyle;    // 17pt bold
-  body: TextStyle;        // 17pt regular
-  callout: TextStyle;     // 16pt
+  largeTitle: TextStyle; // 34pt - H1
+  title1: TextStyle; // 28pt - H2
+  title2: TextStyle; // 22pt - H3
+  title3: TextStyle; // 20pt - H4
+  headline: TextStyle; // 17pt bold
+  body: TextStyle; // 17pt regular
+  callout: TextStyle; // 16pt
   subheadline: TextStyle; // 15pt
-  caption1: TextStyle;    // 13pt
-  caption2: TextStyle;    // 12pt
-  footnote: TextStyle;    // 11pt
+  caption1: TextStyle; // 13pt
+  caption2: TextStyle; // 12pt
+  footnote: TextStyle; // 11pt
 }
 
 // ============================================================
@@ -144,7 +144,9 @@ export const Typography: TypographyScale = {
  * @param fontType - 'sans' | 'serif' | 'mono' | 'rounded'
  * @returns フォントファミリー文字列
  */
-export function getFontFamily(fontType: keyof typeof Fonts.sans = 'sans'): string {
+export function getFontFamily(
+  fontType: keyof typeof Fonts.sans = 'sans'
+): string {
   const platform = Platform.select({
     ios: Fonts.sans,
     android: Fonts.sans,

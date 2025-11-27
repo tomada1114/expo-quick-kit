@@ -38,19 +38,19 @@ San Francisco には、異なるサイズ用に最適化された2つのバリ�
 
 Apple HIG準拠の11段階のタイポグラフィスケール：
 
-| Style | Size | Weight | Line Height | Use Cases |
-|-------|------|--------|-------------|-----------|
-| largeTitle | 34pt | 400 | 41pt | ページタイトル、大見出し |
-| title1 | 28pt | 400 | 34pt | セクションタイトル |
-| title2 | 22pt | 400 | 26pt | サブセクションタイトル |
-| title3 | 20pt | 400 | 24pt | グループタイトル |
-| headline | 17pt | 600 | 22pt | 強調テキスト、ボタンラベル |
-| body | 17pt | 400 | 22pt | 本文テキスト（標準） |
-| callout | 16pt | 400 | 21pt | 補足、注釈 |
-| subheadline | 15pt | 400 | 20pt | 副見出し |
-| caption1 | 13pt | 400 | 16pt | 説明テキスト、メタ情報 |
-| caption2 | 12pt | 400 | 15pt | 細かい補足情報 |
-| footnote | 11pt | 400 | 13pt | 最小テキスト（アクセシビリティ考慮） |
+| Style       | Size | Weight | Line Height | Use Cases                            |
+| ----------- | ---- | ------ | ----------- | ------------------------------------ |
+| largeTitle  | 34pt | 400    | 41pt        | ページタイトル、大見出し             |
+| title1      | 28pt | 400    | 34pt        | セクションタイトル                   |
+| title2      | 22pt | 400    | 26pt        | サブセクションタイトル               |
+| title3      | 20pt | 400    | 24pt        | グループタイトル                     |
+| headline    | 17pt | 600    | 22pt        | 強調テキスト、ボタンラベル           |
+| body        | 17pt | 400    | 22pt        | 本文テキスト（標準）                 |
+| callout     | 16pt | 400    | 21pt        | 補足、注釈                           |
+| subheadline | 15pt | 400    | 20pt        | 副見出し                             |
+| caption1    | 13pt | 400    | 16pt        | 説明テキスト、メタ情報               |
+| caption2    | 12pt | 400    | 15pt        | 細かい補足情報                       |
+| footnote    | 11pt | 400    | 13pt        | 最小テキスト（アクセシビリティ考慮） |
 
 ### 最小フォントサイズ
 
@@ -73,6 +73,7 @@ fontWeight: {
 ```
 
 **使用方針:**
+
 - **400（Normal）**: 本文、説明テキスト
 - **500（Medium）**: 強調テキスト（iOS 13+）
 - **600（Semibold）**: ボタンテキスト、強調見出し
@@ -173,6 +174,7 @@ const multiplier = screenWidth > 375 ? 1.1 : 1.0;
 タイポグラフィ自体は Light/Dark Mode で変わりません。
 
 **変わるもの:**
+
 - テキスト色（colors.text.primary / colors.text.secondary 等）
 - 背景色（colors.background 等）
 

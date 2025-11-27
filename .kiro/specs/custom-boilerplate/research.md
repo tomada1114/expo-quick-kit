@@ -1,15 +1,17 @@
 # Research & Design Decisions Template
 
 ---
+
 **Feature**: `custom-boilerplate`
 **Discovery Scope**: New Feature (複雑なボイラープレート構築)
 **Key Findings**:
-  - Drizzle ORM は Expo SQLite と完全互換、`enableChangeListener` と `useLiveQuery` フックでリアルタイム更新をサポート
-  - Zustand は React Native 2025 標準であり、軽量（2KB）で TypeScript 対応、Redux より学習コストが低い
-  - TanStack Query v5 は React Native で完全サポート、オンライン/オフライン対応、自動キャッシュ管理
-  - React 19 + React Native 0.78+ は 2025 で完全互換、React Compiler により自動最適化可能
-  - Jest + React Native Testing Library が標準テスト環境、jest-expo プリセット使用
-  - ESLint Flat Config + Prettier 統合が 2025 推奨、Husky/lint-staged による自動化可能
+
+- Drizzle ORM は Expo SQLite と完全互換、`enableChangeListener` と `useLiveQuery` フックでリアルタイム更新をサポート
+- Zustand は React Native 2025 標準であり、軽量（2KB）で TypeScript 対応、Redux より学習コストが低い
+- TanStack Query v5 は React Native で完全サポート、オンライン/オフライン対応、自動キャッシュ管理
+- React 19 + React Native 0.78+ は 2025 で完全互換、React Compiler により自動最適化可能
+- Jest + React Native Testing Library が標準テスト環境、jest-expo プリセット使用
+- ESLint Flat Config + Prettier 統合が 2025 推奨、Husky/lint-staged による自動化可能
 
 ---
 
@@ -24,6 +26,7 @@
 - **UI Base**: iOS System Colors準拠テーマシステム（expo-design-system準拠）、共通コンポーネント（button, card, spacer, loading）
 
 発見プロセスは以下の領域をカバー：
+
 1. **Database & ORM**: Drizzle 最新ベストプラクティス
 2. **State Management**: Zustand スライスパターン、TanStack Query キャッシュ戦略
 3. **Testing**: Jest-Expo, React Native Testing Library セットアップ
@@ -74,9 +77,9 @@
   - v5.90.11（最新）で React Native 完全サポート
   - useQuery 同じ key 呼び出しで自動キャッシュ返却
   - onlineManager で オフライン対応、focus refetch hook で画面戻る際自動更新
-  - QueryClientProvider は app/_layout.tsx でセットアップ必須
+  - QueryClientProvider は app/\_layout.tsx でセットアップ必須
   - デフォルト設定（staleTime, cacheTime）プロジェクト全体で統一
-- **Implications**: QueryClient config を constants or lib に集約、app/_layout.tsx で Provider ラップ。非同期通信の一元管理
+- **Implications**: QueryClient config を constants or lib に集約、app/\_layout.tsx で Provider ラップ。非同期通信の一元管理
 
 ### React 19 と React Native 0.81+ 互換性
 
@@ -101,13 +104,13 @@
   - [File-based routing - Expo Docs](https://docs.expo.dev/develop/file-based-routing/)
   - [Common navigation patterns](https://docs.expo.dev/router/basics/common-navigation-patterns/)
 - **Findings**:
-  - app/ directory が routes、_layout.tsx が layout/nesting 定義
+  - app/ directory が routes、\_layout.tsx が layout/nesting 定義
   - (parentheses) route groups は URL に含まれない、tab/modal structuring に最適
   - Dynamic routes [param].tsx で型安全ルーティング（typedRoutes 実験的機能有効化済み）
   - Deep linking 自動、全 screen deep-linkable
   - lazy-eval production, deferred dev bundle 最適化
   - Web SEO 対応（SSG 可能）
-- **Implications**: app/_layout.tsx (root), app/(tabs)/_layout.tsx (tab bar), app/(tabs)/index.tsx (home), app/modal.tsx 構造維持。ルート定義はシンプル
+- **Implications**: app/\_layout.tsx (root), app/(tabs)/\_layout.tsx (tab bar), app/(tabs)/index.tsx (home), app/modal.tsx 構造維持。ルート定義はシンプル
 
 ### Jest + React Native Testing Library セットアップ
 
@@ -176,8 +179,8 @@
   - package.json （React 19.1.0, React Native 0.81.5 確定）
   - CLAUDE.md (kebab-case 命名, @/ alias, theming system)
 - **Findings**:
-  - app/(tabs)/_layout.tsx, app/(tabs)/index.tsx, app/modal.tsx 基本 screens 存在
-  - components/themed-*.tsx, ui/ に基本コンポーネント構造
+  - app/(tabs)/\_layout.tsx, app/(tabs)/index.tsx, app/modal.tsx 基本 screens 存在
+  - components/themed-\*.tsx, ui/ に基本コンポーネント構造
   - constants/theme.ts 既存（colors, fonts light/dark mode）
   - hooks/use-color-scheme.ts, use-theme-color.ts 既存
   - @/ alias 既に tsconfig.json で設定済み
@@ -186,11 +189,11 @@
 
 ## Architecture Pattern Evaluation
 
-| Pattern | Description | Strengths | Risks / Limitations | Notes |
-|---------|-------------|-----------|---------------------|-------|
-| Onion Architecture (DDD) | Domain-Centric + Application/Infrastructure layers | Clear domain boundaries, testable, CLAUDE.md guideline | Requires discipline for separation | Steering default, exam 採用 |
-| Feature-Sliced Design | features/ directory per domain feature | Scalable, team-safe, parallel development | Learning curve, 新人教育コスト | Requirement 2 の features/ align |
-| Modular Monolith | layers (domain, application, infrastructure) + features | Coherent structure, future microservice migration path | Boundary enforcement工数 | Custom boilerplate 向け |
+| Pattern                  | Description                                             | Strengths                                              | Risks / Limitations                | Notes                            |
+| ------------------------ | ------------------------------------------------------- | ------------------------------------------------------ | ---------------------------------- | -------------------------------- |
+| Onion Architecture (DDD) | Domain-Centric + Application/Infrastructure layers      | Clear domain boundaries, testable, CLAUDE.md guideline | Requires discipline for separation | Steering default, exam 採用      |
+| Feature-Sliced Design    | features/ directory per domain feature                  | Scalable, team-safe, parallel development              | Learning curve, 新人教育コスト     | Requirement 2 の features/ align |
+| Modular Monolith         | layers (domain, application, infrastructure) + features | Coherent structure, future microservice migration path | Boundary enforcement工数           | Custom boilerplate 向け          |
 
 **Selected**: Hybrid approach combining Onion Architecture (layer organization) + Feature-Sliced Design (features/ by domain) で steering principles と Requirement 2 目標を両立
 

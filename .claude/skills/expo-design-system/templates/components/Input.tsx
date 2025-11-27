@@ -53,7 +53,9 @@ export function Input({
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const borderColor = error ? colors.semantic.error : colors.interactive.separator;
+  const borderColor = error
+    ? colors.semantic.error
+    : colors.interactive.separator;
   const placeholderTextColor = placeholderColorProp ?? colors.text.tertiary;
   const textColor = colors.text.primary;
 

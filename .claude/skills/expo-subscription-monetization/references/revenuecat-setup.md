@@ -5,6 +5,7 @@
 ### 1. Create Products in App Store Connect
 
 **Monthly Subscription:**
+
 - Product ID: `{app_bundle_id}.monthly` (e.g., `com.example.app.monthly`)
 - Subscription Group: Create new group "Premium Subscriptions"
 - Duration: 1 Month
@@ -12,6 +13,7 @@
 - Localize product name and description
 
 **Annual Subscription:**
+
 - Product ID: `{app_bundle_id}.annual` (e.g., `com.example.app.annual`)
 - Subscription Group: Same as monthly ("Premium Subscriptions")
 - Duration: 1 Year
@@ -22,6 +24,7 @@
 ### 2. Link Products in RevenueCat Dashboard
 
 **Create Products:**
+
 1. Navigate to RevenueCat Dashboard → Project → Products
 2. Click "Add Product"
 3. For Monthly:
@@ -36,6 +39,7 @@
    - Display Name: "Annual Premium"
 
 **Create Entitlement:**
+
 1. Navigate to Entitlements
 2. Click "Add Entitlement"
 3. Lookup Key: `pro` (or `premium`)
@@ -43,6 +47,7 @@
 5. Attach both products to this entitlement
 
 **Create Offering:**
+
 1. Navigate to Offerings
 2. Click "Add Offering"
 3. Lookup Key: `default`
@@ -50,6 +55,7 @@
 5. Set as current offering
 
 **Create Packages:**
+
 1. In the offering, click "Add Package"
 2. For Monthly:
    - Lookup Key: `$rc_monthly`
@@ -71,6 +77,7 @@ Use RevenueCat MCP tools to verify setup:
 ```
 
 MCP will check:
+
 - ✅ Products are created with correct store identifiers
 - ✅ Entitlement "pro" is attached to both products
 - ✅ Offering is set as current
@@ -83,6 +90,7 @@ MCP will check:
 **Annual:** $99.99/year = 16.6% discount (~$20 savings)
 
 **Introductory Offer Example:**
+
 - First month: $4.99
 - Then: $9.99/month
 - Configure in App Store Connect → Subscription → Introductory Offers
@@ -101,11 +109,13 @@ RevenueCat recommends standard package identifiers:
 ### 6. Testing with Sandbox
 
 **Setup:**
+
 1. Create sandbox tester account in App Store Connect
 2. Sign out of App Store on test device
 3. When prompted, sign in with sandbox account
 
 **Verification:**
+
 1. Purchase flows complete successfully
 2. Subscription status updates in RevenueCat dashboard
 3. Entitlement "pro" becomes active
