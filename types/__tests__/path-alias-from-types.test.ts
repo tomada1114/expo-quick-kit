@@ -13,9 +13,10 @@ describe('Path alias from types/ directory', () => {
   });
 
   it('should support TypeScript type inference', () => {
-    const lightText: string = Colors.light.text;
-    const darkText: string = Colors.dark.text;
-    expect(typeof lightText).toBe('string');
-    expect(typeof darkText).toBe('string');
+    // New Colors structure: text is now an object with primary/secondary/tertiary/inverse
+    const lightTextPrimary: string = Colors.light.text.primary;
+    const darkTextPrimary: string = Colors.dark.text.primary;
+    expect(typeof lightTextPrimary).toBe('string');
+    expect(typeof darkTextPrimary).toBe('string');
   });
 });
