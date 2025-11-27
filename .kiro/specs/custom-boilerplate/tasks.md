@@ -126,7 +126,7 @@ UIについては Claude Skill を参照して実装してください。
   - `pnpm check` がパスすることを確認する
   - _Requirements: 5.1, 6.1, 7.1, 10.1_
 
-- [ ] 7.2 タブナビゲーションの整備
+- [x] 7.2 タブナビゲーションの整備
   - `app/(tabs)/_layout.tsx`でボトムタブバーを設定し、テーマ対応のアクティブティント色を適用する
   - タブ切り替え時の画面遷移が正しく動作することを確認する
   - `app/modal.tsx`のモーダル画面が正常に動作することを確認する
@@ -158,14 +158,9 @@ UIについては Claude Skill を参照して実装してください。
   - 不要なサンプルコンポーネント（hello-wave.tsx等のExpoテンプレートデフォルト）を削除する
   - `app/(tabs)/index.tsx`をボイラープレート独自のホーム画面に置き換える
   - タブナビゲーションから削除したexploreタブの参照を除去する
-  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 13.1, 13.2, 13.3_
 
 - [ ] 9.2 (P) package.jsonスクリプトの追加
-  - `test`、`test:watch`、`test:coverage`スクリプトを追加する
-  - `lint`、`lint:fix`スクリプトを追加する
-  - `format`スクリプト（Prettier実行）を追加する
-  - `typecheck`スクリプト（tsc --noEmit）を追加する
   - `db:generate`、`db:studio`スクリプト（Drizzle Kit操作）を追加する
   - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_

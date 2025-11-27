@@ -4,6 +4,8 @@
  * Tests for app initialization, provider integration, and error handling
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports, import/first */
+
 import React from 'react';
 
 // Mock expo-splash-screen BEFORE imports
@@ -55,7 +57,11 @@ jest.mock('@/hooks/use-theme-color', () => ({
   useThemedColors: () => ({
     colors: {
       primary: '#007AFF',
-      background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
+      background: {
+        base: '#FFFFFF',
+        secondary: '#F2F2F7',
+        tertiary: '#FFFFFF',
+      },
       text: {
         primary: '#000000',
         secondary: '#3C3C43',
