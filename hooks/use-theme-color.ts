@@ -14,7 +14,7 @@
  * https://docs.expo.dev/guides/color-schemes/
  */
 
-import { Colors } from '@/constants/theme';
+import { Colors, type ColorScheme } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 type ColorPalette = (typeof Colors)['light'];
@@ -26,7 +26,7 @@ type ColorPalette = (typeof Colors)['light'];
 export function useThemeColor(
   props: { light?: string; dark?: string },
   colorName: keyof ColorPalette
-) {
+): string | undefined {
   const theme = useColorScheme() ?? 'light';
   const colorFromProps = props[theme];
 
@@ -42,12 +42,20 @@ export function useThemeColor(
   }
 }
 
+interface ThemedColorsResult {
+  colors: ColorPalette;
+  colorScheme: ColorScheme;
+}
+
 /**
  * テーマカラーパレット全体を取得するフック（推奨）
  * ネストされたカラー（background.base, text.primary等）にアクセス可能
+ *
+ * @returns colors - 現在のテーマに応じたカラーパレット
+ * @returns colorScheme - 'light' | 'dark'（nullは返らない）
  */
-export function useThemedColors() {
-  const colorScheme = useColorScheme() ?? 'light';
+export function useThemedColors(): ThemedColorsResult {
+  const colorScheme: ColorScheme = useColorScheme() ?? 'light';
   const colors = Colors[colorScheme];
 
   return {
