@@ -102,7 +102,7 @@
 
 UIについては Claude Skill を参照して実装してください。
 
-- [ ] 6.1 UIコンポーネントの実装
+- [x] 6.1 UIコンポーネントの実装
   - `components/ui/button.tsx`でprimary/secondary/ghost/destructiveバリアントのボタンを実装する（タッチターゲット44pt以上確保）
   - `components/ui/card.tsx`でテーマ対応のカードコンテナを実装する（background.secondary使用）
   - `components/ui/spacer.tsx`で8pt Grid準拠のスペーシングコンポーネントを実装する
