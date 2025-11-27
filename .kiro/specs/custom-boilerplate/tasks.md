@@ -100,6 +100,8 @@
 
 ## Task 6. 共通UIコンポーネント
 
+UIについては Claude Skill を参照して実装してください。
+
 - [ ] 6.1 UIコンポーネントの実装
   - `components/ui/button.tsx`でprimary/secondary/ghost/destructiveバリアントのボタンを実装する（タッチターゲット44pt以上確保）
   - `components/ui/card.tsx`でテーマ対応のカードコンテナを実装する（background.secondary使用）
@@ -113,6 +115,8 @@
 ---
 
 ## Task 7. ナビゲーションとアプリ起動フロー
+
+UIについては Claude Skill を参照して実装してください。
 
 - [ ] 7.1 RootLayoutとプロバイダー統合
   - `app/_layout.tsx`を拡張し、データベース初期化、Zustandストア初期化、QueryClientProvider統合を実装する
@@ -132,6 +136,8 @@
 ---
 
 ## Task 8. サンプル機能実装
+
+UIについては Claude Skill を参照して実装してください。
 
 - [ ] 8.1 features/\_example/サンプル機能の作成
   - `features/_example/`ディレクトリに機能別モジュールのリファレンス実装を作成する
