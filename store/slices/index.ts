@@ -3,5 +3,4 @@
  * Zustand store slices
  */
 
-// Export store slices here as they are created
-export {};
+export { createAppSlice } from './app-slice';
