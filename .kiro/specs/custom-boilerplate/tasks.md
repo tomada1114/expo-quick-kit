@@ -15,7 +15,7 @@
   - `pnpm lint`実行時にエラーがない状態を確認する
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 1.2 (P) Jestテスト環境の構築
+- [x] 1.2 (P) Jestテスト環境の構築
   - Jest、jest-expo、React Native Testing Library、jest-native、@types/jestをインストールする
   - `jest.config.js`でjest-expoプリセット、`@/`パスエイリアス解決、カバレッジ設定を構成する
   - `jest.setup.js`でexpo-sqlite、AsyncStorageのモックを設定し、テスト環境を初期化する
