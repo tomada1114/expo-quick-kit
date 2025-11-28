@@ -92,7 +92,7 @@
   - ペイロードサイズ制限（2048バイト）のJSDocコメント追加
   - _Requirements: 3.2, 3.4, 3.5_
 
-- [ ] 4.2 セキュアストレージデモUIの実装
+- [x] 4.2 セキュアストレージデモUIの実装
   - features/_example/components/secure-storage-demo.tsxにデモコンポーネントを作成
   - SecureStorageKey.AUTH_TOKENの保存/取得/削除UI
   - エラーハンドリングとユーザーフィードバック表示
@@ -101,7 +101,7 @@
   - lib/secure-storage.ts（タスク4.1）の完了が必要
   - _Requirements: 3.3, 3.4_
 
-- [ ]* 4.3 SecureStoreラッパーのユニットテスト
+- [x]* 4.3 SecureStoreラッパーのユニットテスト
   - lib/__tests__/secure-storage.test.tsにテストスイートを作成
   - saveSecure関数のモック化テスト（成功・失敗）
   - getSecure関数のモック化テスト（値あり・値なし・エラー）
