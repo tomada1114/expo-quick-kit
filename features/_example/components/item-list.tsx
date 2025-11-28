@@ -78,7 +78,6 @@ export function ItemList({
   const renderItem: ListRenderItem<Item> = useCallback(
     ({ item }) => (
       <ItemCard
-        key={item.id}
         item={item}
         onPress={() => onItemPress?.(item.id)}
         testID={`item-card-${item.id}`}

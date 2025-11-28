@@ -46,10 +46,15 @@ export class ItemRepository {
    * Create a new item
    * @param input - Item data (title required, description optional)
    * @returns Created item with generated ID and timestamp
+   * @throws Error if item creation fails
    */
   async create(input: CreateItemInput): Promise<Item> {
     const result = await db.insert(items).values(input).returning();
-    return result[0];
+    const created = result[0];
+    if (!created) {
+      throw new Error('Failed to create item');
+    }
+    return created;
   }
 
   /**
