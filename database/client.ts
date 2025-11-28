@@ -5,7 +5,9 @@
  */
 
 import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
+import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
 import { openDatabaseSync, SQLiteDatabase } from 'expo-sqlite';
+import migrations from '../drizzle/migrations';
 import * as schema from './schema';
 
 /**
@@ -67,11 +69,14 @@ export async function initializeDatabase(): Promise<void> {
     // Create Drizzle instance
     drizzleDb = drizzle(expoDb, { schema });
 
-    // Run any pending migrations (placeholder for future migration support)
-    // await runMigrations(drizzleDb);
+    // Run migrations
+    console.log('Running database migrations...');
+    await migrate(drizzleDb, migrations);
+    console.log('Database migrations completed');
 
     isInitialized = true;
   } catch (error) {
+    console.error('Database initialization error:', error);
     throw new DatabaseInitError('Database initialization failed', error);
   }
 }
