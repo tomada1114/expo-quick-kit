@@ -2,22 +2,22 @@
 
 ## 1. ライブラリインストールと基盤セットアップ
 
-- [ ] 1.1 (P) zodバリデーションライブラリの導入
+- [x] 1.1 (P) zodバリデーションライブラリの導入
   - pnpm経由でzod ^3.xをインストール
   - package.jsonの依存関係を確認
   - _Requirements: 1.1_
 
-- [ ] 1.2 (P) date-fns日付処理ライブラリの導入
+- [x] 1.2 (P) date-fns日付処理ライブラリの導入
   - pnpm経由でdate-fns ^4.1.0をインストール
   - package.jsonの依存関係を確認
   - _Requirements: 2.1_
 
-- [ ] 1.3 (P) expo-secure-storeセキュアストレージの導入
+- [x] 1.3 (P) expo-secure-storeセキュアストレージの導入
   - pnpm expo installでexpo-secure-store ~15.0.7をインストール
   - package.jsonの依存関係を確認
   - _Requirements: 3.1_
 
-- [ ] 1.4 (P) expo-notificationsプッシュ通知ライブラリの導入
+- [x] 1.4 (P) expo-notificationsプッシュ通知ライブラリの導入
   - pnpm expo installでexpo-notifications ~54.xをインストール
   - pnpm expo installでexpo-device（物理デバイスチェック用）をインストール
   - package.jsonの依存関係を確認
