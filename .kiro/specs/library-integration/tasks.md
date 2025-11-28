@@ -83,7 +83,7 @@
 
 ## 4. セキュアストレージ機能の実装
 
-- [ ] 4.1 (P) SecureStoreラッパーモジュールの作成
+- [x] 4.1 (P) SecureStoreラッパーモジュールの作成
   - lib/secure-storage.tsにSecureStoreラッパーAPIを実装
   - SecureStorageKey列挙型（AUTH_TOKEN, USER_ID, API_KEY）
   - SecureStorageResult型（Result型パターン）
@@ -108,7 +108,7 @@
   - deleteSecure関数のモック化テスト（成功・失敗）
   - SecureStorageKey列挙型の型安全性検証
   - SecureStore APIをモック化（jest.mock）
-  -
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 3.4_
 
 ## 5. プッシュ通知機能の実装
@@ -147,7 +147,7 @@
   - cancelNotification関数のモック化テスト
   - getAllScheduledNotifications関数のモック化テスト
   - expo-notifications APIをモック化（jest.mock）
-  -
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 4.2, 4.3, 4.7_
 
 ## 6. 統合とドキュメント整備
@@ -178,4 +178,5 @@
   - lib/validation.ts, lib/date.ts, lib/secure-storage.ts, services/notifications.tsのカバレッジが80%以上であることを確認
   - 不足している場合は追加テストを作成
   - jest.config.jsのcoverageThresholdを80%に設定
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 5.5_
