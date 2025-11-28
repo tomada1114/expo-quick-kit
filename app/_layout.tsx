@@ -95,9 +95,17 @@ export default function RootLayout() {
       // Store rehydration
       const storeHydrationPromise = useStore.persist.rehydrate();
 
-      // RevenueCat SDK initialization (non-blocking: errors are logged but don't block app startup)
-      // Falls back to free tier mode if initialization fails
-      const revenueCatInitPromise = configurePurchases()
+      // RevenueCat SDK initialization with timeout (non-blocking: errors are logged but don't block app startup)
+      // Falls back to free tier mode if initialization fails or times out
+      const revenueCatInitPromise = Promise.race([
+        configurePurchases(),
+        new Promise<never>((_, reject) =>
+          setTimeout(
+            () => reject(new Error('RevenueCat initialization timeout')),
+            INIT_TIMEOUT_MS
+          )
+        ),
+      ])
         .then(() => {
           useStore.getState().setRevenueCatAvailable(true);
         })

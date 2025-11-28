@@ -79,45 +79,55 @@ export const mockFreeCustomerInfo: MockCustomerInfo = {
   originalPurchaseDate: null,
 };
 
-// Mock CustomerInfo for premium user
-export const mockPremiumCustomerInfo: MockCustomerInfo = {
-  entitlements: {
-    active: {
-      premium: {
-        identifier: 'premium',
-        isActive: true,
-        willRenew: true,
-        periodType: 'normal',
-        latestPurchaseDate: new Date().toISOString(),
-        latestPurchaseDateMillis: Date.now(),
-        originalPurchaseDate: new Date().toISOString(),
-        originalPurchaseDateMillis: Date.now(),
-        expirationDate: new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        expirationDateMillis: Date.now() + 30 * 24 * 60 * 60 * 1000,
-        store: 'APP_STORE',
-        productIdentifier: 'monthly_plan',
-        productPlanIdentifier: null,
-        isSandbox: true,
-        unsubscribeDetectedAt: null,
-        unsubscribeDetectedAtMillis: null,
-        billingIssueDetectedAt: null,
-        billingIssueDetectedAtMillis: null,
-        ownershipType: 'PURCHASED',
+/**
+ * Factory function to create fresh MockCustomerInfo for premium user.
+ * Creates fresh timestamps on each call to avoid frozen dates across tests.
+ */
+export function createMockPremiumCustomerInfo(): MockCustomerInfo {
+  const now = Date.now();
+  const nowIso = new Date(now).toISOString();
+  const expirationMs = now + 30 * 24 * 60 * 60 * 1000;
+  const expirationIso = new Date(expirationMs).toISOString();
+
+  return {
+    entitlements: {
+      active: {
+        premium: {
+          identifier: 'premium',
+          isActive: true,
+          willRenew: true,
+          periodType: 'normal',
+          latestPurchaseDate: nowIso,
+          latestPurchaseDateMillis: now,
+          originalPurchaseDate: nowIso,
+          originalPurchaseDateMillis: now,
+          expirationDate: expirationIso,
+          expirationDateMillis: expirationMs,
+          store: 'APP_STORE',
+          productIdentifier: 'monthly_plan',
+          productPlanIdentifier: null,
+          isSandbox: true,
+          unsubscribeDetectedAt: null,
+          unsubscribeDetectedAtMillis: null,
+          billingIssueDetectedAt: null,
+          billingIssueDetectedAtMillis: null,
+          ownershipType: 'PURCHASED',
+        },
       },
+      all: {},
     },
-    all: {},
-  },
-  activeSubscriptions: ['monthly_plan'],
-  allPurchasedProductIdentifiers: ['monthly_plan'],
-  latestExpirationDate: new Date(
-    Date.now() + 30 * 24 * 60 * 60 * 1000
-  ).toISOString(),
-  originalAppUserId: 'test-user-123',
-  originalApplicationVersion: null,
-  originalPurchaseDate: new Date().toISOString(),
-};
+    activeSubscriptions: ['monthly_plan'],
+    allPurchasedProductIdentifiers: ['monthly_plan'],
+    latestExpirationDate: expirationIso,
+    originalAppUserId: 'test-user-123',
+    originalApplicationVersion: null,
+    originalPurchaseDate: nowIso,
+  };
+}
+
+// Mock CustomerInfo for premium user (for backwards compatibility, creates fresh instance)
+export const mockPremiumCustomerInfo: MockCustomerInfo =
+  createMockPremiumCustomerInfo();
 
 // Test utilities for setting up mock state
 let mockCustomerInfo: MockCustomerInfo = mockFreeCustomerInfo;
@@ -135,9 +145,10 @@ export function setupFreeUserMock(): void {
 /**
  * Set up the mock to return premium user state.
  * Use this at the beginning of tests for premium user scenarios.
+ * Creates fresh timestamps for each test.
  */
 export function setupPremiumUserMock(): void {
-  mockCustomerInfo = mockPremiumCustomerInfo;
+  mockCustomerInfo = createMockPremiumCustomerInfo();
 }
 
 /**
@@ -289,9 +300,10 @@ const Purchases = {
         mockPurchaseErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
       return Promise.reject(error);
     }
-    // Simulate successful purchase - user becomes premium
-    mockCustomerInfo = mockPremiumCustomerInfo;
-    return Promise.resolve({ customerInfo: mockPremiumCustomerInfo });
+    // Simulate successful purchase - user becomes premium with fresh timestamps
+    const freshPremiumInfo = createMockPremiumCustomerInfo();
+    mockCustomerInfo = freshPremiumInfo;
+    return Promise.resolve({ customerInfo: freshPremiumInfo });
   }),
 
   restorePurchases: jest.fn().mockImplementation(() => {
