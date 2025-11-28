@@ -12,15 +12,53 @@
  * @module features/subscription/core/repository
  */
 
-import Purchases, { PURCHASES_ERROR_CODE } from 'react-native-purchases';
+import Purchases, {
+  PURCHASES_ERROR_CODE,
+  type CustomerInfo as SDKCustomerInfo,
+} from 'react-native-purchases';
 import type {
-  CustomerInfo,
   Subscription,
   SubscriptionError,
   SubscriptionPackage,
   Result,
 } from './types';
 import { PREMIUM_ENTITLEMENT_ID, DEFAULT_FREE_SUBSCRIPTION } from './types';
+
+/**
+ * Type guard for RevenueCat SDK errors.
+ * RevenueCat errors have a numeric `code` and string `message` property.
+ */
+function isRevenueCatError(
+  error: unknown
+): error is { code: number; message: string } {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    'message' in error &&
+    typeof (error as { code: unknown }).code === 'number' &&
+    typeof (error as { message: unknown }).message === 'string'
+  );
+}
+
+/**
+ * Safely convert error to SubscriptionError.
+ * Handles both RevenueCat errors and unknown errors.
+ */
+function handleError(error: unknown): SubscriptionError {
+  if (isRevenueCatError(error)) {
+    return toSubscriptionError(error);
+  }
+
+  // Handle unknown errors
+  const message =
+    error instanceof Error ? error.message : 'An unknown error occurred';
+  return {
+    code: 'UNKNOWN_ERROR',
+    message,
+    retryable: false,
+  };
+}
 
 /**
  * Convert RevenueCat CustomerInfo to domain Subscription entity.
@@ -35,7 +73,7 @@ import { PREMIUM_ENTITLEMENT_ID, DEFAULT_FREE_SUBSCRIPTION } from './types';
  * console.log(subscription.tier); // 'free' or 'premium'
  * ```
  */
-export function toSubscription(customerInfo: CustomerInfo): Subscription {
+export function toSubscription(customerInfo: SDKCustomerInfo): Subscription {
   const premiumEntitlement =
     customerInfo.entitlements.active[PREMIUM_ENTITLEMENT_ID];
 
@@ -204,15 +242,10 @@ export const subscriptionRepository = {
   async getCustomerInfo(): Promise<Result<Subscription, SubscriptionError>> {
     try {
       const customerInfo = await Purchases.getCustomerInfo();
-      const subscription = toSubscription(
-        customerInfo as unknown as CustomerInfo
-      );
+      const subscription = toSubscription(customerInfo);
       return { success: true, data: subscription };
     } catch (error) {
-      const subscriptionError = toSubscriptionError(
-        error as { code: number; message: string }
-      );
-      return { success: false, error: subscriptionError };
+      return { success: false, error: handleError(error) };
     }
   },
 
@@ -237,10 +270,7 @@ export const subscriptionRepository = {
 
       return { success: true, data: packages };
     } catch (error) {
-      const subscriptionError = toSubscriptionError(
-        error as { code: number; message: string }
-      );
-      return { success: false, error: subscriptionError };
+      return { success: false, error: handleError(error) };
     }
   },
 
@@ -295,16 +325,11 @@ export const subscriptionRepository = {
 
       // Purchase the package
       const { customerInfo } = await Purchases.purchasePackage(pkg);
-      const subscription = toSubscription(
-        customerInfo as unknown as CustomerInfo
-      );
+      const subscription = toSubscription(customerInfo);
 
       return { success: true, data: subscription };
     } catch (error) {
-      const subscriptionError = toSubscriptionError(
-        error as { code: number; message: string }
-      );
-      return { success: false, error: subscriptionError };
+      return { success: false, error: handleError(error) };
     }
   },
 
@@ -328,9 +353,7 @@ export const subscriptionRepository = {
   > {
     try {
       const customerInfo = await Purchases.restorePurchases();
-      const subscription = toSubscription(
-        customerInfo as unknown as CustomerInfo
-      );
+      const subscription = toSubscription(customerInfo);
 
       // Return null if no active subscription
       if (!subscription.isActive) {
@@ -339,10 +362,7 @@ export const subscriptionRepository = {
 
       return { success: true, data: subscription };
     } catch (error) {
-      const subscriptionError = toSubscriptionError(
-        error as { code: number; message: string }
-      );
-      return { success: false, error: subscriptionError };
+      return { success: false, error: handleError(error) };
     }
   },
 };

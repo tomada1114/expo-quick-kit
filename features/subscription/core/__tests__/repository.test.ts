@@ -10,11 +10,8 @@
  * - getCustomerInfo, getAvailablePackages, purchasePackage, restorePurchases
  */
 
-// Import mock utilities directly from the mock file to avoid TypeScript errors
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const mockModule = require('../../../../__mocks__/react-native-purchases');
-
-const {
+import Purchases, { type CustomerInfo } from 'react-native-purchases';
+import {
   mockFreeCustomerInfo,
   createMockPremiumCustomerInfo,
   setupFreeUserMock,
@@ -22,10 +19,7 @@ const {
   setupPurchaseError,
   resetMock,
   PURCHASES_ERROR_CODE,
-} = mockModule;
-
-import Purchases from 'react-native-purchases';
-import type { CustomerInfo } from '../types';
+} from '../../../../__mocks__/react-native-purchases';
 import { PREMIUM_ENTITLEMENT_ID } from '../types';
 
 // Import the module under test (will be created in GREEN phase)
