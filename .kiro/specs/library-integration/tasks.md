@@ -152,28 +152,28 @@
 
 ## 6. 統合とドキュメント整備
 
-- [ ] 6.1 サンプル実装の統合
+- [x] 6.1 サンプル実装の統合
   - features/_example/配下の全デモコンポーネントをapp/(tabs)/demo.tsxまたは新規ルートに統合
   - ValidationDemo, DateDemo, SecureStorageDemo, NotificationDemoを並列表示
   - 複数ライブラリ統合パターンの実装（例: zodでdate入力検証 + date-fnsでフォーマット）
   - タスク2.2, 3.2, 4.2, 5.2の完了が必要
   - _Requirements: 5.1, 5.4_
 
-- [ ] 6.2 lib/README.mdドキュメントの作成
+- [x] 6.2 lib/README.mdドキュメントの作成
   - lib/README.mdにユーティリティモジュールのドキュメントを記述
   - lib/validation.ts、lib/date.ts、lib/secure-storage.tsの使用方法と例
   - TypeScript型アノテーションの例示
   - services/notifications.tsの使用方法
   - _Requirements: 5.2, 5.3_
 
-- [ ] 6.3 CLAUDE.mdとTEMPLATE_ARCHITECTURE.mdの更新
+- [x] 6.3 CLAUDE.mdとTEMPLATE_ARCHITECTURE.mdの更新
   - CLAUDE.mdにライブラリインストール状況と使用パターンを追記
   - TEMPLATE_ARCHITECTURE.mdにzod, date-fns, expo-secure-store, expo-notificationsの導入ステータスを反映
   - lib/配下のユーティリティモジュール構成を記載
   - services/notifications.tsの説明を追加
   - _Requirements: 5.6_
 
-- [ ]* 6.4 テストカバレッジ検証と80%達成
+- [x]* 6.4 テストカバレッジ検証と80%達成
   - pnpm test:coverageでカバレッジレポート生成
   - lib/validation.ts, lib/date.ts, lib/secure-storage.ts, services/notifications.tsのカバレッジが80%以上であることを確認
   - 不足している場合は追加テストを作成

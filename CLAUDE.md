@@ -63,7 +63,17 @@ database/             # Drizzle ORM setup
 └── client.ts         # SQLite client initialization
 
 store/                # Zustand state management
+
 lib/                  # Shared utilities and configurations
+├── validation.ts     # Zod validation schemas
+├── date.ts           # date-fns utilities (Japanese locale)
+├── secure-storage.ts # expo-secure-store wrapper
+├── query-client.ts   # TanStack Query configuration
+└── README.md         # Utility module documentation
+
+services/             # External service wrappers
+└── notifications.ts  # expo-notifications service
+
 constants/            # Theme, colors, and other constants
 ```
 
@@ -102,6 +112,25 @@ Files use **kebab-case**: `themed-text.tsx`, `use-color-scheme.ts`
 - **State Management**: Zustand
 - **Data Fetching**: TanStack Query
 - **Local Database**: Drizzle ORM + expo-sqlite
+- **Validation**: Zod (type-safe form validation)
+- **Date Utilities**: date-fns (Japanese locale configured)
+- **Secure Storage**: expo-secure-store (encrypted key-value storage)
+- **Push Notifications**: expo-notifications (local notifications, Development Build required)
+
+### Utility Modules (lib/)
+
+| Module | Description | Documentation |
+|--------|-------------|---------------|
+| `validation.ts` | Zod validation schemas (email, password, phone) | [lib/README.md](lib/README.md) |
+| `date.ts` | date-fns wrappers with Japanese locale | [lib/README.md](lib/README.md) |
+| `secure-storage.ts` | expo-secure-store wrapper with Result pattern | [lib/README.md](lib/README.md) |
+| `query-client.ts` | TanStack Query configuration | [lib/README.md](lib/README.md) |
+
+### Services (services/)
+
+| Service | Description |
+|---------|-------------|
+| `notifications.ts` | Push notification permission, scheduling, and handlers |
 
 ### Theming (iOS System Colors)
 
