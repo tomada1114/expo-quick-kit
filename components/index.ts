@@ -13,6 +13,3 @@ export * from './ui';
 export { ThemedText, type ThemedTextProps } from './themed-text';
 export { ThemedView, type ThemedViewProps } from './themed-view';
 
-// Other Components
-export { ExternalLink } from './external-link';
-export { HapticTab } from './haptic-tab';
