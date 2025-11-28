@@ -89,27 +89,27 @@ export function ItemList({
 
   const keyExtractor = useCallback((item: Item) => String(item.id), []);
 
-  if (items.length === 0) {
-    return <EmptyState />;
-  }
-
   return (
     <FlatList
       testID={testID}
       data={items}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      contentContainerStyle={styles.listContent}
+      contentContainerStyle={[
+        styles.listContent,
+        items.length === 0 && styles.emptyListContent,
+      ]}
       showsVerticalScrollIndicator={false}
-      refreshControl={
-        onRefresh ? (
+      ListEmptyComponent={EmptyState}
+      {...(onRefresh && {
+        refreshControl: (
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor={colors.primary}
           />
-        ) : undefined
-      }
+        ),
+      })}
     />
   );
 }
@@ -117,6 +117,9 @@ export function ItemList({
 const styles = StyleSheet.create({
   listContent: {
     paddingVertical: Spacing.sm,
+  },
+  emptyListContent: {
+    flex: 1,
   },
   emptyContainer: {
     flex: 1,

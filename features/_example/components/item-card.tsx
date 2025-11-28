@@ -16,6 +16,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Card } from '@/components/ui/card';
 import { BorderRadius, Spacing, Typography } from '@/constants/theme';
 import { useThemedColors } from '@/hooks/use-theme-color';
+import { formatDate } from '@/lib';
 import type { Item } from '../types';
 
 export interface ItemCardProps {
@@ -25,18 +26,6 @@ export interface ItemCardProps {
   onPress?: () => void;
   /** Test ID for testing */
   testID?: string;
-}
-
-/**
- * Format date for display
- */
-function formatDate(date: Date): string {
-  const d = new Date(date);
-  return d.toLocaleDateString('ja-JP', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
 }
 
 export function ItemCard({ item, onPress, testID }: ItemCardProps) {

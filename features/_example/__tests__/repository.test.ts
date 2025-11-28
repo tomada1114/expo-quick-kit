@@ -21,6 +21,94 @@ jest.mock('@/database/client', () => ({
   },
 }));
 
+// ============================================================================
+// Mock Helpers - Reduce duplication in test setup
+// ============================================================================
+
+type MockResult<T> = T | Error;
+
+/**
+ * Create mock chain for db.select().from().orderBy() pattern
+ */
+function mockSelectOrderBy<T>(result: MockResult<T[]>) {
+  const mockChain = {
+    from: jest.fn().mockReturnValue({
+      orderBy:
+        result instanceof Error
+          ? jest.fn().mockRejectedValue(result)
+          : jest.fn().mockResolvedValue(result),
+    }),
+  };
+  (db.select as jest.Mock).mockReturnValue(mockChain);
+  return mockChain;
+}
+
+/**
+ * Create mock chain for db.select().from().where() pattern
+ */
+function mockSelectWhere<T>(result: MockResult<T[]>) {
+  const mockChain = {
+    from: jest.fn().mockReturnValue({
+      where:
+        result instanceof Error
+          ? jest.fn().mockRejectedValue(result)
+          : jest.fn().mockResolvedValue(result),
+    }),
+  };
+  (db.select as jest.Mock).mockReturnValue(mockChain);
+  return mockChain;
+}
+
+/**
+ * Create mock chain for db.insert().values().returning() pattern
+ */
+function mockInsert<T>(result: MockResult<T[]>) {
+  const mockChain = {
+    values: jest.fn().mockReturnValue({
+      returning:
+        result instanceof Error
+          ? jest.fn().mockRejectedValue(result)
+          : jest.fn().mockResolvedValue(result),
+    }),
+  };
+  (db.insert as jest.Mock).mockReturnValue(mockChain);
+  return mockChain;
+}
+
+/**
+ * Create mock chain for db.update().set().where().returning() pattern
+ */
+function mockUpdate<T>(result: MockResult<T[]>) {
+  const mockChain = {
+    set: jest.fn().mockReturnValue({
+      where: jest.fn().mockReturnValue({
+        returning:
+          result instanceof Error
+            ? jest.fn().mockRejectedValue(result)
+            : jest.fn().mockResolvedValue(result),
+      }),
+    }),
+  };
+  (db.update as jest.Mock).mockReturnValue(mockChain);
+  return mockChain;
+}
+
+/**
+ * Create mock chain for db.delete().where().returning() pattern
+ */
+function mockDelete<T>(result: MockResult<T[]>) {
+  const mockChain = {
+    where: jest.fn().mockReturnValue({
+      returning:
+        result instanceof Error
+          ? jest.fn().mockRejectedValue(result)
+          : jest.fn().mockResolvedValue(result),
+    }),
+  };
+  (db.delete as jest.Mock).mockReturnValue(mockChain);
+  return mockChain;
+}
+
 describe('ItemRepository', () => {
   let repository: ItemRepository;
 
@@ -46,12 +134,7 @@ describe('ItemRepository', () => {
           createdAt: new Date('2024-01-01'),
         },
       ];
-      const mockChain = {
-        from: jest.fn().mockReturnValue({
-          orderBy: jest.fn().mockResolvedValue(mockItems),
-        }),
-      };
-      (db.select as jest.Mock).mockReturnValue(mockChain);
+      mockSelectOrderBy(mockItems);
 
       // Act
       const result = await repository.getAll();
@@ -63,12 +146,7 @@ describe('ItemRepository', () => {
 
     it('should return empty array when no items exist', async () => {
       // Arrange
-      const mockChain = {
-        from: jest.fn().mockReturnValue({
-          orderBy: jest.fn().mockResolvedValue([]),
-        }),
-      };
-      (db.select as jest.Mock).mockReturnValue(mockChain);
+      mockSelectOrderBy([]);
 
       // Act
       const result = await repository.getAll();
@@ -79,12 +157,7 @@ describe('ItemRepository', () => {
 
     it('should handle database errors', async () => {
       // Arrange
-      const mockChain = {
-        from: jest.fn().mockReturnValue({
-          orderBy: jest.fn().mockRejectedValue(new Error('Database error')),
-        }),
-      };
-      (db.select as jest.Mock).mockReturnValue(mockChain);
+      mockSelectOrderBy(new Error('Database error'));
 
       // Act & Assert
       await expect(repository.getAll()).rejects.toThrow('Database error');
@@ -100,12 +173,7 @@ describe('ItemRepository', () => {
         description: 'Test description',
         createdAt: new Date('2024-01-01'),
       };
-      const mockChain = {
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue([mockItem]),
-        }),
-      };
-      (db.select as jest.Mock).mockReturnValue(mockChain);
+      mockSelectWhere([mockItem]);
 
       // Act
       const result = await repository.getById(1);
@@ -116,12 +184,7 @@ describe('ItemRepository', () => {
 
     it('should return null when item not found', async () => {
       // Arrange
-      const mockChain = {
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue([]),
-        }),
-      };
-      (db.select as jest.Mock).mockReturnValue(mockChain);
+      mockSelectWhere([]);
 
       // Act
       const result = await repository.getById(999);
@@ -132,12 +195,7 @@ describe('ItemRepository', () => {
 
     it('should handle id of zero', async () => {
       // Arrange
-      const mockChain = {
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue([]),
-        }),
-      };
-      (db.select as jest.Mock).mockReturnValue(mockChain);
+      mockSelectWhere([]);
 
       // Act
       const result = await repository.getById(0);
@@ -156,12 +214,7 @@ describe('ItemRepository', () => {
         ...input,
         createdAt: new Date('2024-01-01'),
       };
-      const mockChain = {
-        values: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([createdItem]),
-        }),
-      };
-      (db.insert as jest.Mock).mockReturnValue(mockChain);
+      mockInsert([createdItem]);
 
       // Act
       const result = await repository.create(input);
@@ -180,12 +233,7 @@ describe('ItemRepository', () => {
         description: null,
         createdAt: new Date('2024-01-01'),
       };
-      const mockChain = {
-        values: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([createdItem]),
-        }),
-      };
-      (db.insert as jest.Mock).mockReturnValue(mockChain);
+      mockInsert([createdItem]);
 
       // Act
       const result = await repository.create(input);
@@ -202,12 +250,7 @@ describe('ItemRepository', () => {
         ...input,
         createdAt: new Date('2024-01-01'),
       };
-      const mockChain = {
-        values: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([createdItem]),
-        }),
-      };
-      (db.insert as jest.Mock).mockReturnValue(mockChain);
+      mockInsert([createdItem]);
 
       // Act
       const result = await repository.create(input);
@@ -227,12 +270,7 @@ describe('ItemRepository', () => {
         description: null,
         createdAt: new Date('2024-01-01'),
       };
-      const mockChain = {
-        values: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([createdItem]),
-        }),
-      };
-      (db.insert as jest.Mock).mockReturnValue(mockChain);
+      mockInsert([createdItem]);
 
       // Act
       const result = await repository.create(input);
@@ -251,14 +289,7 @@ describe('ItemRepository', () => {
         description: 'Updated description',
         createdAt: new Date('2024-01-01'),
       };
-      const mockChain = {
-        set: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            returning: jest.fn().mockResolvedValue([updatedItem]),
-          }),
-        }),
-      };
-      (db.update as jest.Mock).mockReturnValue(mockChain);
+      mockUpdate([updatedItem]);
 
       // Act
       const result = await repository.update(1, { title: 'Updated Title' });
@@ -269,14 +300,7 @@ describe('ItemRepository', () => {
 
     it('should return null when updating non-existent item', async () => {
       // Arrange
-      const mockChain = {
-        set: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            returning: jest.fn().mockResolvedValue([]),
-          }),
-        }),
-      };
-      (db.update as jest.Mock).mockReturnValue(mockChain);
+      mockUpdate([]);
 
       // Act
       const result = await repository.update(999, { title: 'Updated' });
@@ -293,14 +317,7 @@ describe('ItemRepository', () => {
         description: 'Updated desc only',
         createdAt: new Date('2024-01-01'),
       };
-      const mockChain = {
-        set: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            returning: jest.fn().mockResolvedValue([updatedItem]),
-          }),
-        }),
-      };
-      (db.update as jest.Mock).mockReturnValue(mockChain);
+      mockUpdate([updatedItem]);
 
       // Act
       const result = await repository.update(1, {
@@ -315,12 +332,7 @@ describe('ItemRepository', () => {
   describe('delete', () => {
     it('should delete existing item and return true', async () => {
       // Arrange
-      const mockChain = {
-        where: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([{ id: 1 }]),
-        }),
-      };
-      (db.delete as jest.Mock).mockReturnValue(mockChain);
+      mockDelete([{ id: 1 }]);
 
       // Act
       const result = await repository.delete(1);
@@ -331,12 +343,7 @@ describe('ItemRepository', () => {
 
     it('should return false when deleting non-existent item', async () => {
       // Arrange
-      const mockChain = {
-        where: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([]),
-        }),
-      };
-      (db.delete as jest.Mock).mockReturnValue(mockChain);
+      mockDelete([]);
 
       // Act
       const result = await repository.delete(999);
