@@ -4,15 +4,21 @@
  * TDD: Tests for Drizzle ORM client initialization
  */
 
+const mockStatement = {
+  executeSync: jest.fn().mockReturnValue({ changes: 0, lastInsertRowId: 0 }),
+  executeForRawResultSync: jest.fn().mockReturnValue({
+    getAllSync: jest.fn().mockReturnValue([]),
+    getFirstSync: jest.fn().mockReturnValue(null),
+  }),
+  finalizeSync: jest.fn(),
+};
+
 const mockExpoDb = {
   execSync: jest.fn(),
   runSync: jest.fn().mockReturnValue({ changes: 0, lastInsertRowId: 1 }),
   getFirstSync: jest.fn().mockReturnValue(null),
   getAllSync: jest.fn().mockReturnValue([]),
-  prepareSync: jest.fn().mockReturnValue({
-    executeSync: jest.fn(),
-    finalizeSync: jest.fn(),
-  }),
+  prepareSync: jest.fn().mockReturnValue(mockStatement),
 };
 
 const mockOpenDatabaseSync = jest.fn().mockReturnValue(mockExpoDb);

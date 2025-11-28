@@ -1,31 +1,33 @@
 # Implementation Plan
+-
 
 ## 1. ライブラリインストールと基盤セットアップ
 
-- [ ] 1.1 (P) zodバリデーションライブラリの導入
+- [x] 1.1 (P) zodバリデーションライブラリの導入
   - pnpm経由でzod ^3.xをインストール
   - package.jsonの依存関係を確認
   - _Requirements: 1.1_
 
-- [ ] 1.2 (P) date-fns日付処理ライブラリの導入
+- [x] 1.2 (P) date-fns日付処理ライブラリの導入
   - pnpm経由でdate-fns ^4.1.0をインストール
   - package.jsonの依存関係を確認
   - _Requirements: 2.1_
 
-- [ ] 1.3 (P) expo-secure-storeセキュアストレージの導入
+- [x] 1.3 (P) expo-secure-storeセキュアストレージの導入
   - pnpm expo installでexpo-secure-store ~15.0.7をインストール
   - package.jsonの依存関係を確認
   - _Requirements: 3.1_
 
-- [ ] 1.4 (P) expo-notificationsプッシュ通知ライブラリの導入
+- [x] 1.4 (P) expo-notificationsプッシュ通知ライブラリの導入
   - pnpm expo installでexpo-notifications ~54.xをインストール
   - pnpm expo installでexpo-device（物理デバイスチェック用）をインストール
   - package.jsonの依存関係を確認
+  -
   - _Requirements: 4.1_
 
 ## 2. バリデーション機能の実装
 
-- [ ] 2.1 (P) zodバリデーションスキーマの作成
+- [x] 2.1 (P) zodバリデーションスキーマの作成
   - lib/validation.tsに再利用可能なバリデーションスキーマを定義
   - emailSchema（メールアドレス検証、日本語エラーメッセージ）
   - passwordSchema（8文字以上、大文字小文字数字を含む、日本語エラーメッセージ）
@@ -33,7 +35,7 @@
   - ValidationResult型とvalidateData関数を実装
   - _Requirements: 1.3, 1.4_
 
-- [ ] 2.2 バリデーションデモUIの実装
+- [x] 2.2 バリデーションデモUIの実装
   - features/_example/components/validation-demo.tsxにデモコンポーネントを作成
   - メール、パスワード、電話番号の入力フォームを配置
   - リアルタイムバリデーション（入力変更時にvalidateDataを実行）
@@ -42,12 +44,13 @@
   - lib/validation.ts（タスク2.1）の完了が必要
   - _Requirements: 1.2, 1.4_
 
-- [ ]* 2.3 zodバリデーションのユニットテスト
+- [x]* 2.3 zodバリデーションのユニットテスト
   - lib/__tests__/validation.test.tsにテストスイートを作成
   - emailSchema検証テスト（正常系・異常系）
   - passwordSchema検証テスト（8文字未満、大文字なし、小文字なし、数字なし）
   - phoneSchema検証テスト（日本の電話番号形式）
   - validateData関数のテスト（success/errorsパス）
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 1.5_
 
 ## 3. 日付処理機能の実装
@@ -75,6 +78,7 @@
   - formatDistanceToNow関数のテスト（過去・未来の日付）
   - formatRelativeDate関数のテスト（今日、昨日、明日など）
   - 日本語ロケールの検証
+  -
   - _Requirements: 2.5_
 
 ## 4. セキュアストレージ機能の実装
@@ -104,6 +108,7 @@
   - deleteSecure関数のモック化テスト（成功・失敗）
   - SecureStorageKey列挙型の型安全性検証
   - SecureStore APIをモック化（jest.mock）
+  -
   - _Requirements: 3.4_
 
 ## 5. プッシュ通知機能の実装
@@ -142,6 +147,7 @@
   - cancelNotification関数のモック化テスト
   - getAllScheduledNotifications関数のモック化テスト
   - expo-notifications APIをモック化（jest.mock）
+  -
   - _Requirements: 4.2, 4.3, 4.7_
 
 ## 6. 統合とドキュメント整備
