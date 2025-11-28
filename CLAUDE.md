@@ -158,7 +158,12 @@ refer to `expo-design-system` Claude Skill.
 
 ## Development Guidelines
 
-- Think in English, generate responses in Japanese. All Markdown content written to project files (e.g., requirements.md, design.md, tasks.md, research.md, validation reports) MUST be written in the target language configured for this specification (see spec.json.language).
+### Language
+
+- **Default language: English**
+- Generate all responses, documentation, and file content in English unless explicitly specified otherwise
+- This includes: Markdown files (requirements.md, design.md, tasks.md, research.md), code comments, commit messages, validation reports, and all other project documentation
+- For specifications: Follow the language configured in spec.json.language if different from the default
 
 ## Minimal Workflow
 

@@ -1,9 +1,9 @@
 /**
  * Zod Validation Schemas
  *
- * 再利用可能なバリデーションスキーマを提供
+ * Provides reusable validation schemas
  * - Email validation schema with localized error messages
- * - Password validation schema (8文字以上、大文字小文字数字を含む)
+ * - Password validation schema (minimum 8 characters, uppercase, lowercase, and number required)
  * - Phone number validation schema (Japanese format)
  */
 
@@ -14,8 +14,8 @@ import { z } from 'zod';
  */
 export const emailSchema = z
   .string()
-  .min(1, { message: 'メールアドレスを入力してください' })
-  .email({ message: 'メールアドレスの形式が正しくありません' });
+  .min(1, { message: 'Please enter your email address' })
+  .email({ message: 'Invalid email format' });
 
 /**
  * Password validation schema
@@ -24,10 +24,10 @@ export const emailSchema = z
  */
 export const passwordSchema = z
   .string()
-  .min(8, { message: 'パスワードは8文字以上で入力してください' })
-  .regex(/[A-Z]/, { message: '大文字を1文字以上含めてください' })
-  .regex(/[a-z]/, { message: '小文字を1文字以上含めてください' })
-  .regex(/[0-9]/, { message: '数字を1文字以上含めてください' });
+  .min(8, { message: 'Password must be at least 8 characters' })
+  .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter' })
+  .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
+  .regex(/[0-9]/, { message: 'Password must contain at least one number' });
 
 /**
  * Phone number validation schema (Japanese format)
@@ -35,7 +35,7 @@ export const passwordSchema = z
  * - 10-11 digits total (no hyphens)
  */
 export const phoneSchema = z.string().regex(/^0\d{9,10}$/, {
-  message: '電話番号の形式が正しくありません（例: 09012345678）',
+  message: 'Invalid phone number format (example: 09012345678)',
 });
 
 /**
