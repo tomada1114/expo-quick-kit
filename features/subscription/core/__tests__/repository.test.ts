@@ -81,6 +81,138 @@ describe('Subscription Repository', () => {
       expect(subscription.isActive).toBe(false);
     });
 
+    it('should return free subscription when entitlement exists but isActive is false', () => {
+      const customerInfo = {
+        entitlements: {
+          active: {
+            [PREMIUM_ENTITLEMENT_ID]: {
+              identifier: PREMIUM_ENTITLEMENT_ID,
+              isActive: false, // Entitlement exists but is not active
+              willRenew: false,
+              periodType: 'normal',
+              latestPurchaseDate: new Date().toISOString(),
+              latestPurchaseDateMillis: Date.now(),
+              originalPurchaseDate: new Date().toISOString(),
+              originalPurchaseDateMillis: Date.now(),
+              expirationDate: new Date(Date.now() - 1000).toISOString(), // Expired
+              expirationDateMillis: Date.now() - 1000,
+              store: 'APP_STORE',
+              productIdentifier: 'monthly_plan',
+              productPlanIdentifier: null,
+              isSandbox: false,
+              unsubscribeDetectedAt: null,
+              unsubscribeDetectedAtMillis: null,
+              billingIssueDetectedAt: null,
+              billingIssueDetectedAtMillis: null,
+              ownershipType: 'PURCHASED',
+            },
+          },
+          all: {},
+        },
+        activeSubscriptions: [],
+        allPurchasedProductIdentifiers: ['monthly_plan'],
+        latestExpirationDate: null,
+        originalAppUserId: 'test-user',
+        originalApplicationVersion: null,
+        originalPurchaseDate: null,
+      } as CustomerInfo;
+
+      const subscription = toSubscription(customerInfo);
+
+      expect(subscription.tier).toBe('free');
+      expect(subscription.isActive).toBe(false);
+    });
+
+    it('should handle malformed expiration date gracefully', () => {
+      const customerInfo = {
+        entitlements: {
+          active: {
+            [PREMIUM_ENTITLEMENT_ID]: {
+              identifier: PREMIUM_ENTITLEMENT_ID,
+              isActive: true,
+              willRenew: true,
+              periodType: 'normal',
+              latestPurchaseDate: new Date().toISOString(),
+              latestPurchaseDateMillis: Date.now(),
+              originalPurchaseDate: new Date().toISOString(),
+              originalPurchaseDateMillis: Date.now(),
+              expirationDate: 'invalid-date-string', // Malformed date
+              expirationDateMillis: null,
+              store: 'APP_STORE',
+              productIdentifier: 'monthly_plan',
+              productPlanIdentifier: null,
+              isSandbox: false,
+              unsubscribeDetectedAt: null,
+              unsubscribeDetectedAtMillis: null,
+              billingIssueDetectedAt: null,
+              billingIssueDetectedAtMillis: null,
+              ownershipType: 'PURCHASED',
+            },
+          },
+          all: {},
+        },
+        activeSubscriptions: ['monthly_plan'],
+        allPurchasedProductIdentifiers: ['monthly_plan'],
+        latestExpirationDate: null,
+        originalAppUserId: 'test-user',
+        originalApplicationVersion: null,
+        originalPurchaseDate: null,
+      } as CustomerInfo;
+
+      const subscription = toSubscription(customerInfo);
+
+      // Should still be premium, but expiresAt should be Invalid Date
+      expect(subscription.tier).toBe('premium');
+      expect(subscription.isActive).toBe(true);
+      expect(subscription.expiresAt).toBeInstanceOf(Date);
+      // Invalid Date check
+      expect(Number.isNaN(subscription.expiresAt?.getTime())).toBe(true);
+    });
+
+    it('should handle null expiration date for lifetime subscription', () => {
+      const customerInfo = {
+        entitlements: {
+          active: {
+            [PREMIUM_ENTITLEMENT_ID]: {
+              identifier: PREMIUM_ENTITLEMENT_ID,
+              isActive: true,
+              willRenew: false,
+              periodType: 'normal',
+              latestPurchaseDate: new Date().toISOString(),
+              latestPurchaseDateMillis: Date.now(),
+              originalPurchaseDate: new Date().toISOString(),
+              originalPurchaseDateMillis: Date.now(),
+              expirationDate: null, // Lifetime - no expiration
+              expirationDateMillis: null,
+              store: 'APP_STORE',
+              productIdentifier: 'lifetime_plan',
+              productPlanIdentifier: null,
+              isSandbox: false,
+              unsubscribeDetectedAt: null,
+              unsubscribeDetectedAtMillis: null,
+              billingIssueDetectedAt: null,
+              billingIssueDetectedAtMillis: null,
+              ownershipType: 'PURCHASED',
+            },
+          },
+          all: {},
+        },
+        activeSubscriptions: [],
+        allPurchasedProductIdentifiers: ['lifetime_plan'],
+        latestExpirationDate: null,
+        originalAppUserId: 'test-user',
+        originalApplicationVersion: null,
+        originalPurchaseDate: null,
+      } as CustomerInfo;
+
+      const subscription = toSubscription(customerInfo);
+
+      expect(subscription.tier).toBe('premium');
+      expect(subscription.isActive).toBe(true);
+      expect(subscription.expiresAt).toBeNull();
+      expect(subscription.productId).toBe('lifetime_plan');
+    });
+
     it('should correctly parse expiration date from premium entitlement', () => {
       const futureDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
       const customerInfo = {
@@ -186,6 +318,18 @@ describe('Subscription Repository', () => {
       const subscriptionError = toSubscriptionError(error);
 
       expect(subscriptionError.code).toBe('NETWORK_ERROR');
+      expect(subscriptionError.retryable).toBe(true);
+    });
+
+    it('should map STORE_PROBLEM_ERROR to STORE_PROBLEM_ERROR with retryable flag', () => {
+      const error = {
+        code: PURCHASES_ERROR_CODE.STORE_PROBLEM_ERROR,
+        message: 'Store problem',
+      };
+
+      const subscriptionError = toSubscriptionError(error);
+
+      expect(subscriptionError.code).toBe('STORE_PROBLEM_ERROR');
       expect(subscriptionError.retryable).toBe(true);
     });
 

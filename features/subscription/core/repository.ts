@@ -152,6 +152,13 @@ export function toSubscriptionError(error: {
         retryable: true,
       };
 
+    case PURCHASES_ERROR_CODE.STORE_PROBLEM_ERROR:
+      return {
+        code: 'STORE_PROBLEM_ERROR',
+        message,
+        retryable: true,
+      };
+
     case PURCHASES_ERROR_CODE.CONFIGURATION_ERROR:
       return {
         code: 'CONFIGURATION_ERROR',
