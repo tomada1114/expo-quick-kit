@@ -13,6 +13,7 @@ module.exports = {
     '!**/dist/**',
     '!**/build/**',
   ],
+  setupFiles: ['<rootDir>/jest.setup.pre.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: ['**/__tests__/**/*.test.(ts|tsx)'],
 };
