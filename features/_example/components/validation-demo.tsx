@@ -48,29 +48,26 @@ export function ValidationDemo({ testID }: ValidationDemoProps) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const validateField = useCallback(
-    (field: keyof FormState, value: string) => {
-      let schema;
-      switch (field) {
-        case 'email':
-          schema = emailSchema;
-          break;
-        case 'password':
-          schema = passwordSchema;
-          break;
-        case 'phone':
-          schema = phoneSchema;
-          break;
-      }
+  const validateField = useCallback((field: keyof FormState, value: string) => {
+    let schema;
+    switch (field) {
+      case 'email':
+        schema = emailSchema;
+        break;
+      case 'password':
+        schema = passwordSchema;
+        break;
+      case 'phone':
+        schema = phoneSchema;
+        break;
+    }
 
-      const result = validateData(schema, value);
-      setErrors((prev) => ({
-        ...prev,
-        [field]: result.success ? undefined : Object.values(result.errors)[0],
-      }));
-    },
-    []
-  );
+    const result = validateData(schema, value);
+    setErrors((prev) => ({
+      ...prev,
+      [field]: result.success ? undefined : Object.values(result.errors)[0],
+    }));
+  }, []);
 
   const handleChange = useCallback(
     (field: keyof FormState) => (value: string) => {
@@ -119,7 +116,11 @@ export function ValidationDemo({ testID }: ValidationDemoProps) {
   return (
     <Card variant="flat" testID={testID} style={styles.container}>
       <Text
-        style={[styles.title, Typography.headline, { color: colors.text.primary }]}
+        style={[
+          styles.title,
+          Typography.headline,
+          { color: colors.text.primary },
+        ]}
       >
         Zod Validation Demo
       </Text>
@@ -134,7 +135,13 @@ export function ValidationDemo({ testID }: ValidationDemoProps) {
       </Text>
 
       <View style={styles.formGroup}>
-        <Text style={[styles.label, Typography.caption1, { color: colors.text.secondary }]}>
+        <Text
+          style={[
+            styles.label,
+            Typography.caption1,
+            { color: colors.text.secondary },
+          ]}
+        >
           メールアドレス
         </Text>
         <TextInput
@@ -152,7 +159,11 @@ export function ValidationDemo({ testID }: ValidationDemoProps) {
         {touched.email && errors.email && (
           <Text
             testID={testID ? `${testID}-email-error` : 'email-error'}
-            style={[styles.error, Typography.caption1, { color: colors.semantic.error }]}
+            style={[
+              styles.error,
+              Typography.caption1,
+              { color: colors.semantic.error },
+            ]}
           >
             {errors.email}
           </Text>
@@ -160,12 +171,21 @@ export function ValidationDemo({ testID }: ValidationDemoProps) {
       </View>
 
       <View style={styles.formGroup}>
-        <Text style={[styles.label, Typography.caption1, { color: colors.text.secondary }]}>
+        <Text
+          style={[
+            styles.label,
+            Typography.caption1,
+            { color: colors.text.secondary },
+          ]}
+        >
           パスワード
         </Text>
         <TextInput
           testID={testID ? `${testID}-password-input` : 'password-input'}
-          style={[inputStyle, touched.password && errors.password && errorInputStyle]}
+          style={[
+            inputStyle,
+            touched.password && errors.password && errorInputStyle,
+          ]}
           placeholder="8文字以上、大小英字・数字を含む"
           placeholderTextColor={colors.text.tertiary}
           value={form.password}
@@ -178,7 +198,11 @@ export function ValidationDemo({ testID }: ValidationDemoProps) {
         {touched.password && errors.password && (
           <Text
             testID={testID ? `${testID}-password-error` : 'password-error'}
-            style={[styles.error, Typography.caption1, { color: colors.semantic.error }]}
+            style={[
+              styles.error,
+              Typography.caption1,
+              { color: colors.semantic.error },
+            ]}
           >
             {errors.password}
           </Text>
@@ -186,7 +210,13 @@ export function ValidationDemo({ testID }: ValidationDemoProps) {
       </View>
 
       <View style={styles.formGroup}>
-        <Text style={[styles.label, Typography.caption1, { color: colors.text.secondary }]}>
+        <Text
+          style={[
+            styles.label,
+            Typography.caption1,
+            { color: colors.text.secondary },
+          ]}
+        >
           電話番号
         </Text>
         <TextInput
@@ -202,7 +232,11 @@ export function ValidationDemo({ testID }: ValidationDemoProps) {
         {touched.phone && errors.phone && (
           <Text
             testID={testID ? `${testID}-phone-error` : 'phone-error'}
-            style={[styles.error, Typography.caption1, { color: colors.semantic.error }]}
+            style={[
+              styles.error,
+              Typography.caption1,
+              { color: colors.semantic.error },
+            ]}
           >
             {errors.phone}
           </Text>

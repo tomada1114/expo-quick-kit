@@ -34,11 +34,9 @@ export const passwordSchema = z
  * - Starts with 0
  * - 10-11 digits total (no hyphens)
  */
-export const phoneSchema = z
-  .string()
-  .regex(/^0\d{9,10}$/, {
-    message: '電話番号の形式が正しくありません（例: 09012345678）',
-  });
+export const phoneSchema = z.string().regex(/^0\d{9,10}$/, {
+  message: '電話番号の形式が正しくありません（例: 09012345678）',
+});
 
 /**
  * Generic form validation result type
