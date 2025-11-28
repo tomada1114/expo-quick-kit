@@ -1,15 +1,16 @@
 /**
  * SecureStorageDemo Component
  *
+ * Apple HIG準拠のセキュアストレージデモ
  * expo-secure-storeのインタラクティブデモを提供
- * AUTH_TOKENの保存、取得、削除操作とエラーハンドリング
+ * AUTH_TOKENの保存、取得、削除操作とグレースフルなエラーハンドリング
  *
  * Usage:
  *   <SecureStorageDemo />
  */
 
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, Text, TextInput, View, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -27,7 +28,7 @@ export interface SecureStorageDemoProps {
 }
 
 interface Status {
-  type: 'idle' | 'success' | 'error';
+  type: 'idle' | 'success' | 'error' | 'info';
   message: string;
 }
 
@@ -48,7 +49,10 @@ export function SecureStorageDemo({ testID }: SecureStorageDemoProps) {
 
   const handleSave = useCallback(async () => {
     if (!inputValue.trim()) {
-      setStatus({ type: 'error', message: 'トークンを入力してください' });
+      setStatus({
+        type: 'info',
+        message: 'トークンを入力してください',
+      });
       return;
     }
 
@@ -56,10 +60,16 @@ export function SecureStorageDemo({ testID }: SecureStorageDemoProps) {
     const result = await saveSecure(SecureStorageKey.AUTH_TOKEN, inputValue);
 
     if (result.success) {
-      setStatus({ type: 'success', message: 'トークンを保存しました' });
+      setStatus({
+        type: 'success',
+        message: '✓ トークンを保存しました',
+      });
       setInputValue('');
     } else {
-      setStatus({ type: 'error', message: result.error });
+      setStatus({
+        type: 'error',
+        message: result.error,
+      });
     }
     setIsLoading(false);
   }, [inputValue]);
@@ -73,16 +83,19 @@ export function SecureStorageDemo({ testID }: SecureStorageDemoProps) {
         setInputValue(result.data);
         setStatus({
           type: 'success',
-          message: 'トークンを取得しました',
+          message: '✓ トークンを取得しました',
         });
       } else {
         setStatus({
-          type: 'error',
-          message: 'トークンが見つかりません',
+          type: 'info',
+          message: 'トークンが保存されていません',
         });
       }
     } else {
-      setStatus({ type: 'error', message: result.error });
+      setStatus({
+        type: 'error',
+        message: result.error,
+      });
     }
     setIsLoading(false);
   }, []);
@@ -92,13 +105,32 @@ export function SecureStorageDemo({ testID }: SecureStorageDemoProps) {
     const result = await deleteSecure(SecureStorageKey.AUTH_TOKEN);
 
     if (result.success) {
-      setStatus({ type: 'success', message: 'トークンを削除しました' });
+      setStatus({
+        type: 'success',
+        message: '✓ トークンを削除しました',
+      });
       setInputValue('');
     } else {
-      setStatus({ type: 'error', message: result.error });
+      setStatus({
+        type: 'error',
+        message: result.error,
+      });
     }
     setIsLoading(false);
   }, []);
+
+  const getStatusBackgroundColor = () => {
+    switch (status.type) {
+      case 'success':
+        return colors.semantic.success;
+      case 'error':
+        return colors.semantic.error;
+      case 'info':
+        return colors.semantic.info;
+      default:
+        return 'transparent';
+    }
+  };
 
   const inputStyle = [
     styles.input,
@@ -109,34 +141,56 @@ export function SecureStorageDemo({ testID }: SecureStorageDemoProps) {
     },
   ];
 
-  const statusColor =
-    status.type === 'success'
-      ? colors.semantic.success
-      : status.type === 'error'
-        ? colors.semantic.error
-        : colors.text.secondary;
-
   return (
     <Card variant="flat" testID={testID} style={styles.container}>
-      <Text
-        style={[
-          styles.title,
-          Typography.headline,
-          { color: colors.text.primary },
-        ]}
-      >
-        Secure Storage Demo
-      </Text>
-      <Text
-        style={[
-          styles.description,
-          Typography.subheadline,
-          { color: colors.text.secondary },
-        ]}
-      >
-        セキュアストレージのサンプル実装です
-      </Text>
+      {/* Header */}
+      <View style={styles.headerSection}>
+        <Text
+          style={[
+            styles.title,
+            Typography.headline,
+            { color: colors.text.primary },
+          ]}
+        >
+          セキュア保存
+        </Text>
+        <Text
+          style={[
+            styles.description,
+            Typography.body,
+            { color: colors.text.secondary },
+          ]}
+        >
+          トークンを暗号化して安全に保存します
+        </Text>
+      </View>
 
+      {/* Status Banner */}
+      {status.message && (
+        <View
+          testID={testID ? `${testID}-status` : 'secure-storage-status'}
+          style={[
+            styles.statusBanner,
+            {
+              backgroundColor: getStatusBackgroundColor(),
+            },
+          ]}
+        >
+          <Text
+            style={[
+              Typography.body,
+              styles.statusText,
+              {
+                color: colors.text.inverse,
+              },
+            ]}
+          >
+            {status.message}
+          </Text>
+        </View>
+      )}
+
+      {/* Input Section */}
       <View style={styles.formGroup}>
         <Text
           style={[
@@ -145,12 +199,12 @@ export function SecureStorageDemo({ testID }: SecureStorageDemoProps) {
             { color: colors.text.secondary },
           ]}
         >
-          AUTH_TOKEN
+          トークン入力
         </Text>
         <TextInput
           testID={testID ? `${testID}-input` : 'secure-storage-input'}
           style={inputStyle}
-          placeholder="トークンを入力"
+          placeholder="暗号化したいトークンまたはキーを入力"
           placeholderTextColor={colors.text.tertiary}
           value={inputValue}
           onChangeText={handleInputChange}
@@ -160,72 +214,71 @@ export function SecureStorageDemo({ testID }: SecureStorageDemoProps) {
           multiline
           numberOfLines={4}
         />
-        <Text
-          style={[
-            styles.infoText,
-            Typography.footnote,
-            { color: colors.text.tertiary },
-          ]}
-        >
-          2000文字以内で入力してください ({inputValue.length}/{MAX_INPUT_LENGTH}
-          )
-        </Text>
-      </View>
-
-      {status.message && (
-        <View
-          testID={testID ? `${testID}-status` : 'secure-storage-status'}
-          style={{
-            backgroundColor:
-              status.type === 'success'
-                ? colors.semantic.success
-                : colors.semantic.error,
-            borderRadius: BorderRadius.md,
-            padding: Spacing.sm,
-            marginBottom: Spacing.md,
-          }}
-        >
+        <View style={styles.counterSection}>
           <Text
             style={[
-              Typography.caption1,
+              Typography.footnote,
               {
-                color:
-                  status.type === 'success'
-                    ? colors.text.inverse
-                    : colors.text.inverse,
+                color: colors.text.tertiary,
               },
             ]}
           >
-            {status.message}
+            {inputValue.length} / {MAX_INPUT_LENGTH}
           </Text>
         </View>
-      )}
+      </View>
 
-      <View style={styles.buttonRow}>
+      {/* Info Text */}
+      <View
+        style={[
+          styles.infoBox,
+          {
+            backgroundColor: colors.background.secondary,
+            borderColor: colors.interactive.separator,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            Typography.footnote,
+            {
+              color: colors.text.secondary,
+            },
+          ]}
+        >
+          💡 暗号化保存対応: iOS KeychainとAndroid EncryptedSharedPreferencesで
+          安全に保護されます
+        </Text>
+      </View>
+
+      {/* Action Buttons */}
+      <View style={styles.buttonSection}>
         <Button
           testID={testID ? `${testID}-save-button` : 'save-button'}
           title="保存"
           variant="primary"
           onPress={handleSave}
-          style={styles.button}
+          style={styles.mainButton}
           disabled={isLoading}
         />
-        <Button
-          testID={testID ? `${testID}-retrieve-button` : 'retrieve-button'}
-          title="取得"
-          variant="primary"
-          onPress={handleRetrieve}
-          style={styles.button}
-          disabled={isLoading}
-        />
-        <Button
-          testID={testID ? `${testID}-delete-button` : 'delete-button'}
-          title="削除"
-          variant="secondary"
-          onPress={handleDelete}
-          style={styles.button}
-          disabled={isLoading}
-        />
+        <View style={styles.secondaryButtonRow}>
+          <Button
+            testID={testID ? `${testID}-retrieve-button` : 'retrieve-button'}
+            title="取得"
+            variant="secondary"
+            onPress={handleRetrieve}
+            style={styles.secondaryButton}
+            disabled={isLoading}
+          />
+          <Button
+            testID={testID ? `${testID}-delete-button` : 'delete-button'}
+            title="削除"
+            variant="secondary"
+            onPress={handleDelete}
+            style={styles.secondaryButton}
+            disabled={isLoading}
+          />
+        </View>
       </View>
     </Card>
   );
@@ -233,38 +286,71 @@ export function SecureStorageDemo({ testID }: SecureStorageDemoProps) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: Spacing.sm,
+    gap: 0,
+  },
+  headerSection: {
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F2F2F7',
   },
   title: {
     marginBottom: Spacing.xs,
+    fontWeight: '600',
   },
   description: {
+    marginBottom: 0,
+  },
+  statusBanner: {
+    marginTop: Spacing.md,
+    marginHorizontal: 0,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
   },
+  statusText: {
+    fontWeight: '500',
+  },
   formGroup: {
-    marginBottom: Spacing.sm,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.md,
   },
   label: {
     marginBottom: Spacing.xs,
+    fontWeight: '500',
   },
   input: {
-    height: 120,
+    height: 100,
     borderWidth: 1,
     borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     ...Typography.body,
     textAlignVertical: 'top',
   },
-  infoText: {
+  counterSection: {
     marginTop: Spacing.xs,
+    alignItems: 'flex-end',
   },
-  buttonRow: {
+  infoBox: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderWidth: 1,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.md,
+  },
+  buttonSection: {
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+  },
+  mainButton: {
+    width: '100%',
+  },
+  secondaryButtonRow: {
     flexDirection: 'row',
     gap: Spacing.sm,
-    marginTop: Spacing.sm,
   },
-  button: {
+  secondaryButton: {
     flex: 1,
   },
 });

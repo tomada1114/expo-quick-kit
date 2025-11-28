@@ -42,14 +42,14 @@ describe('SecureStorageDemo Component', () => {
   it('should render component with title', () => {
     render(<SecureStorageDemo />);
 
-    expect(screen.getByText('Secure Storage Demo')).toBeDefined();
+    expect(screen.getByText('セキュア保存')).toBeDefined();
   });
 
   it('should render description text', () => {
     render(<SecureStorageDemo />);
 
     expect(
-      screen.getByText(/セキュアストレージのサンプル実装です/)
+      screen.getByText(/トークンを暗号化して安全に保存します/)
     ).toBeDefined();
   });
 
@@ -280,7 +280,11 @@ describe('SecureStorageDemo Component', () => {
   it('should display info text about size limit', () => {
     render(<SecureStorageDemo />);
 
-    expect(screen.getByText(/2000文字以内で入力してください/)).toBeDefined();
+    expect(
+      screen.getByText(
+        /暗号化保存対応: iOS KeychainとAndroid EncryptedSharedPreferencesで/
+      )
+    ).toBeDefined();
   });
 
   it('should accept custom testID prop', () => {
