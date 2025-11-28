@@ -55,7 +55,7 @@
 
 ## 3. 日付処理機能の実装
 
-- [ ] 3.1 (P) date-fnsユーティリティモジュールの作成
+- [x] 3.1 (P) date-fnsユーティリティモジュールの作成
   - lib/date.tsにdate-fnsラッパー関数を実装
   - formatDate関数（デフォルトロケール: ja）
   - formatDistanceToNow関数（相対時刻表示、日本語ロケール）
@@ -63,7 +63,7 @@
   - date-fnsのモジュラーインポートを使用（Tree-shaking維持）
   - _Requirements: 2.2_
 
-- [ ] 3.2 日付フォーマットデモUIの実装
+- [x] 3.2 日付フォーマットデモUIの実装
   - features/_example/components/date-demo.tsxにデモコンポーネントを作成
   - format, formatDistanceToNow, formatRelativeDateの使用例を表示
   - 複数のフォーマットパターンを並列表示（'yyyy-MM-dd HH:mm:ss'、'3日前'、'今日'など）
@@ -72,7 +72,7 @@
   - lib/date.ts（タスク3.1）の完了が必要
   - _Requirements: 2.3, 2.4_
 
-- [ ]* 3.3 date-fnsユーティリティのユニットテスト
+- [x]* 3.3 date-fnsユーティリティのユニットテスト
   - lib/__tests__/date.test.tsにテストスイートを作成
   - formatDate関数のテスト（様々なフォーマット文字列）
   - formatDistanceToNow関数のテスト（過去・未来の日付）
