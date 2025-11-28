@@ -17,6 +17,7 @@ import { initializeDatabase } from '@/database/client';
 import { useStore } from '@/store';
 import { queryClient } from '@/lib/query-client';
 import { setupForegroundHandler } from '@/services/notifications';
+import { configurePurchases } from '@/features/subscription/core/sdk';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -94,8 +95,19 @@ export default function RootLayout() {
       // Store rehydration
       const storeHydrationPromise = useStore.persist.rehydrate();
 
-      // Parallel initialization
-      await Promise.all([dbInitPromise, storeHydrationPromise]);
+      // RevenueCat SDK initialization (non-blocking: errors are logged but don't block app startup)
+      // Falls back to free tier mode if initialization fails
+      const revenueCatInitPromise = configurePurchases().catch((error) => {
+        // Log error but don't block app startup - user will be in free tier mode
+        console.warn('RevenueCat SDK initialization failed:', error);
+      });
+
+      // Parallel initialization of all critical services
+      await Promise.all([
+        dbInitPromise,
+        storeHydrationPromise,
+        revenueCatInitPromise,
+      ]);
 
       setAppReady(true);
     } catch (error) {
