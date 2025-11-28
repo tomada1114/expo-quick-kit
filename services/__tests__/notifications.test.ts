@@ -26,15 +26,37 @@ jest.mock('expo-notifications', () => ({
   cancelScheduledNotificationAsync: jest.fn(),
   getAllScheduledNotificationsAsync: jest.fn(),
   setNotificationHandler: jest.fn(),
+  setNotificationChannelAsync: jest.fn(),
   SchedulableTriggerInputTypes: {
     TIME_INTERVAL: 'timeInterval',
     DATE: 'date',
+  },
+  AndroidImportance: {
+    MAX: 5,
   },
 }));
 
 // Mock expo-device
 jest.mock('expo-device', () => ({
   isDevice: true,
+}));
+
+// Mock expo-constants
+jest.mock('expo-constants', () => ({
+  expoConfig: {
+    extra: {
+      eas: {
+        projectId: 'test-project-id',
+      },
+    },
+  },
+}));
+
+// Mock react-native Platform
+jest.mock('react-native', () => ({
+  Platform: {
+    OS: 'ios',
+  },
 }));
 
 describe('Notification Service', () => {
@@ -78,6 +100,43 @@ describe('Notification Service', () => {
         token: 'ExponentPushToken[yyyyy]',
       });
       expect(Notifications.requestPermissionsAsync).toHaveBeenCalled();
+    });
+
+    it('should request permissions with iOS-specific options', async () => {
+      (Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({
+        status: 'undetermined',
+      });
+      (Notifications.requestPermissionsAsync as jest.Mock).mockResolvedValue({
+        status: 'granted',
+      });
+      (Notifications.getExpoPushTokenAsync as jest.Mock).mockResolvedValue({
+        data: 'ExponentPushToken[zzzzz]',
+      });
+
+      await requestNotificationPermissions();
+
+      expect(Notifications.requestPermissionsAsync).toHaveBeenCalledWith({
+        ios: {
+          allowAlert: true,
+          allowBadge: true,
+          allowSound: true,
+        },
+      });
+    });
+
+    it('should get push token with projectId', async () => {
+      (Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({
+        status: 'granted',
+      });
+      (Notifications.getExpoPushTokenAsync as jest.Mock).mockResolvedValue({
+        data: 'ExponentPushToken[aaaaa]',
+      });
+
+      await requestNotificationPermissions();
+
+      expect(Notifications.getExpoPushTokenAsync).toHaveBeenCalledWith({
+        projectId: 'test-project-id',
+      });
     });
 
     it('should return denied status when permissions are denied', async () => {

@@ -6,6 +6,14 @@
  * - Local notification scheduling
  * - Notification cancellation and retrieval
  * - Foreground notification handler setup
+ * - Android Notification Channel setup (Android 8.0+ required)
+ *
+ * Best Practices Applied:
+ * - iOS: Explicit allowAlert/allowBadge/allowSound permissions
+ * - Android: Notification channel setup (required for Android 8.0+)
+ * - projectId from expo-constants for push token (EAS Build)
+ * - SchedulableTriggerInputTypes for type-safe triggers
+ * - Modern handler API (shouldShowBanner/shouldShowList)
  *
  * Requirements: Development Build (Expo Go not supported)
  *
@@ -14,6 +22,8 @@
 
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 /**
  * Notification permission result
@@ -25,8 +35,10 @@ export type PermissionResult =
 /**
  * Request notification permissions and get push token
  *
- * Checks if running on physical device, verifies existing permissions,
- * requests if needed, and retrieves Expo Push Token on success.
+ * Best practices applied:
+ * - iOS: Explicit allowAlert/allowBadge/allowSound permissions
+ * - Android: Notification channel setup (required for Android 8.0+)
+ * - projectId from expo-constants for push token (EAS Build)
  *
  * @returns Permission result with token or error message
  *
@@ -48,14 +60,31 @@ export async function requestNotificationPermissions(): Promise<PermissionResult
       };
     }
 
+    // Setup Android notification channel (required for Android 8.0+)
+    // Must be called before requesting permissions on Android 13+
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'Default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+
     // Check existing permissions
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
-    // Request permissions if not granted
+    // Request permissions if not granted (with iOS-specific options)
     if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
+      const { status } = await Notifications.requestPermissionsAsync({
+        ios: {
+          allowAlert: true,
+          allowBadge: true,
+          allowSound: true,
+        },
+      });
       finalStatus = status;
     }
 
@@ -66,8 +95,14 @@ export async function requestNotificationPermissions(): Promise<PermissionResult
       };
     }
 
-    // Get push token
-    const token = await Notifications.getExpoPushTokenAsync();
+    // Get push token with projectId (required for EAS Build)
+    const projectId =
+      Constants?.expoConfig?.extra?.eas?.projectId ??
+      Constants?.easConfig?.projectId;
+
+    const token = await Notifications.getExpoPushTokenAsync({
+      projectId: projectId ?? undefined,
+    });
     return { status: 'granted', token: token.data };
   } catch (error) {
     return {
