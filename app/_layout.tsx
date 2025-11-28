@@ -43,7 +43,10 @@ function ErrorScreen({
 
   return (
     <View
-      style={[styles.errorContainer, { backgroundColor: colors.background.base }]}
+      style={[
+        styles.errorContainer,
+        { backgroundColor: colors.background.base },
+      ]}
     >
       <Text style={[styles.errorTitle, { color: colors.text.primary }]}>
         Something went wrong
