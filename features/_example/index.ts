@@ -38,9 +38,11 @@ export {
   ValidationDemo,
   DateDemo,
   SecureStorageDemo,
+  NotificationDemo,
   type ItemCardProps,
   type ItemListProps,
   type ValidationDemoProps,
   type DateDemoProps,
   type SecureStorageDemoProps,
+  type NotificationDemoProps,
 } from './components';

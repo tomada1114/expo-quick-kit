@@ -16,6 +16,7 @@ import { useThemedColors } from '@/hooks/use-theme-color';
 import { initializeDatabase } from '@/database/client';
 import { useStore } from '@/store';
 import { queryClient } from '@/lib/query-client';
+import { setupForegroundHandler } from '@/services/notifications';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -113,6 +114,11 @@ export default function RootLayout() {
   useEffect(() => {
     initializeApp();
   }, [initializeApp]);
+
+  // Setup foreground notification handler (safe for hot-reload)
+  useEffect(() => {
+    setupForegroundHandler();
+  }, []);
 
   // Show nothing while initializing (splash screen is visible)
   if (!appReady) {

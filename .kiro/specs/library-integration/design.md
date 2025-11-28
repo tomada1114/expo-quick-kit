@@ -470,16 +470,18 @@ export async function deleteSecure(
 
 **Responsibilities & Constraints**
 
-- 通知権限の確認とリクエスト
-- Expo Push Tokenの取得
+- 通知権限の確認とリクエスト（iOS: allowAlert/allowBadge/allowSound明示指定）
+- Expo Push Tokenの取得（projectId指定推奨）
 - ローカル通知のスケジュール/キャンセル/取得
 - フォアグラウンド通知ハンドラーの設定
+- Android Notification Channelの設定（Android 8.0+必須）
 - Development Build必須（Expo Go非対応）
 
 **Dependencies**
 
 - External: expo-notifications ~54.x — 通知API (P0)
 - External: expo-device — 物理デバイスチェック (P1)
+- External: expo-constants — projectId取得 (P1)
 
 **Contracts**: [x] Service [x] Event
 
@@ -488,6 +490,8 @@ export async function deleteSecure(
 ```typescript
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 /**
  * Notification permission result
@@ -498,6 +502,12 @@ export type PermissionResult =
 
 /**
  * Request notification permissions and get push token
+ *
+ * Best practices applied:
+ * - iOS: Explicit allowAlert/allowBadge/allowSound
+ * - Android: Notification channel setup (required for Android 8.0+)
+ * - projectId from expo-constants for push token
+ *
  * @returns Permission result with token or error
  */
 export async function requestNotificationPermissions(): Promise<PermissionResult> {
@@ -507,13 +517,29 @@ export async function requestNotificationPermissions(): Promise<PermissionResult
       return { status: 'denied', error: 'Must use physical device for push notifications' };
     }
 
+    // Setup Android notification channel (required for Android 8.0+)
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'Default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+
     // Check existing permissions
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
-    // Request permissions if not granted
+    // Request permissions if not granted (with iOS-specific options)
     if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
+      const { status } = await Notifications.requestPermissionsAsync({
+        ios: {
+          allowAlert: true,
+          allowBadge: true,
+          allowSound: true,
+        },
+      });
       finalStatus = status;
     }
 
@@ -521,8 +547,13 @@ export async function requestNotificationPermissions(): Promise<PermissionResult
       return { status: 'denied', error: 'Permission to send notifications was denied' };
     }
 
-    // Get push token
-    const token = await Notifications.getExpoPushTokenAsync();
+    // Get push token with projectId
+    const projectId =
+      Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+
+    const token = await Notifications.getExpoPushTokenAsync({
+      projectId: projectId ?? undefined,
+    });
     return { status: 'granted', token: token.data };
   } catch (error) {
     return {
@@ -534,6 +565,9 @@ export async function requestNotificationPermissions(): Promise<PermissionResult
 
 /**
  * Schedule a local notification
+ *
+ * Uses SchedulableTriggerInputTypes for type-safe trigger configuration.
+ *
  * @param title - Notification title
  * @param body - Notification body
  * @param trigger - Trigger configuration (seconds from now or date)
@@ -544,9 +578,20 @@ export async function scheduleNotification(
   body: string,
   trigger: { seconds: number } | { date: Date }
 ): Promise<string> {
+  const notificationTrigger =
+    'seconds' in trigger
+      ? {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL as const,
+          seconds: trigger.seconds,
+        }
+      : {
+          type: Notifications.SchedulableTriggerInputTypes.DATE as const,
+          date: trigger.date,
+        };
+
   return await Notifications.scheduleNotificationAsync({
     content: { title, body },
-    trigger,
+    trigger: notificationTrigger,
   });
 }
 
@@ -570,6 +615,10 @@ export async function getAllScheduledNotifications(): Promise<
 
 /**
  * Setup foreground notification handler
+ *
+ * Configures how notifications are displayed when app is in foreground.
+ * Uses shouldShowBanner/shouldShowList (modern API) instead of deprecated shouldShowAlert.
+ *
  * @param handler - Handler function (optional, defaults to showing notification)
  */
 export function setupForegroundHandler(
@@ -579,7 +628,8 @@ export function setupForegroundHandler(
     handleNotification: async (notification) => {
       handler?.(notification);
       return {
-        shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
         shouldPlaySound: true,
         shouldSetBadge: false,
       };
@@ -588,8 +638,8 @@ export function setupForegroundHandler(
 }
 ```
 
-- Preconditions: expo-notificationsライブラリインストール済み、Development Build環境、Android 13以降は通知チャンネル作成済み
-- Postconditions: 権限許可時はPush Token返却、通知スケジュール成功時はID返却
+- Preconditions: expo-notificationsライブラリインストール済み、Development Build環境
+- Postconditions: 権限許可時はPush Token返却、通知スケジュール成功時はID返却、Androidでは通知チャンネル作成済み
 - Invariants: 物理デバイスでのみ動作（シミュレーターでは拒否）
 
 ##### Event Contract
@@ -598,12 +648,21 @@ export function setupForegroundHandler(
 - **Subscribed events**:
   - `Notifications.addNotificationReceivedListener`: フォアグラウンド通知受信
   - `Notifications.addNotificationResponseReceivedListener`: 通知タップ時
+  - `Notifications.addPushTokenListener`: Push Token更新時（オプション）
 - **Ordering / delivery guarantees**: システム通知配信は保証なし、ローカル通知はベストエフォート
+
+##### Best Practices Applied (Context7 MCP verified)
+
+1. **Android Notification Channel**: Android 8.0+では`setNotificationChannelAsync`が必須。チャンネルなしでは通知が表示されない
+2. **projectId指定**: `getExpoPushTokenAsync`にprojectIdを明示的に指定（EAS Build環境で必須）
+3. **iOS権限オプション**: `allowAlert/allowBadge/allowSound`を明示的に指定
+4. **SchedulableTriggerInputTypes**: 型安全なトリガー設定（TIME_INTERVAL/DATE）
+5. **Modern Handler API**: `shouldShowBanner/shouldShowList`を使用（`shouldShowAlert`は非推奨）
 
 **Implementation Notes**
 
 - Integration: app/_layout.tsxで`setupForegroundHandler()`を初期化、features/_example/components/notification-demo.tsxで使用
-- Validation: 物理デバイスチェック、権限状態確認、Android 13以降のチャンネル要件
+- Validation: 物理デバイスチェック、権限状態確認、Androidチャンネル自動作成
 - Risks: Expo Go非対応（research.md参照）、Development Build必須をREADMEに明記
 
 ### Presentation Layer
@@ -714,6 +773,7 @@ export function setupForegroundHandler(
 - 権限リクエストボタン
 - 通知スケジュール（5秒後、10秒後）
 - 権限拒否時の設定案内表示
+- Push Token の表示
 
 **Dependencies**
 
@@ -724,9 +784,42 @@ export function setupForegroundHandler(
 
 ##### State Management
 
-- **State model**: ローカルuseState（permissionStatus, pushToken, scheduledIds）
+- **State model**: ローカルuseState（permissionStatus, pushToken, scheduledIds, status, isLoading）
 - **Persistence & consistency**: なし（デモUI）
 - **Concurrency strategy**: なし
+
+##### expo-design-system Compliance
+
+**Color Usage**:
+- `useThemedColors()` フックでテーマカラーを取得
+- 背景色: `colors.background.base/secondary/tertiary` の3階層を適切に使用
+- テキスト色: `colors.text.primary/secondary/tertiary/inverse` の4階層を適切に使用
+- Semantic Colors: `colors.semantic.success/error/warning/info` をステータス表示に使用
+- Interactive: `colors.interactive.separator` を区切り線に使用
+
+**Typography**:
+- `Typography.headline` - タイトル用（17pt, fontWeight: 600）
+- `Typography.body` - 本文テキスト用（17pt, fontWeight: 400）
+- `Typography.caption1` - ラベル用（13pt）
+- `Typography.footnote` - 補足テキスト用（11pt）
+
+**Spacing**:
+- 8pt Grid System準拠: `Spacing.xs(4)`, `Spacing.sm(8)`, `Spacing.md(16)`, `Spacing.lg(24)`
+- カード内パディング: `Spacing.md`（16pt）
+
+**Touch Targets**:
+- ボタン最小高さ: 44pt（iOS HIG準拠）
+
+**Border Radius**:
+- `BorderRadius.md(8)` - 標準カード、ボタン
+- `BorderRadius.sm(4)` - 小要素
+
+**NG Rules Compliance**:
+- ✅ Indigo不使用（iOS Blue #007AFF使用）
+- ✅ グラデーション不使用
+- ✅ ネオン/ビビッドカラー不使用
+- ✅ パステルカラー不使用
+- ✅ カスタムグレー不使用（iOS標準グレー使用）
 
 **Implementation Notes**
 
