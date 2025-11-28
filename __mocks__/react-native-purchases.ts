@@ -92,7 +92,9 @@ export const mockPremiumCustomerInfo: MockCustomerInfo = {
         latestPurchaseDateMillis: Date.now(),
         originalPurchaseDate: new Date().toISOString(),
         originalPurchaseDateMillis: Date.now(),
-        expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        expirationDate: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         expirationDateMillis: Date.now() + 30 * 24 * 60 * 60 * 1000,
         store: 'APP_STORE',
         productIdentifier: 'monthly_plan',
@@ -109,7 +111,9 @@ export const mockPremiumCustomerInfo: MockCustomerInfo = {
   },
   activeSubscriptions: ['monthly_plan'],
   allPurchasedProductIdentifiers: ['monthly_plan'],
-  latestExpirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+  latestExpirationDate: new Date(
+    Date.now() + 30 * 24 * 60 * 60 * 1000
+  ).toISOString(),
   originalAppUserId: 'test-user-123',
   originalApplicationVersion: null,
   originalPurchaseDate: new Date().toISOString(),
@@ -281,7 +285,8 @@ const Purchases = {
   purchasePackage: jest.fn().mockImplementation((pkg: MockPurchasesPackage) => {
     if (mockShouldFailPurchase) {
       const error = new Error('Purchase failed');
-      (error as Error & { code: number }).code = mockPurchaseErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
+      (error as Error & { code: number }).code =
+        mockPurchaseErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
       return Promise.reject(error);
     }
     // Simulate successful purchase - user becomes premium

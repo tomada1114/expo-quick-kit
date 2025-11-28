@@ -231,7 +231,6 @@ describe('TabLayout', () => {
         })
       );
     });
-
   });
 
   describe('Tab Icons', () => {
