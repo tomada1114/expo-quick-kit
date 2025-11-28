@@ -144,7 +144,12 @@ export function SecureStorageDemo({ testID }: SecureStorageDemoProps) {
   return (
     <Card variant="flat" testID={testID} style={styles.container}>
       {/* Header */}
-      <View style={styles.headerSection}>
+      <View
+        style={[
+          styles.headerSection,
+          { borderBottomColor: colors.interactive.separator },
+        ]}
+      >
         <Text
           style={[
             styles.title,
@@ -291,7 +296,6 @@ const styles = StyleSheet.create({
   headerSection: {
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#F2F2F7',
   },
   title: {
     marginBottom: Spacing.xs,
