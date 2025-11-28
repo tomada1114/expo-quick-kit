@@ -11,7 +11,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。パスしたらコミットする。
   - _Requirements: 1.1, 1.2, 1.3, 1.5, 12.1, 12.2_
 
-- [ ] 1.2 (P) ドメイン型定義を作成
+- [x] 1.2 (P) ドメイン型定義を作成
   - `Subscription` エンティティ（isActive, tier, expiresAt, productId）を定義
   - `UsageLimits` Value Object（maxItems, maxExports, hasAds）を定義
   - `SubscriptionPackage` 型（identifier, title, priceString, price, currencyCode, introPrice）を定義

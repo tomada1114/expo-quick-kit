@@ -77,7 +77,11 @@ export type SubscriptionError =
   | { code: 'NETWORK_ERROR'; message: string; retryable: true }
   | { code: 'CONFIGURATION_ERROR'; message: string; retryable: false }
   | { code: 'INVALID_CREDENTIALS_ERROR'; message: string; retryable: false }
-  | { code: 'UNEXPECTED_BACKEND_RESPONSE_ERROR'; message: string; retryable: true }
+  | {
+      code: 'UNEXPECTED_BACKEND_RESPONSE_ERROR';
+      message: string;
+      retryable: true;
+    }
   | { code: 'RECEIPT_ALREADY_IN_USE_ERROR'; message: string; retryable: false }
   | { code: 'NO_ACTIVE_SUBSCRIPTION'; message: string; retryable: false }
   | { code: 'UNKNOWN_ERROR'; message: string; retryable: false };
