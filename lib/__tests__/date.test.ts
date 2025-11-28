@@ -213,3 +213,40 @@ describe('Japanese locale integration', () => {
     jest.useRealTimers();
   });
 });
+
+describe('Invalid date validation', () => {
+  it('should throw error for invalid Date object in formatDate', () => {
+    const invalidDate = new Date('invalid');
+    expect(() => formatDate(invalidDate, 'yyyy-MM-dd')).toThrow('Invalid date');
+  });
+
+  it('should throw error for NaN timestamp in formatDate', () => {
+    expect(() => formatDate(NaN, 'yyyy-MM-dd')).toThrow('Invalid date');
+  });
+
+  it('should throw error for invalid Date in formatDistanceToNow', () => {
+    const invalidDate = new Date('invalid');
+    expect(() => formatDistanceToNow(invalidDate)).toThrow('Invalid date');
+  });
+
+  it('should throw error for invalid baseDate in formatDistanceToNow', () => {
+    const validDate = new Date(2024, 0, 15);
+    const invalidBaseDate = new Date('invalid');
+    expect(() => formatDistanceToNow(validDate, invalidBaseDate)).toThrow(
+      'Invalid date'
+    );
+  });
+
+  it('should throw error for invalid Date in formatRelativeDate', () => {
+    const invalidDate = new Date('invalid');
+    expect(() => formatRelativeDate(invalidDate)).toThrow('Invalid date');
+  });
+
+  it('should throw error for invalid baseDate in formatRelativeDate', () => {
+    const validDate = new Date(2024, 0, 15);
+    const invalidBaseDate = new Date('invalid');
+    expect(() => formatRelativeDate(validDate, invalidBaseDate)).toThrow(
+      'Invalid date'
+    );
+  });
+});
