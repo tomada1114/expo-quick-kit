@@ -36,7 +36,9 @@ export {
   ItemCard,
   ItemList,
   ValidationDemo,
+  DateDemo,
   type ItemCardProps,
   type ItemListProps,
   type ValidationDemoProps,
+  type DateDemoProps,
 } from './components';
