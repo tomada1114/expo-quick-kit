@@ -14,6 +14,7 @@ pnpm start              # Start Expo dev server
 pnpm ios                # Run on iOS simulator
 pnpm android            # Run on Android emulator
 pnpm web                # Run on web
+pnpm dev:ios            # Run on iOS with dev-client and tunnel (for testing on physical device)
 
 # Code Quality
 pnpm lint               # Run ESLint
@@ -23,8 +24,9 @@ pnpm typecheck          # TypeScript type check
 pnpm check              # Run all checks (format + lint + typecheck + test)
 
 # Testing
-pnpm test               # Run Jest tests
+pnpm test               # Run all Jest tests
 pnpm test:coverage      # Run tests with coverage report
+pnpm test <pattern>     # Run specific test file (e.g., pnpm test button)
 
 # Database (Drizzle ORM)
 pnpm db:generate        # Generate Drizzle migrations
@@ -36,6 +38,34 @@ pnpm db:studio          # Open Drizzle Studio
 When getting the latest information about libraries, refer to Context7 MCP.
 
 ## Architecture
+
+### Project Structure
+
+```
+app/                    # expo-router file-based routing
+├── (tabs)/            # Tab navigation group
+├── _layout.tsx        # Root layout with ThemeProvider
+└── modal.tsx          # Modal screen example
+
+components/            # Shared UI components
+├── ui/               # Reusable UI components (Button, Card, Spacer, etc.)
+└── themed-*.tsx      # Theme-aware components
+
+features/             # Feature-based modules
+└── _example/         # Example feature structure
+    ├── components/   # Feature-specific components
+    ├── hooks/        # Feature-specific hooks
+    ├── services/     # API calls, repositories, query keys
+    └── types.ts      # Feature-specific types
+
+database/             # Drizzle ORM setup
+├── schema.ts         # Database schema definitions
+└── client.ts         # SQLite client initialization
+
+store/                # Zustand state management
+lib/                  # Shared utilities and configurations
+constants/            # Theme, colors, and other constants
+```
 
 ### File-Based Routing (expo-router)
 
@@ -53,11 +83,19 @@ Single alias `@/*` maps to project root (`./`):
 ```typescript
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Button } from '@/components/ui/button';
+import { ItemList } from '@/features/_example';
 ```
 
 ### Naming Convention
 
 Files use **kebab-case**: `themed-text.tsx`, `use-color-scheme.ts`
+
+### Testing
+
+- Tests are located in `__tests__/` directories alongside the code they test
+- Test files follow the pattern: `*.test.ts` or `*.test.tsx`
+- Run specific tests: `pnpm test <pattern>` (e.g., `pnpm test button`)
 
 ### Key Libraries
 
