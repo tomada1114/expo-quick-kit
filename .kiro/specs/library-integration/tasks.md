@@ -1,4 +1,5 @@
 # Implementation Plan
+-
 
 ## 1. ライブラリインストールと基盤セットアップ
 
@@ -21,6 +22,7 @@
   - pnpm expo installでexpo-notifications ~54.xをインストール
   - pnpm expo installでexpo-device（物理デバイスチェック用）をインストール
   - package.jsonの依存関係を確認
+  -
   - _Requirements: 4.1_
 
 ## 2. バリデーション機能の実装
@@ -48,6 +50,7 @@
   - passwordSchema検証テスト（8文字未満、大文字なし、小文字なし、数字なし）
   - phoneSchema検証テスト（日本の電話番号形式）
   - validateData関数のテスト（success/errorsパス）
+  - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 1.5_
 
 ## 3. 日付処理機能の実装
@@ -75,6 +78,7 @@
   - formatDistanceToNow関数のテスト（過去・未来の日付）
   - formatRelativeDate関数のテスト（今日、昨日、明日など）
   - 日本語ロケールの検証
+  -
   - _Requirements: 2.5_
 
 ## 4. セキュアストレージ機能の実装
@@ -104,6 +108,7 @@
   - deleteSecure関数のモック化テスト（成功・失敗）
   - SecureStorageKey列挙型の型安全性検証
   - SecureStore APIをモック化（jest.mock）
+  -
   - _Requirements: 3.4_
 
 ## 5. プッシュ通知機能の実装
@@ -142,6 +147,7 @@
   - cancelNotification関数のモック化テスト
   - getAllScheduledNotifications関数のモック化テスト
   - expo-notifications APIをモック化（jest.mock）
+  -
   - _Requirements: 4.2, 4.3, 4.7_
 
 ## 6. 統合とドキュメント整備
