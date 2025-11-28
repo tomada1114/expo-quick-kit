@@ -25,7 +25,7 @@
 
 ## 2. バリデーション機能の実装
 
-- [ ] 2.1 (P) zodバリデーションスキーマの作成
+- [x] 2.1 (P) zodバリデーションスキーマの作成
   - lib/validation.tsに再利用可能なバリデーションスキーマを定義
   - emailSchema（メールアドレス検証、日本語エラーメッセージ）
   - passwordSchema（8文字以上、大文字小文字数字を含む、日本語エラーメッセージ）
@@ -33,7 +33,7 @@
   - ValidationResult型とvalidateData関数を実装
   - _Requirements: 1.3, 1.4_
 
-- [ ] 2.2 バリデーションデモUIの実装
+- [x] 2.2 バリデーションデモUIの実装
   - features/_example/components/validation-demo.tsxにデモコンポーネントを作成
   - メール、パスワード、電話番号の入力フォームを配置
   - リアルタイムバリデーション（入力変更時にvalidateDataを実行）
@@ -42,7 +42,7 @@
   - lib/validation.ts（タスク2.1）の完了が必要
   - _Requirements: 1.2, 1.4_
 
-- [ ]* 2.3 zodバリデーションのユニットテスト
+- [x]* 2.3 zodバリデーションのユニットテスト
   - lib/__tests__/validation.test.tsにテストスイートを作成
   - emailSchema検証テスト（正常系・異常系）
   - passwordSchema検証テスト（8文字未満、大文字なし、小文字なし、数字なし）

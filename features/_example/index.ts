@@ -35,6 +35,8 @@ export { useItemList } from './hooks';
 export {
   ItemCard,
   ItemList,
+  ValidationDemo,
   type ItemCardProps,
   type ItemListProps,
+  type ValidationDemoProps,
 } from './components';
