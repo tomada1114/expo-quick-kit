@@ -153,14 +153,14 @@ UIについては Claude Skill を参照して実装してください。
 
 ## Task 9. 不要ファイル削除とスクリプト整備
 
-- [ ] 9.1 (P) 不要ファイルの削除とクリーンアップ
+- [x] 9.1 (P) 不要ファイルの削除とクリーンアップ
   - `app/(tabs)/explore.tsx`を削除する
   - 不要なサンプルコンポーネント（hello-wave.tsx等のExpoテンプレートデフォルト）を削除する
   - `app/(tabs)/index.tsx`をボイラープレート独自のホーム画面に置き換える
   - タブナビゲーションから削除したexploreタブの参照を除去する
   - _Requirements: 13.1, 13.2, 13.3_
 
-- [ ] 9.2 (P) package.jsonスクリプトの追加
+- [x] 9.2 (P) package.jsonスクリプトの追加
   - `db:generate`、`db:studio`スクリプト（Drizzle Kit操作）を追加する
   - `pnpm check` がパスすることを確認したら、コミットしてプッシュしつつ、PRを作成する
   - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
