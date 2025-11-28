@@ -91,6 +91,7 @@ jest.mock('@/database/client', () => ({
 }));
 
 // Mock store with persist
+const mockSetRevenueCatAvailable = jest.fn();
 jest.mock('@/store', () => {
   const mockRehydrate = jest.fn().mockResolvedValue(undefined);
   const mockUseStore = Object.assign(
@@ -102,10 +103,23 @@ jest.mock('@/store', () => {
         onHydrate: jest.fn(),
         onFinishHydration: jest.fn(),
       },
+      getState: jest.fn(() => ({
+        setRevenueCatAvailable: mockSetRevenueCatAvailable,
+      })),
     }
   );
   return { useStore: mockUseStore };
 });
+
+// Mock RevenueCat SDK
+jest.mock('@/features/subscription/core/sdk', () => ({
+  configurePurchases: jest.fn().mockResolvedValue(undefined),
+}));
+
+// Mock notifications service
+jest.mock('@/services/notifications', () => ({
+  setupForegroundHandler: jest.fn(),
+}));
 
 // Mock TanStack Query
 jest.mock('@tanstack/react-query', () => {
@@ -128,18 +142,22 @@ import { render, waitFor, screen } from '@testing-library/react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { initializeDatabase } from '@/database/client';
 import { useStore } from '@/store';
+import { configurePurchases } from '@/features/subscription/core/sdk';
 import RootLayout from '@/app/_layout';
 
 // Get mock functions for assertions
 const mockHideAsync = SplashScreen.hideAsync as jest.Mock;
 const mockInitializeDatabase = initializeDatabase as jest.Mock;
 const mockRehydrate = useStore.persist.rehydrate as jest.Mock;
+const mockConfigurePurchases = configurePurchases as jest.Mock;
 
 describe('RootLayout', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockInitializeDatabase.mockResolvedValue(undefined);
     mockRehydrate.mockResolvedValue(undefined);
+    mockConfigurePurchases.mockResolvedValue(undefined);
+    mockSetRevenueCatAvailable.mockClear();
   });
 
   describe('Initialization', () => {
@@ -288,6 +306,87 @@ describe('RootLayout', () => {
       await waitFor(() => {
         expect(screen.getByTestId('theme-provider')).toBeTruthy();
       });
+    });
+  });
+
+  describe('RevenueCat SDK Integration', () => {
+    it('should initialize RevenueCat SDK in parallel with other services', async () => {
+      render(<RootLayout />);
+
+      await waitFor(() => {
+        expect(mockConfigurePurchases).toHaveBeenCalled();
+        expect(mockInitializeDatabase).toHaveBeenCalled();
+        expect(mockRehydrate).toHaveBeenCalled();
+      });
+    });
+
+    it('should set RevenueCat availability to true on successful initialization', async () => {
+      mockConfigurePurchases.mockResolvedValue(undefined);
+
+      render(<RootLayout />);
+
+      await waitFor(() => {
+        expect(mockSetRevenueCatAvailable).toHaveBeenCalledWith(true);
+      });
+    });
+
+    it('should set RevenueCat availability to false when SDK initialization fails', async () => {
+      mockConfigurePurchases.mockRejectedValue(new Error('SDK init failed'));
+
+      render(<RootLayout />);
+
+      await waitFor(() => {
+        expect(mockSetRevenueCatAvailable).toHaveBeenCalledWith(false);
+      });
+    });
+
+    it('should not block app startup when RevenueCat SDK fails', async () => {
+      mockConfigurePurchases.mockRejectedValue(new Error('SDK init failed'));
+
+      render(<RootLayout />);
+
+      // App should still render successfully
+      await waitFor(() => {
+        expect(screen.getByTestId('mock-stack')).toBeTruthy();
+        expect(mockHideAsync).toHaveBeenCalled();
+      });
+    });
+
+    it('should log warning when RevenueCat SDK initialization fails', async () => {
+      const consoleWarnSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
+      mockConfigurePurchases.mockRejectedValue(new Error('Test SDK error'));
+
+      render(<RootLayout />);
+
+      await waitFor(() => {
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+          'RevenueCat SDK initialization failed:',
+          'Test SDK error'
+        );
+      });
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('should handle non-Error objects thrown by SDK', async () => {
+      const consoleWarnSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
+      mockConfigurePurchases.mockRejectedValue('string error');
+
+      render(<RootLayout />);
+
+      await waitFor(() => {
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+          'RevenueCat SDK initialization failed:',
+          'string error'
+        );
+        expect(mockSetRevenueCatAvailable).toHaveBeenCalledWith(false);
+      });
+
+      consoleWarnSpy.mockRestore();
     });
   });
 });

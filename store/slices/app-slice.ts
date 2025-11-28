@@ -28,11 +28,14 @@ export const createAppSlice = (
   // Initial state
   isOnboarded: false,
   isPremium: false,
+  isRevenueCatAvailable: false,
   userPreferences: defaultUserPreferences,
 
   // Actions
   setOnboarded: (value: boolean) => set({ isOnboarded: value }),
   setPremium: (value: boolean) => set({ isPremium: value }),
+  setRevenueCatAvailable: (value: boolean) =>
+    set({ isRevenueCatAvailable: value }),
   updateUserPreferences: (prefs: Partial<UserPreferences>) =>
     set((state) => ({
       userPreferences: { ...state.userPreferences, ...prefs },

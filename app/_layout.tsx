@@ -97,10 +97,17 @@ export default function RootLayout() {
 
       // RevenueCat SDK initialization (non-blocking: errors are logged but don't block app startup)
       // Falls back to free tier mode if initialization fails
-      const revenueCatInitPromise = configurePurchases().catch((error) => {
-        // Log error but don't block app startup - user will be in free tier mode
-        console.warn('RevenueCat SDK initialization failed:', error);
-      });
+      const revenueCatInitPromise = configurePurchases()
+        .then(() => {
+          useStore.getState().setRevenueCatAvailable(true);
+        })
+        .catch((error: unknown) => {
+          // Log error but don't block app startup - user will be in free tier mode
+          const message =
+            error instanceof Error ? error.message : String(error);
+          console.warn('RevenueCat SDK initialization failed:', message);
+          useStore.getState().setRevenueCatAvailable(false);
+        });
 
       // Parallel initialization of all critical services
       await Promise.all([

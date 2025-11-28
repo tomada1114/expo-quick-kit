@@ -29,6 +29,10 @@ export interface AppState {
   isPremium: boolean;
   setPremium: (value: boolean) => void;
 
+  // RevenueCat SDK availability (not persisted - determined at runtime)
+  isRevenueCatAvailable: boolean;
+  setRevenueCatAvailable: (value: boolean) => void;
+
   // User preferences
   userPreferences: UserPreferences;
   updateUserPreferences: (prefs: Partial<UserPreferences>) => void;
