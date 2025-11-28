@@ -75,6 +75,7 @@ export type SubscriptionError =
   | { code: 'PURCHASE_INVALID'; message: string; retryable: false }
   | { code: 'PRODUCT_ALREADY_PURCHASED'; message: string; retryable: false }
   | { code: 'NETWORK_ERROR'; message: string; retryable: true }
+  | { code: 'STORE_PROBLEM_ERROR'; message: string; retryable: true }
   | { code: 'CONFIGURATION_ERROR'; message: string; retryable: false }
   | { code: 'INVALID_CREDENTIALS_ERROR'; message: string; retryable: false }
   | {
