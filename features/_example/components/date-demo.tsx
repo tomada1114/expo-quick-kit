@@ -13,8 +13,8 @@
  *   <DateDemo />
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { AppState, Platform, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -33,17 +33,44 @@ export interface DateDemoProps {
 export function DateDemo({ testID }: DateDemoProps) {
   const { colors } = useThemedColors();
   const [now, setNow] = useState(() => new Date());
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const refreshNow = useCallback(() => {
     setNow(new Date());
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(new Date());
-    }, 1000);
-    return () => clearInterval(interval);
+  const startInterval = useCallback(() => {
+    if (intervalRef.current === null) {
+      intervalRef.current = setInterval(() => {
+        setNow(new Date());
+      }, 1000);
+    }
   }, []);
+
+  const stopInterval = useCallback(() => {
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    startInterval();
+
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        setNow(new Date());
+        startInterval();
+      } else {
+        stopInterval();
+      }
+    });
+
+    return () => {
+      stopInterval();
+      subscription.remove();
+    };
+  }, [startInterval, stopInterval]);
 
   return (
     <Card variant="flat" testID={testID} style={styles.container}>
@@ -62,49 +89,29 @@ export function DateDemo({ testID }: DateDemoProps) {
         </Text>
       </View>
 
-      <Section
-        title="formatDate"
-        description="日付を任意のフォーマットに変換"
-        colors={colors}
-      >
+      <Section title="formatDate" description="日付を任意のフォーマットに変換">
         <FormatRow
           label="yyyy-MM-dd"
           value={formatDate(now, 'yyyy-MM-dd')}
-          colors={colors}
           isFirst
         />
         <FormatRow
           label="yyyy年MM月dd日"
           value={formatDate(now, 'yyyy年MM月dd日')}
-          colors={colors}
         />
-        <FormatRow
-          label="HH:mm:ss"
-          value={formatDate(now, 'HH:mm:ss')}
-          colors={colors}
-        />
-        <FormatRow
-          label="EEEE"
-          value={formatDate(now, 'EEEE')}
-          colors={colors}
-        />
+        <FormatRow label="HH:mm:ss" value={formatDate(now, 'HH:mm:ss')} />
+        <FormatRow label="EEEE" value={formatDate(now, 'EEEE')} />
         <FormatRow
           label="yyyy年MM月dd日(EEEE)"
           value={formatDate(now, 'yyyy年MM月dd日(EEEE)')}
-          colors={colors}
           isLast
         />
       </Section>
 
-      <Section
-        title="formatDistanceToNow"
-        description="相対時刻を日本語で表示"
-        colors={colors}
-      >
+      <Section title="formatDistanceToNow" description="相対時刻を日本語で表示">
         <FormatRow
           label="1時間前"
           value={formatDistanceToNow(new Date(now.getTime() - 60 * 60 * 1000))}
-          colors={colors}
           isFirst
         />
         <FormatRow
@@ -112,21 +119,18 @@ export function DateDemo({ testID }: DateDemoProps) {
           value={formatDistanceToNow(
             new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000)
           )}
-          colors={colors}
         />
         <FormatRow
           label="1週間後"
           value={formatDistanceToNow(
             new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
           )}
-          colors={colors}
         />
         <FormatRow
           label="1ヶ月前"
           value={formatDistanceToNow(
             new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
           )}
-          colors={colors}
           isLast
         />
       </Section>
@@ -134,34 +138,25 @@ export function DateDemo({ testID }: DateDemoProps) {
       <Section
         title="formatRelativeDate"
         description="相対日付（今日・昨日・明日など）"
-        colors={colors}
       >
-        <FormatRow
-          label="今日"
-          value={formatRelativeDate(now)}
-          colors={colors}
-          isFirst
-        />
+        <FormatRow label="今日" value={formatRelativeDate(now)} isFirst />
         <FormatRow
           label="昨日"
           value={formatRelativeDate(
             new Date(now.getTime() - 24 * 60 * 60 * 1000)
           )}
-          colors={colors}
         />
         <FormatRow
           label="明日"
           value={formatRelativeDate(
             new Date(now.getTime() + 24 * 60 * 60 * 1000)
           )}
-          colors={colors}
         />
         <FormatRow
           label="先週"
           value={formatRelativeDate(
             new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
           )}
-          colors={colors}
           isLast
         />
       </Section>
@@ -181,11 +176,12 @@ export function DateDemo({ testID }: DateDemoProps) {
 interface SectionProps {
   title: string;
   description: string;
-  colors: ReturnType<typeof useThemedColors>['colors'];
   children: React.ReactNode;
 }
 
-function Section({ title, description, colors, children }: SectionProps) {
+function Section({ title, description, children }: SectionProps) {
+  const { colors } = useThemedColors();
+
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
@@ -217,12 +213,13 @@ function Section({ title, description, colors, children }: SectionProps) {
 interface FormatRowProps {
   label: string;
   value: string;
-  colors: ReturnType<typeof useThemedColors>['colors'];
   isFirst?: boolean;
   isLast?: boolean;
 }
 
-function FormatRow({ label, value, colors, isFirst, isLast }: FormatRowProps) {
+function FormatRow({ label, value, isFirst, isLast }: FormatRowProps) {
+  const { colors } = useThemedColors();
+
   return (
     <View
       style={[

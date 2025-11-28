@@ -12,8 +12,21 @@ import {
   format as dateFnsFormat,
   formatDistance,
   formatRelative,
+  isValid,
 } from 'date-fns';
 import { ja } from 'date-fns/locale';
+
+/**
+ * Validate date input and convert to Date object
+ * @throws {Error} if the date is invalid
+ */
+function toValidDate(date: Date | number): Date {
+  const d = typeof date === 'number' ? new Date(date) : date;
+  if (!isValid(d)) {
+    throw new Error(`Invalid date: ${date}`);
+  }
+  return d;
+}
 
 /**
  * Format date with default locale (ja)
@@ -29,7 +42,7 @@ import { ja } from 'date-fns/locale';
  * ```
  */
 export function formatDate(date: Date | number, formatStr: string): string {
-  return dateFnsFormat(date, formatStr, { locale: ja });
+  return dateFnsFormat(toValidDate(date), formatStr, { locale: ja });
 }
 
 /**
@@ -51,7 +64,9 @@ export function formatDistanceToNow(
   date: Date | number,
   baseDate?: Date | number
 ): string {
-  return formatDistance(date, baseDate ?? new Date(), {
+  const validDate = toValidDate(date);
+  const validBaseDate = baseDate ? toValidDate(baseDate) : new Date();
+  return formatDistance(validDate, validBaseDate, {
     locale: ja,
     addSuffix: true,
   });
@@ -76,5 +91,7 @@ export function formatRelativeDate(
   date: Date | number,
   baseDate?: Date | number
 ): string {
-  return formatRelative(date, baseDate ?? new Date(), { locale: ja });
+  const validDate = toValidDate(date);
+  const validBaseDate = baseDate ? toValidDate(baseDate) : new Date();
+  return formatRelative(validDate, validBaseDate, { locale: ja });
 }
