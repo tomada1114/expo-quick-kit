@@ -179,7 +179,22 @@ export function Button({
       )}
       {(!loading || showChildrenWhileLoading) &&
         (children ? (
-          children
+          typeof children === 'string' ? (
+            <Text
+              style={[
+                styles.text,
+                {
+                  color: textColor,
+                  fontSize: sizeConfig.fontSize,
+                },
+                textStyle,
+              ]}
+            >
+              {children}
+            </Text>
+          ) : (
+            children
+          )
         ) : (
           <Text
             style={[
