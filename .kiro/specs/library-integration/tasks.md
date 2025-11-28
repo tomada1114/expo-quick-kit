@@ -113,7 +113,7 @@
 
 ## 5. プッシュ通知機能の実装
 
-- [ ] 5.1 (P) 通知サービスモジュールの作成
+- [x] 5.1 (P) 通知サービスモジュールの作成
   - services/notifications.tsに通知サービスを実装
   - requestNotificationPermissions関数（権限確認・リクエスト・トークン取得）
   - scheduleNotification関数（ローカル通知スケジュール）
@@ -124,7 +124,7 @@
   - PermissionResult型の定義
   - _Requirements: 4.2, 4.3, 4.5, 4.7_
 
-- [ ] 5.2 通知デモUIの実装
+- [x] 5.2 通知デモUIの実装
   - features/_example/components/notification-demo.tsxにデモコンポーネントを作成
   - 権限リクエストボタン（requestNotificationPermissions呼び出し）
   - 通知スケジュールボタン（5秒後、10秒後のローカル通知）
@@ -134,13 +134,13 @@
   - services/notifications.ts（タスク5.1）の完了が必要
   - _Requirements: 4.4, 4.6_
 
-- [ ] 5.3 アプリ起動時の通知ハンドラー初期化
+- [x] 5.3 アプリ起動時の通知ハンドラー初期化
   - app/_layout.tsxのRoot Layoutでsetupforegroundhandler()を呼び出し
-  - フォアグラウンド通知受信時の動作設定（shouldShowAlert: true, shouldPlaySound: true, shouldSetBadge: false）
+  - フォアグラウンド通知受信時の動作設定（shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false）
   - services/notifications.ts（タスク5.1）の完了が必要
   - _Requirements: 4.5_
 
-- [ ]* 5.4 通知サービスのユニットテスト
+- [x]* 5.4 通知サービスのユニットテスト
   - services/__tests__/notifications.test.tsにテストスイートを作成
   - requestNotificationPermissions関数のモック化テスト（権限許可・拒否・デバイスチェック）
   - scheduleNotification関数のモック化テスト（正常系・異常系）

@@ -16,9 +16,14 @@ import { useThemedColors } from '@/hooks/use-theme-color';
 import { initializeDatabase } from '@/database/client';
 import { useStore } from '@/store';
 import { queryClient } from '@/lib/query-client';
+import { setupForegroundHandler } from '@/services/notifications';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
+
+// Setup foreground notification handler
+// This configures how notifications are displayed when app is in foreground
+setupForegroundHandler();
 
 /**
  * Initialization timeout in milliseconds

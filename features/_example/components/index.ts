@@ -11,3 +11,7 @@ export {
   SecureStorageDemo,
   type SecureStorageDemoProps,
 } from './secure-storage-demo';
+export {
+  NotificationDemo,
+  type NotificationDemoProps,
+} from './notification-demo';
