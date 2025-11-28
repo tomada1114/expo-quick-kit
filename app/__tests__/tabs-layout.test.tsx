@@ -36,11 +36,6 @@ jest.mock('expo-router', () => {
   return { Tabs };
 });
 
-// Mock HapticTab component
-jest.mock('@/components/haptic-tab', () => ({
-  HapticTab: () => null,
-}));
-
 // Mock IconSymbol component
 jest.mock('@/components/ui/icon-symbol', () => ({
   IconSymbol: ({
@@ -237,17 +232,6 @@ describe('TabLayout', () => {
       );
     });
 
-    it('should use HapticTab component for tab buttons', () => {
-      render(<TabLayout />);
-
-      expect(mockTabs).toHaveBeenCalledWith(
-        expect.objectContaining({
-          screenOptions: expect.objectContaining({
-            tabBarButton: expect.any(Function),
-          }),
-        })
-      );
-    });
   });
 
   describe('Tab Icons', () => {
