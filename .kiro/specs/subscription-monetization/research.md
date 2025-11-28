@@ -36,6 +36,7 @@
   - [RevenueCat Paywall Display Documentation](https://www.revenuecat.com/docs/tools/paywalls/displaying-paywalls)
   - [react-native-purchases-ui npm package](https://www.npmjs.com/package/react-native-purchases-ui/v/9.2.1)
   - [RevenueCat Blog: How to add subscriptions to Expo app](https://www.revenuecat.com/blog/engineering/how-to-add-in-app-purchases-to-your-bolt-generated-expo-app/)
+  - [GitHub Issue #1158: PaywallFooterContainerView New Architecture support](https://github.com/RevenueCat/react-native-purchases/issues/1158)
 - **Findings**:
   - **表示方法**: 3つのアプローチ
     1. `RevenueCatUI.presentPaywall()`: モーダル表示 (Promise ベース)
@@ -44,8 +45,10 @@
   - **イベントハンドリング**: `onPurchaseCompleted`, `onRestoreCompleted`, `onPurchaseError`, `onDismiss` などのコールバックを提供
   - **遠隔設定**: RevenueCat Dashboard で UI デザインを変更可能 (コード変更・アプリ更新不要)
   - **ローディング状態**: SDK が自動管理 (手動実装不要)
+  - **New Architecture 制限**: `PaywallFooterContainerView` は New Architecture 非対応 (GitHub Issue #1158)
 - **Implications**:
   - `<RevenueCatUI.Paywall>` コンポーネントを使用し、expo-router のルート (`app/paywall.tsx`) として実装
+  - `PaywallFooterContainerView` は使用しない (New Architecture 環境のため)
   - カスタムイベント処理 (購入成功時の状態更新、ナビゲーション制御) を Paywall ラッパーコンポーネントで実装
   - iOS Design System のテーマカラーは RevenueCat Dashboard で設定可能 (カスタムフォント、カラーパレット対応)
 
@@ -189,8 +192,8 @@
   - **Mitigation**: 定期的な SDK バージョン更新と統合テストで検出。Repository の `toSubscription()` 関数に型ガードを実装
 - **Risk 4: ユーザーが購入をキャンセルした際、エラーログが大量に記録される**
   - **Mitigation**: `PURCHASE_CANCELLED` エラーは条件付きロギングでエラーログから除外 (情報ログのみ)
-- **Risk 5: New Architecture 移行時の互換性問題**
-  - **Mitigation**: RevenueCat SDK 8.9.2+ が既に New Architecture 対応済み。今後の SDK 更新で継続サポート
+- **Risk 5: New Architecture 環境での PaywallFooterContainerView 使用**
+  - **Mitigation**: `PaywallFooterContainerView` は使用せず、`<RevenueCatUI.Paywall>` のみ使用。GitHub Issue #1158 で対応状況を監視
 
 ## References
 

@@ -23,6 +23,7 @@
 - RevenueCat 以外の決済プロバイダー (Stripe, PayPal など) の統合
 - Web プラットフォーム向けのサブスクリプション実装 (iOS/Android のみ対象)
 - カスタムペイウォール UI の実装 (RevenueCat の組み込み UI を使用)
+- `PaywallFooterContainerView` の使用 (New Architecture 非対応のため除外)
 - 複雑なプロモーションコードやトライアル管理 (RevenueCat Dashboard で管理)
 - 既存機能の大規模なリファクタリング (新しい feature モジュールとして追加)
 
@@ -125,8 +126,8 @@ graph TB
 | レイヤー                         | 選択技術 / バージョン                 | 機能における役割                                                     | 備考                                                                                   |
 | -------------------------------- | ------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | **Frontend / UI**                | React Native 0.81.5 + Expo SDK 54     | クロスプラットフォーム UI 基盤                                       | New Architecture 有効化済み、React Compiler 対応                                       |
-| **Subscription SDK**             | react-native-purchases 8.9.2+         | RevenueCat SDK (購入、復元、CustomerInfo 取得)                      | New Architecture 対応済み、Expo 開発ビルド必須                                         |
-| **Paywall UI**                   | react-native-purchases-ui 9.2.1+      | RevenueCat 組み込みペイウォール UI                                   | Dashboard で遠隔設定可能、カスタムフォント対応                                         |
+| **Subscription SDK**             | react-native-purchases 8.9.2+         | RevenueCat SDK (購入、復元、CustomerInfo 取得)                      | New Architecture 対応済み、Expo 開発ビルド必須、StoreKit 2 デフォルト               |
+| **Paywall UI**                   | react-native-purchases-ui 9.2.1+      | RevenueCat 組み込みペイウォール UI                                   | Dashboard で遠隔設定可能、PaywallFooterContainerView は New Arch 非対応            |
 | **State Management**             | Zustand 5.x + React Context           | クライアント状態管理 (isPremium フラグ) + コンポーネントツリー状態  | AsyncStorage 永続化、Subscription Provider で Context 提供                             |
 | **Data Fetching (Optional)**     | TanStack Query 5.x                    | サブスクリプション状態のキャッシュと自動再フェッチ                   | オプション統合、既存 queryClient 利用                                                  |
 | **Local Storage (Future)**       | Drizzle ORM + expo-sqlite             | サブスクリプション履歴の永続化 (将来的な拡張)                       | 初期実装では不要、RevenueCat が状態管理                                                |
@@ -137,8 +138,8 @@ graph TB
 
 **選択理由の詳細**:
 
-1. **RevenueCat SDK 8.9.2+**: New Architecture 対応済み、React Native 0.81+ と互換性あり。公式ドキュメントでは最小バージョン 0.73.0 を要求。
-2. **react-native-purchases-ui**: RevenueCat Dashboard で UI を遠隔設定可能。コード変更なしでペイウォールデザインを更新できるため、迅速な A/B テストとイテレーションが可能。
+1. **RevenueCat SDK 8.9.2+**: New Architecture 対応済み、React Native 0.81+ と互換性あり。公式ドキュメントでは最小バージョン 0.73.0 を要求。SDK v8 は StoreKit 2 をデフォルト使用。
+2. **react-native-purchases-ui**: RevenueCat Dashboard で UI を遠隔設定可能。コード変更なしでペイウォールデザインを更新できるため、迅速な A/B テストとイテレーションが可能。**注意**: `PaywallFooterContainerView` は New Architecture 非対応 ([GitHub Issue #1158](https://github.com/RevenueCat/react-native-purchases/issues/1158))。
 3. **Zustand + React Context**: Zustand は既存ストアとの統合 (`isPremium` フラグ同期) を提供し、React Context はサブスクリプション状態のリアクティブな配信を担当。
 4. **TypeScript strict mode**: RevenueCat の `CustomerInfo` を型安全なドメインエンティティ (`Subscription`) に変換し、実行時エラーを防止。
 
@@ -499,8 +500,14 @@ interface Subscription {
  */
 type SubscriptionError =
   | { code: 'PURCHASE_CANCELLED'; message: string; retryable: false }
+  | { code: 'PURCHASE_NOT_ALLOWED'; message: string; retryable: false }
+  | { code: 'PURCHASE_INVALID'; message: string; retryable: false }
+  | { code: 'PRODUCT_ALREADY_PURCHASED'; message: string; retryable: false }
   | { code: 'NETWORK_ERROR'; message: string; retryable: true }
   | { code: 'CONFIGURATION_ERROR'; message: string; retryable: false }
+  | { code: 'INVALID_CREDENTIALS_ERROR'; message: string; retryable: false }
+  | { code: 'UNEXPECTED_BACKEND_RESPONSE_ERROR'; message: string; retryable: true }
+  | { code: 'RECEIPT_ALREADY_IN_USE_ERROR'; message: string; retryable: false }
   | { code: 'UNKNOWN_ERROR'; message: string; retryable: false };
 ```
 
@@ -946,15 +953,24 @@ type Result<T, E> = { success: true; data: T } | { success: false; error: E };
 **ユーザーエラー (4xx 相当)**:
 - **PURCHASE_CANCELLED**: ユーザーが購入をキャンセル
   - 対応: エラーログなし、UI は「キャンセルされました」と表示し、Paywall を閉じない
-  - フィールドレベル検証: なし (ユーザーアクション)
+- **PURCHASE_NOT_ALLOWED**: デバイスで購入が無効
+  - 対応: 「このデバイスでは購入できません」メッセージ表示
+- **PURCHASE_INVALID**: 無効な購入
+  - 対応: エラーログ記録、ユーザーにサポート連絡を促す
+- **PRODUCT_ALREADY_PURCHASED**: 既に購入済み
+  - 対応: 自動的に `restorePurchases()` を実行
 
 **システムエラー (5xx 相当)**:
 - **NETWORK_ERROR**: ネットワーク接続失敗、RevenueCat API タイムアウト
   - 対応: 再試行可能フラグ (`retryable: true`) を設定、UI は「接続エラー。再試行してください」メッセージと「再試行」ボタンを表示
-  - インフラストラクチャ障害: Circuit Breaker パターンは不要 (RevenueCat SDK が内部でリトライ管理)
 - **CONFIGURATION_ERROR**: API キー未設定、SDK 初期化失敗
   - 対応: 開発者向けエラーメッセージをコンソールに出力、アプリは free tier モードで起動継続
-  - Rate Limiting: なし (RevenueCat は一般的な使用量で制限なし)
+- **INVALID_CREDENTIALS_ERROR**: API キーが無効
+  - 対応: 開発者向けエラー、環境変数の確認を促す
+- **UNEXPECTED_BACKEND_RESPONSE_ERROR**: サーバーエラー
+  - 対応: エラーログ記録、一時的なエラーとして再試行を促す
+- **RECEIPT_ALREADY_IN_USE_ERROR**: レシートが他のアカウントで使用中
+  - 対応: 「この購入は別のアカウントで使用されています」メッセージ表示
 
 **ビジネスロジックエラー (422 相当)**:
 - **NO_ACTIVE_SUBSCRIPTION**: 復元時にアクティブなサブスクリプションが見つからない
@@ -1121,8 +1137,14 @@ export type FeatureLevel = 'basic' | 'premium';
  */
 export type SubscriptionError =
   | { code: 'PURCHASE_CANCELLED'; message: string; retryable: false }
+  | { code: 'PURCHASE_NOT_ALLOWED'; message: string; retryable: false }
+  | { code: 'PURCHASE_INVALID'; message: string; retryable: false }
+  | { code: 'PRODUCT_ALREADY_PURCHASED'; message: string; retryable: false }
   | { code: 'NETWORK_ERROR'; message: string; retryable: true }
   | { code: 'CONFIGURATION_ERROR'; message: string; retryable: false }
+  | { code: 'INVALID_CREDENTIALS_ERROR'; message: string; retryable: false }
+  | { code: 'UNEXPECTED_BACKEND_RESPONSE_ERROR'; message: string; retryable: true }
+  | { code: 'RECEIPT_ALREADY_IN_USE_ERROR'; message: string; retryable: false }
   | { code: 'NO_ACTIVE_SUBSCRIPTION'; message: string; retryable: false }
   | { code: 'UNKNOWN_ERROR'; message: string; retryable: false };
 
