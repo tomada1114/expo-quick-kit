@@ -1,6 +1,12 @@
 /**
  * Demo Screen
- * Demonstration screen for sample features
+ * Demonstration screen for sample features including:
+ * - Zustand state management
+ * - SQLite database operations
+ * - Zod validation
+ * - Date-fns formatting
+ * - Secure storage
+ * - Push notifications
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,6 +21,12 @@ import { Card } from '@/components/ui/card';
 import { Spacer } from '@/components/ui/spacer';
 import { Spacing, Typography } from '@/constants/theme';
 import { ItemList } from '@/features/_example/components/item-list';
+import {
+  ValidationDemo,
+  DateDemo,
+  SecureStorageDemo,
+  NotificationDemo,
+} from '@/features/_example';
 import { useItemList } from '@/features/_example/hooks/use-item-list';
 import { itemKeys } from '@/features/_example/services/query-keys';
 import { itemRepository } from '@/features/_example/services/repository';
@@ -175,6 +187,31 @@ export default function DemoScreen() {
           Open Modal Screen
         </Button>
       </Card>
+
+      <Spacer size="md" />
+
+      {/* Library Integration Demos */}
+      <ThemedText style={styles.sectionHeader}>Library Integrations</ThemedText>
+
+      <Spacer size="md" />
+
+      {/* Zod Validation Demo */}
+      <ValidationDemo testID="validation-demo" />
+
+      <Spacer size="md" />
+
+      {/* Date-fns Demo */}
+      <DateDemo testID="date-demo" />
+
+      <Spacer size="md" />
+
+      {/* Secure Storage Demo */}
+      <SecureStorageDemo testID="secure-storage-demo" />
+
+      <Spacer size="md" />
+
+      {/* Push Notifications Demo */}
+      <NotificationDemo testID="notification-demo" />
     </View>
   );
 
@@ -240,5 +277,9 @@ const styles = StyleSheet.create({
   },
   halfButton: {
     flex: 1,
+  },
+  sectionHeader: {
+    ...Typography.title2,
+    fontWeight: '600',
   },
 });
