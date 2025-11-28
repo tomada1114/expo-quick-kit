@@ -250,6 +250,18 @@ describe('Notification Service', () => {
         scheduleNotification('Title', 'Body', { seconds: 5 })
       ).rejects.toThrow('Scheduling failed');
     });
+
+    it('should throw error when seconds is zero', async () => {
+      await expect(
+        scheduleNotification('Title', 'Body', { seconds: 0 })
+      ).rejects.toThrow('seconds must be positive');
+    });
+
+    it('should throw error when seconds is negative', async () => {
+      await expect(
+        scheduleNotification('Title', 'Body', { seconds: -5 })
+      ).rejects.toThrow('seconds must be positive');
+    });
   });
 
   describe('cancelNotification', () => {
