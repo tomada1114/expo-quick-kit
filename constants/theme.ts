@@ -1,6 +1,6 @@
 /**
  * Expo Design System - iOS System Colors Theme
- * Apple Human Interface Guidelines準拠のミニマル配色システム
+ * Minimal color system compliant with Apple Human Interface Guidelines
  *
  * Usage:
  *   import { Colors } from '@/constants/theme';
@@ -8,23 +8,23 @@
  *   const colors = Colors[colorScheme ?? 'light'];
  *
  * CUSTOMIZE:
- *   1. PRIMARY_COLOR を Blue/Green/Orange から選択
- *   2. Semantic colors が必要に応じて追加・カスタマイズ
+ *   1. Select PRIMARY_COLOR from Blue/Green/Orange
+ *   2. Add or customize Semantic colors as needed
  */
 
 import { Platform } from 'react-native';
 
 // ============================================================
-// Primary Color Selection（アプリのメインアクション色を1色選択）
+// Primary Color Selection (Select one main action color for your app)
 // ============================================================
 
 export const AppPrimaryColor = {
-  blue: '#007AFF', // Decision Journal - 理性的、信頼感
-  green: '#34C759', // Energy Tracker - 健康、エネルギー
-  orange: '#FF9500', // 12 Week Year - 緊急性、実行
+  blue: '#007AFF', // Decision Journal - Rational, trustworthy
+  green: '#34C759', // Energy Tracker - Health, energy
+  orange: '#FF9500', // 12 Week Year - Urgency, action
 } as const;
 
-// CUSTOMIZE: Blue/Green/Orange のいずれかを選択
+// CUSTOMIZE: Select one from Blue/Green/Orange
 export const PRIMARY_COLOR = AppPrimaryColor.blue;
 
 // ============================================================
@@ -32,40 +32,40 @@ export const PRIMARY_COLOR = AppPrimaryColor.blue;
 // ============================================================
 
 interface ColorPalette {
-  // Primary（アプリのメインアクション色）
+  // Primary (Main action color for the app)
   primary: string;
 
-  // Background（3段階の背景階層）
+  // Background (3-level background hierarchy)
   background: {
-    base: string; // 画面全体の基本背景
-    secondary: string; // カード、セクション背景
-    tertiary: string; // モーダル、オーバーレイ背景
+    base: string; // Base background for entire screen
+    secondary: string; // Card, section background
+    tertiary: string; // Modal, overlay background
   };
 
-  // Text（テキスト色 - 4段階）
+  // Text (Text colors - 4 levels)
   text: {
-    primary: string; // メインテキスト、見出し
-    secondary: string; // サブタイトル、説明文
-    tertiary: string; // プレースホルダー、非活性テキスト
-    inverse: string; // Dark背景上のテキスト
+    primary: string; // Main text, headings
+    secondary: string; // Subtitles, descriptions
+    tertiary: string; // Placeholders, inactive text
+    inverse: string; // Text on dark backgrounds
   };
 
-  // Semantic（機能的な意味を持つ色）
+  // Semantic (Colors with functional meaning)
   semantic: {
-    success: string; // 成功、完了（iOS Green）
-    warning: string; // 注意、警告（iOS Orange）
-    error: string; // エラー、削除（iOS Red）
-    info: string; // 情報、ヒント（iOS Blue）
+    success: string; // Success, completion (iOS Green)
+    warning: string; // Caution, warning (iOS Orange)
+    error: string; // Error, deletion (iOS Red)
+    info: string; // Information, hints (iOS Blue)
   };
 
-  // Interactive（操作要素）
+  // Interactive (Interactive elements)
   interactive: {
-    separator: string; // 区切り線、ボーダー
-    fill: string; // アイコン、非活性要素
-    fillSecondary: string; // 副次的な塗りつぶし
+    separator: string; // Dividers, borders
+    fill: string; // Icons, inactive elements
+    fillSecondary: string; // Secondary fills
   };
 
-  // Legacy（既存コードとの互換性）
+  // Legacy (Compatibility with existing code)
   tint: string;
   icon: string;
   tabIconDefault: string;
@@ -73,7 +73,7 @@ interface ColorPalette {
 }
 
 // ============================================================
-// Light Mode Colors（iOS System Colors準拠）
+// Light Mode Colors (iOS System Colors compliant)
 // ============================================================
 
 const lightColors: ColorPalette = {
@@ -90,8 +90,8 @@ const lightColors: ColorPalette = {
   // Text
   text: {
     primary: '#000000', // Black
-    secondary: '#3C3C43', // iOS Gray（60% opacity相当）
-    tertiary: '#8E8E93', // iOS Gray（lighter）
+    secondary: '#3C3C43', // iOS Gray (60% opacity equivalent)
+    tertiary: '#8E8E93', // iOS Gray (lighter)
     inverse: '#FFFFFF', // White on dark background
   },
 
@@ -106,11 +106,11 @@ const lightColors: ColorPalette = {
   // Interactive
   interactive: {
     separator: '#C6C6C8', // iOS Separator
-    fill: '#787880', // iOS Gray（~30% opacity）
-    fillSecondary: '#BCBCC0', // iOS Gray（~20% opacity）
+    fill: '#787880', // iOS Gray (~30% opacity)
+    fillSecondary: '#BCBCC0', // iOS Gray (~20% opacity)
   },
 
-  // Legacy（既存コードとの互換性）
+  // Legacy (Compatibility with existing code)
   tint: PRIMARY_COLOR,
   icon: '#787880',
   tabIconDefault: '#787880',
@@ -118,7 +118,7 @@ const lightColors: ColorPalette = {
 };
 
 // ============================================================
-// Dark Mode Colors（+10% Brightness Rule適用）
+// Dark Mode Colors (+10% Brightness Rule applied)
 // ============================================================
 
 const DarkPrimaryColors: Record<string, string> = {
@@ -145,8 +145,8 @@ const darkColors: ColorPalette = {
   // Text
   text: {
     primary: '#FFFFFF', // White
-    secondary: '#EBEBF5', // iOS Light Gray（60% opacity white相当）
-    tertiary: '#8E8E93', // iOS Gray（same as light mode）
+    secondary: '#EBEBF5', // iOS Light Gray (60% opacity white equivalent)
+    tertiary: '#8E8E93', // iOS Gray (same as light mode)
     inverse: '#000000', // Black on light background
   },
 
@@ -162,10 +162,10 @@ const darkColors: ColorPalette = {
   interactive: {
     separator: '#38383A', // iOS Dark Separator
     fill: '#787880', // Same as light mode
-    fillSecondary: '#48484A', // iOS Dark Gray（lighter）
+    fillSecondary: '#48484A', // iOS Dark Gray (lighter)
   },
 
-  // Legacy（既存コードとの互換性）
+  // Legacy (Compatibility with existing code)
   tint: getDarkPrimaryColor(),
   icon: '#9BA1A6',
   tabIconDefault: '#9BA1A6',
@@ -195,7 +195,7 @@ export const Spacing = {
 } as const;
 
 // ============================================================
-// Typography（iOS Dynamic Type準拠）
+// Typography (iOS Dynamic Type compliant)
 // ============================================================
 
 export const Typography = {
@@ -259,7 +259,7 @@ export const BorderRadius = {
 } as const;
 
 // ============================================================
-// Touch Target（iOS HIG準拠）
+// Touch Target (iOS HIG compliant)
 // ============================================================
 
 export const TouchTarget = {
@@ -267,7 +267,7 @@ export const TouchTarget = {
 } as const;
 
 // ============================================================
-// Shadows（iOS標準シャドウ）
+// Shadows (iOS standard shadows)
 // ============================================================
 
 export const Shadows = {
@@ -295,7 +295,7 @@ export const Shadows = {
 } as const;
 
 // ============================================================
-// Typography（フォントファミリー定義）
+// Typography (Font family definitions)
 // ============================================================
 
 interface FontFamily {

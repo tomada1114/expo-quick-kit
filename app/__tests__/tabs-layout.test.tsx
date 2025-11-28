@@ -103,7 +103,7 @@ describe('TabLayout', () => {
         (call) => call[0].name === 'explore'
       );
 
-      // exploreタブはボイラープレートから削除されたため存在しない
+      // Explore tab has been removed from the boilerplate
       expect(exploreScreenCall).toBeFalsy();
     });
   });
@@ -275,7 +275,7 @@ describe('TabLayout', () => {
         (call) => call[0].name === 'explore'
       );
 
-      // exploreタブはボイラープレートから削除されたため存在しない
+      // Explore tab has been removed from the boilerplate
       expect(exploreScreenCall).toBeFalsy();
     });
   });

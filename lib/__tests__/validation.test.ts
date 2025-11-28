@@ -2,10 +2,10 @@
  * Validation Utility Tests
  *
  * Tests cover:
- * - Email validation schema (正常系・異常系)
- * - Password validation schema (8文字以上、大文字小文字数字を含む)
- * - Phone number validation schema (日本の電話番号形式)
- * - validateData function (success/errors パス)
+ * - Email validation schema (valid/invalid cases)
+ * - Password validation schema (minimum 8 characters, uppercase, lowercase, number required)
+ * - Phone number validation schema (Japanese phone number format)
+ * - validateData function (success/errors paths)
  */
 
 import {
@@ -34,9 +34,7 @@ describe('emailSchema', () => {
     const result = emailSchema.safeParse('invalid-email');
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].message).toBe(
-        'メールアドレスの形式が正しくありません'
-      );
+      expect(result.error.errors[0].message).toBe('Invalid email format');
     }
   });
 
@@ -76,7 +74,7 @@ describe('passwordSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.errors[0].message).toBe(
-        'パスワードは8文字以上で入力してください'
+        'Password must be at least 8 characters'
       );
     }
   });
@@ -86,7 +84,9 @@ describe('passwordSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.errors.map((e) => e.message);
-      expect(messages).toContain('大文字を1文字以上含めてください');
+      expect(messages).toContain(
+        'Password must contain at least one uppercase letter'
+      );
     }
   });
 
@@ -95,7 +95,9 @@ describe('passwordSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.errors.map((e) => e.message);
-      expect(messages).toContain('小文字を1文字以上含めてください');
+      expect(messages).toContain(
+        'Password must contain at least one lowercase letter'
+      );
     }
   });
 
@@ -104,7 +106,7 @@ describe('passwordSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.errors.map((e) => e.message);
-      expect(messages).toContain('数字を1文字以上含めてください');
+      expect(messages).toContain('Password must contain at least one number');
     }
   });
 
@@ -130,7 +132,7 @@ describe('phoneSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.errors[0].message).toBe(
-        '電話番号の形式が正しくありません（例: 09012345678）'
+        'Invalid phone number format (example: 09012345678)'
       );
     }
   });

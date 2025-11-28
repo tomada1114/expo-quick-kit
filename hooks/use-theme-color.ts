@@ -1,13 +1,13 @@
 /**
  * Theme Color Hooks
- * iOS System Colors準拠のテーマカラーを取得するフック
+ * Hooks to get theme colors compliant with iOS System Colors
  *
  * Usage:
- *   // 方法1: Colors全体を取得（推奨）
+ *   // Method 1: Get entire Colors object (recommended)
  *   const { colors, colorScheme } = useThemedColors();
  *   <View style={{ backgroundColor: colors.background.base }} />
  *
- *   // 方法2: トップレベルの色を取得（legacy互換）
+ *   // Method 2: Get top-level color (legacy compatibility)
  *   const tintColor = useThemeColor({}, 'tint');
  *
  * Learn more about light and dark modes:
@@ -20,8 +20,8 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 type ColorPalette = (typeof Colors)['light'];
 
 /**
- * トップレベルのカラープロパティを取得するフック（legacy互換）
- * ネストされたカラー（background.base等）にはuseThemedColorsを使用
+ * Get top-level color properties (legacy compatibility)
+ * For nested colors (background.base, etc.), use useThemedColors instead
  */
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -34,7 +34,7 @@ export function useThemeColor(
     return colorFromProps;
   } else {
     const colorValue = Colors[theme][colorName];
-    // ネストされたオブジェクトの場合はundefinedを返す（型安全性のため）
+    // Return undefined for nested objects (for type safety)
     if (typeof colorValue === 'string') {
       return colorValue;
     }
@@ -48,11 +48,11 @@ interface ThemedColorsResult {
 }
 
 /**
- * テーマカラーパレット全体を取得するフック（推奨）
- * ネストされたカラー（background.base, text.primary等）にアクセス可能
+ * Get entire theme color palette (recommended)
+ * Provides access to nested colors (background.base, text.primary, etc.)
  *
- * @returns colors - 現在のテーマに応じたカラーパレット
- * @returns colorScheme - 'light' | 'dark'（nullは返らない）
+ * @returns colors - Color palette based on current theme
+ * @returns colorScheme - 'light' | 'dark' (never returns null)
  */
 export function useThemedColors(): ThemedColorsResult {
   const colorScheme: ColorScheme = useColorScheme() ?? 'light';

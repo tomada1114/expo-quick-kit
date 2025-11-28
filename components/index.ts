@@ -1,6 +1,6 @@
 /**
  * Components Barrel Export
- * 共通コンポーネントの一括エクスポート
+ * Centralized export for shared components
  *
  * Usage:
  *   import { Button, Card, ThemedText, ThemedView } from '@/components';

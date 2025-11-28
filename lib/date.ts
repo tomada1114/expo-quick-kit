@@ -1,11 +1,11 @@
 /**
  * Date Utility Functions
  *
- * date-fnsのラッパー関数を提供し、プロジェクト固有のデフォルト設定（日本語ロケール）を適用
+ * Provides wrapper functions for date-fns with project-specific default settings (Japanese locale)
  *
- * - formatDate: 日付フォーマット（デフォルトロケール: ja）
- * - formatDistanceToNow: 相対時刻表示（例: '3日前'）
- * - formatRelativeDate: 相対日付表示（例: '今日', '昨日'）
+ * - formatDate: Date formatting (default locale: ja)
+ * - formatDistanceToNow: Relative time display (e.g., '3 days ago')
+ * - formatRelativeDate: Relative date display (e.g., 'today', 'yesterday')
  */
 
 import {

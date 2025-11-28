@@ -2,17 +2,17 @@
  * Date Utility Tests
  *
  * Tests cover:
- * - formatDate関数のテスト（様々なフォーマット文字列）
- * - formatDistanceToNow関数のテスト（過去・未来の日付）
- * - formatRelativeDate関数のテスト（今日、昨日、明日など）
- * - 日本語ロケールの検証
+ * - formatDate function tests (various format strings)
+ * - formatDistanceToNow function tests (past/future dates)
+ * - formatRelativeDate function tests (today, yesterday, tomorrow, etc.)
+ * - Japanese locale verification
  */
 
 import { formatDate, formatDistanceToNow, formatRelativeDate } from '../date';
 
 describe('formatDate', () => {
   it('should format date with yyyy-MM-dd pattern', () => {
-    const date = new Date(2024, 0, 15); // 2024年1月15日
+    const date = new Date(2024, 0, 15); // January 15, 2024
     const result = formatDate(date, 'yyyy-MM-dd');
     expect(result).toBe('2024-01-15');
   });
@@ -64,7 +64,7 @@ describe('formatDate', () => {
 describe('formatDistanceToNow', () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    jest.setSystemTime(new Date(2024, 0, 15, 12, 0, 0)); // 2024年1月15日 12:00
+    jest.setSystemTime(new Date(2024, 0, 15, 12, 0, 0)); // January 15, 2024 12:00
   });
 
   afterEach(() => {
@@ -72,31 +72,31 @@ describe('formatDistanceToNow', () => {
   });
 
   it('should format past date with Japanese suffix', () => {
-    const pastDate = new Date(2024, 0, 14, 12, 0, 0); // 1日前
+    const pastDate = new Date(2024, 0, 14, 12, 0, 0); // 1 day ago
     const result = formatDistanceToNow(pastDate);
     expect(result).toContain('前');
   });
 
   it('should format 3 days ago in Japanese', () => {
-    const pastDate = new Date(2024, 0, 12, 12, 0, 0); // 3日前
+    const pastDate = new Date(2024, 0, 12, 12, 0, 0); // 3 days ago
     const result = formatDistanceToNow(pastDate);
     expect(result).toBe('3日前');
   });
 
   it('should format 1 hour ago in Japanese', () => {
-    const pastDate = new Date(2024, 0, 15, 11, 0, 0); // 1時間前
+    const pastDate = new Date(2024, 0, 15, 11, 0, 0); // 1 hour ago
     const result = formatDistanceToNow(pastDate);
     expect(result).toContain('時間前');
   });
 
   it('should format future date with Japanese suffix', () => {
-    const futureDate = new Date(2024, 0, 16, 12, 0, 0); // 1日後
+    const futureDate = new Date(2024, 0, 16, 12, 0, 0); // 1 day later
     const result = formatDistanceToNow(futureDate);
     expect(result).toContain('後');
   });
 
   it('should format 1 week ago in Japanese', () => {
-    const pastDate = new Date(2024, 0, 8, 12, 0, 0); // 約1週間前
+    const pastDate = new Date(2024, 0, 8, 12, 0, 0); // About 1 week ago
     const result = formatDistanceToNow(pastDate);
     expect(result).toMatch(/約1週間前|7日前/);
   });
@@ -115,7 +115,7 @@ describe('formatDistanceToNow', () => {
   });
 
   it('should format about 1 month ago', () => {
-    const pastDate = new Date(2023, 11, 15, 12, 0, 0); // 約1ヶ月前
+    const pastDate = new Date(2023, 11, 15, 12, 0, 0); // About 1 month ago
     const result = formatDistanceToNow(pastDate);
     expect(result).toMatch(/約1か月前|1か月前/);
   });
@@ -124,7 +124,7 @@ describe('formatDistanceToNow', () => {
 describe('formatRelativeDate', () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    jest.setSystemTime(new Date(2024, 0, 15, 12, 0, 0)); // 2024年1月15日 12:00 (月曜日)
+    jest.setSystemTime(new Date(2024, 0, 15, 12, 0, 0)); // January 15, 2024 12:00 (Monday)
   });
 
   afterEach(() => {
@@ -144,10 +144,10 @@ describe('formatRelativeDate', () => {
   });
 
   it('should format date within the week with weekday', () => {
-    // 先週の金曜日 (2024年1月12日)
+    // Last Friday (January 12, 2024)
     const lastFriday = new Date(2024, 0, 12, 9, 30, 0);
     const result = formatRelativeDate(lastFriday);
-    // Should show weekday (金曜日) or relative format
+    // Should show weekday (Friday) or relative format
     expect(result).toMatch(/金曜日|先週.*金曜日|前の金曜日/);
   });
 
@@ -158,7 +158,7 @@ describe('formatRelativeDate', () => {
   });
 
   it('should format next week date with weekday', () => {
-    // 次の金曜日 (2024年1月19日)
+    // Next Friday (January 19, 2024)
     const nextFriday = new Date(2024, 0, 19, 9, 30, 0);
     const result = formatRelativeDate(nextFriday);
     expect(result).toMatch(/金曜日|次の金曜日/);

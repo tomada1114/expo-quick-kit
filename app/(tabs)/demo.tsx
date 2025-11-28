@@ -1,6 +1,6 @@
 /**
  * Demo Screen
- * サンプル機能のデモンストレーション画面
+ * Demonstration screen for sample features
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -35,7 +35,7 @@ export default function DemoScreen() {
     },
     onError: (error) => {
       console.error('Failed to create item:', error);
-      Alert.alert('エラー', 'アイテムの追加に失敗しました');
+      Alert.alert('Error', 'Failed to add item');
     },
   });
 
@@ -48,11 +48,11 @@ export default function DemoScreen() {
     },
     onError: (error) => {
       console.error('Failed to delete item:', error);
-      Alert.alert('エラー', 'アイテムの削除に失敗しました');
+      Alert.alert('Error', 'Failed to delete item');
     },
   });
 
-  // Zustand状態管理のデモ
+  // Zustand state management demo
   const isOnboarded = useStore((state) => state.isOnboarded);
   const isPremium = useStore((state) => state.isPremium);
   const toggleOnboarded = useStore((state) => state.setOnboarded);
@@ -68,12 +68,12 @@ export default function DemoScreen() {
   const handleItemPress = useCallback(
     (id: number) => {
       Alert.alert(
-        'アイテム削除',
-        'このアイテムを削除しますか？',
+        'Delete Item',
+        'Are you sure you want to delete this item?',
         [
-          { text: 'キャンセル', style: 'cancel' },
+          { text: 'Cancel', style: 'cancel' },
           {
-            text: '削除',
+            text: 'Delete',
             style: 'destructive',
             onPress: () => deleteItem.mutate(id),
           },
@@ -90,22 +90,24 @@ export default function DemoScreen() {
 
   const renderHeader = () => (
     <View style={styles.header}>
-      {/* Zustand状態管理デモ */}
+      {/* Zustand state management demo */}
       <Card style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>Zustand 状態管理</ThemedText>
+        <ThemedText style={styles.sectionTitle}>
+          Zustand State Management
+        </ThemedText>
         <Spacer size="sm" />
 
         <View style={styles.stateRow}>
           <ThemedText style={styles.stateLabel}>Onboarded:</ThemedText>
           <ThemedText style={styles.stateValue}>
-            {isOnboarded ? '✓ はい' : '✗ いいえ'}
+            {isOnboarded ? '✓ Yes' : '✗ No'}
           </ThemedText>
         </View>
 
         <View style={styles.stateRow}>
           <ThemedText style={styles.stateLabel}>Premium:</ThemedText>
           <ThemedText style={styles.stateValue}>
-            {isPremium ? '✓ はい' : '✗ いいえ'}
+            {isPremium ? '✓ Yes' : '✗ No'}
           </ThemedText>
         </View>
 
@@ -118,7 +120,7 @@ export default function DemoScreen() {
             testID="toggle-onboarded"
             style={styles.halfButton}
           >
-            Onboarded切替
+            Toggle Onboarded
           </Button>
           <Spacer size="sm" direction="horizontal" />
           <Button
@@ -127,20 +129,18 @@ export default function DemoScreen() {
             testID="toggle-premium"
             style={styles.halfButton}
           >
-            Premium切替
+            Toggle Premium
           </Button>
         </View>
       </Card>
 
       <Spacer size="md" />
 
-      {/* SQLite + TanStack Query デモ */}
+      {/* SQLite + TanStack Query demo */}
       <Card style={styles.section}>
         <View style={styles.headerRow}>
-          <ThemedText style={styles.sectionTitle}>
-            SQLite データベース
-          </ThemedText>
-          <ThemedText style={styles.itemCount}>{items.length}件</ThemedText>
+          <ThemedText style={styles.sectionTitle}>SQLite Database</ThemedText>
+          <ThemedText style={styles.itemCount}>{items.length} items</ThemedText>
         </View>
 
         <Spacer size="sm" />
@@ -151,7 +151,7 @@ export default function DemoScreen() {
           loading={addItem.isPending}
           testID="add-item"
         >
-          アイテム追加
+          Add Item
         </Button>
       </Card>
 
@@ -163,16 +163,16 @@ export default function DemoScreen() {
     <View style={styles.footer}>
       <Spacer size="md" />
 
-      {/* ナビゲーションデモ */}
+      {/* Navigation demo */}
       <Card style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>ナビゲーション</ThemedText>
+        <ThemedText style={styles.sectionTitle}>Navigation</ThemedText>
         <Spacer size="sm" />
         <Button
           onPress={handleModalPress}
           variant="secondary"
           testID="open-modal"
         >
-          モーダル画面を開く
+          Open Modal Screen
         </Button>
       </Card>
     </View>
