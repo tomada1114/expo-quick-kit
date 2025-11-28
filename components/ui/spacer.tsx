@@ -1,6 +1,6 @@
 /**
  * Spacer Component
- * 8pt Grid System準拠のスペーシングコンポーネント
+ * Spacing component compliant with 8pt Grid System
  *
  * Usage:
  *   <Spacer />  // 16pt vertical

@@ -1,6 +1,6 @@
 /**
  * HomeScreen Tests
- * ボイラープレートのホーム画面のテスト
+ * Tests for the boilerplate home screen
  */
 
 import { render, screen } from '@testing-library/react-native';
@@ -58,12 +58,12 @@ describe('HomeScreen', () => {
 
     it('should render subtitle description', () => {
       render(<HomeScreen />);
-      expect(screen.getByText(/Expo SDK 54 ボイラープレート/i)).toBeTruthy();
+      expect(screen.getByText(/Expo SDK 54 Boilerplate/i)).toBeTruthy();
     });
 
     it('should render feature sections', () => {
       render(<HomeScreen />);
-      // 主要な機能セクションが表示されていることを確認
+      // Verify that key feature sections are displayed
       expect(screen.getByText(/Zustand/i)).toBeTruthy();
       expect(screen.getByText(/Drizzle/i)).toBeTruthy();
       expect(screen.getByText(/TanStack Query/i)).toBeTruthy();

@@ -1,6 +1,6 @@
 /**
  * Home Screen
- * ボイラープレートのメインホーム画面
+ * Main home screen of the boilerplate
  */
 
 import { StyleSheet, ScrollView, View } from 'react-native';
@@ -20,19 +20,21 @@ interface FeatureItem {
 const features: FeatureItem[] = [
   {
     title: 'Zustand',
-    description: 'シンプルで軽量な状態管理。persist ミドルウェアで永続化対応。',
+    description:
+      'Simple and lightweight state management. Persistence support with persist middleware.',
   },
   {
     title: 'Drizzle ORM',
-    description: '型安全なSQLiteデータベース操作。expo-sqlite と連携。',
+    description:
+      'Type-safe SQLite database operations. Works with expo-sqlite.',
   },
   {
     title: 'TanStack Query',
-    description: '非同期データのキャッシュとフェッチ管理。',
+    description: 'Asynchronous data caching and fetch management.',
   },
   {
     title: 'expo-router',
-    description: 'ファイルベースのルーティング。型安全なナビゲーション。',
+    description: 'File-based routing. Type-safe navigation.',
   },
 ];
 
@@ -48,15 +50,13 @@ export default function HomeScreen() {
       <ThemedView style={styles.header}>
         <ThemedText style={styles.title}>expo-quick-kit</ThemedText>
         <Spacer size="sm" />
-        <ThemedText style={styles.subtitle}>
-          Expo SDK 54 ボイラープレート
-        </ThemedText>
+        <ThemedText style={styles.subtitle}>Expo SDK 54 Boilerplate</ThemedText>
       </ThemedView>
 
       <Spacer size="lg" />
 
       <View style={styles.featuresSection}>
-        <ThemedText style={styles.sectionTitle}>主要機能</ThemedText>
+        <ThemedText style={styles.sectionTitle}>Key Features</ThemedText>
         <Spacer size="sm" />
 
         {features.map((feature, index) => (
@@ -79,7 +79,7 @@ export default function HomeScreen() {
 
       <ThemedView style={styles.footer}>
         <ThemedText style={styles.footerText}>
-          詳細は features/_example/ を参照してください
+          See features/_example/ for details
         </ThemedText>
       </ThemedView>
     </ScrollView>

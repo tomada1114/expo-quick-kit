@@ -1,6 +1,6 @@
 /**
  * Button Component
- * iOS System Colors準拠のボタンコンポーネント
+ * Button component compliant with iOS System Colors
  *
  * Usage:
  *   <Button title="Save" onPress={handleSave} />

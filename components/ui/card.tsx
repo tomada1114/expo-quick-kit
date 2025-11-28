@@ -1,6 +1,6 @@
 /**
  * Card Component
- * iOS System Colors準拠のカードコンテナコンポーネント
+ * Card container component compliant with iOS System Colors
  *
  * Usage:
  *   <Card>
