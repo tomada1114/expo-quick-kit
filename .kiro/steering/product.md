@@ -20,14 +20,14 @@ expo-quick-kit is a **React Native boilerplate template** for building cross-pla
 ### 2. Modern Routing Architecture
 
 - **File-based Navigation** via expo-router: Routes defined in directory structure (`app/` directory)
-- **Tab-Based UI Pattern**: Pre-configured bottom tab navigation (Home/Explore tabs)
+- **Tab-Based UI Pattern**: Pre-configured bottom tab navigation (Home/Demo tabs)
 - **Type-Safe Routing**: TypeScript support for route definitions and navigation
 
-### 3. Dark Mode & Theming
+### 3. iOS Design System & Theming
 
-- **Automatic Theme Detection**: Responds to system light/dark preferences
-- **Centralized Color Palette**: Single source of truth for colors in `constants/theme.ts`
-- **Light/Dark Variants**: Colors and fonts configured for both modes
+- **Apple HIG準拠**: iOS System Colors、Dark Mode対応（+10% brightness rule）
+- **構造化カラーパレット**: Background/Text/Semantic/Interactiveの階層構造
+- **デザイントークン**: Spacing, Typography, BorderRadius, Shadowsの一貫したシステム
 
 ### 4. Optimization Features
 
@@ -35,13 +35,21 @@ expo-quick-kit is a **React Native boilerplate template** for building cross-pla
 - **New Architecture (TurboModules)**: Modern React Native runtime enabled
 - **Reanimated 4 + Worklets**: Smooth animations and native thread performance
 
+### 5. Data & State Management
+
+- **Zustand**: AsyncStorage永続化付きのクライアント状態管理
+- **TanStack Query**: サーバー状態、キャッシュ、データフェッチ
+- **Drizzle ORM + SQLite**: 型安全なローカルデータベース
+
 ## What Developers Don't Build From Scratch
 
 - Project setup and configuration
 - Basic navigation structure
-- Theme system and dark mode
-- Linting and code quality standards
-- Component patterns and organization
+- iOS Design System (HIG準拠テーマ)
+- State management architecture
+- Local database layer
+- Linting, testing, and code quality standards
+- Feature module pattern (参照実装付き)
 
 ## Value Proposition
 

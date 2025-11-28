@@ -5,25 +5,38 @@
 ```
 expo-quick-kit/
 ├── app/                      # Routes (expo-router file-based)
-│   ├── _layout.tsx          # Root layout with ThemeProvider
+│   ├── _layout.tsx          # Root layout with providers
 │   ├── (tabs)/              # Route group for tab navigation
-│   │   ├── _layout.tsx      # Tab bar configuration & colors
+│   │   ├── _layout.tsx      # Tab bar configuration
 │   │   ├── index.tsx        # Home screen
-│   │   └── explore.tsx      # Explore screen
+│   │   └── demo.tsx         # Demo screen
 │   └── modal.tsx            # Modal screen example
-├── components/              # Reusable UI components
-│   ├── themed-*.tsx         # Themed versions (text, view, etc.)
-│   ├── ui/                  # Generic UI primitives
-│   │   ├── icon-symbol.tsx  # Icon wrapper
-│   │   └── collapsible.tsx  # Disclosure component
-│   └── [feature]*.tsx       # Feature-specific components
+├── components/              # Shared UI components
+│   ├── themed-*.tsx         # Theme-aware components
+│   └── ui/                  # Design system primitives (Button, Card, etc.)
+├── features/                # Feature modules (domain-specific)
+│   └── _example/            # Reference implementation
+│       ├── components/      # Feature-specific UI
+│       ├── hooks/           # Feature-specific hooks
+│       ├── services/        # Repository, query keys
+│       └── types.ts         # Feature types
+├── database/                # Drizzle ORM layer
+│   ├── schema.ts            # Table definitions
+│   ├── client.ts            # Database client & operations
+│   └── index.ts             # Public exports
+├── store/                   # Zustand state management
+│   ├── index.ts             # Store creation with persistence
+│   ├── slices/              # State slices
+│   └── types.ts             # Store types
+├── lib/                     # Shared utilities
+│   ├── query-client.ts      # TanStack Query configuration
+│   └── format.ts            # Formatting helpers
 ├── constants/
-│   └── theme.ts             # Colors & Fonts (light/dark variants)
-├── hooks/
-│   ├── use-color-scheme.ts  # Re-export + platform variants
-│   └── use-theme-color.ts   # Lookup helper for theme values
-├── assets/                  # Images, icons, fonts
-└── app.json                 # Expo configuration
+│   └── theme.ts             # iOS Design System (Colors, Spacing, Typography)
+├── hooks/                   # Shared hooks
+│   ├── use-color-scheme.ts  # System theme detection
+│   └── use-theme-color.ts   # Theme color access
+└── types/                   # Global type definitions
 ```
 
 ## Naming Convention
@@ -84,59 +97,94 @@ export function ThemedText({ lightColor, darkColor, ...props }) {
 **Grouping with parentheses** doesn't create URL segments:
 
 - `app/(tabs)/index.tsx` → `/` (not `/(tabs)`)
-- `app/(tabs)/explore.tsx` → `/explore`
+- `app/(tabs)/demo.tsx` → `/demo`
 
-## Theming System
+## Theming System (iOS Design System)
 
-**Centralized in constants/theme.ts**:
+**constants/theme.ts**で定義されたApple HIG準拠のデザインシステム：
 
 ```typescript
+// 構造化されたカラーパレット
 export const Colors = {
-  light: { text: '#11181C', background: '#fff', tint: '#0a7ea4', ... },
-  dark: { text: '#ECEDEE', background: '#151718', tint: '#fff', ... }
+  light: {
+    primary: '#007AFF',
+    background: { base, secondary, tertiary },
+    text: { primary, secondary, tertiary, inverse },
+    semantic: { success, warning, error, info },
+    interactive: { separator, fill, fillSecondary },
+  },
+  dark: { /* +10% brightness rule適用 */ }
 };
 
-export const Fonts = Platform.select({
-  ios: { sans: 'system-ui', serif: 'ui-serif', ... },
-  default: { sans: 'normal', serif: 'serif', ... },
-  web: { sans: 'system-ui, -apple-system, ...', ... }
-});
+// その他のデザイントークン
+export const Spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, '2xl': 48 };
+export const Typography = { largeTitle, title1, headline, body, ... };
+export const BorderRadius = { sm: 4, md: 8, lg: 12, xl: 16, full: 9999 };
+export const TouchTarget = { min: 44 }; // iOS minimum
 ```
 
 **Access Pattern**:
 
 ```typescript
-const colorScheme = useColorScheme(); // 'light' | 'dark' | null
-const color = Colors[colorScheme ?? 'light'].text;
-```
+// 推奨: useThemedColors() - 構造化されたアクセス
+const { colors, colorScheme } = useThemedColors();
+<View style={{ backgroundColor: colors.background.base }} />
+<Text style={{ color: colors.text.primary }} />
 
-**No context/providers for theming**: useColorScheme (from React Native) handles system preference subscriptions.
+// レガシー: useThemeColor() - トップレベルカラーのみ
+const tintColor = useThemeColor({}, 'tint');
+```
 
 ## Code Patterns
 
-### 1. Hook-Based Theme Access
+### 1. Theme Access
 
-- Use `useColorScheme()` to subscribe to theme changes
-- Use `useThemeColor()` helper to resolve named colors
-- Re-export hooks from `hooks/` for consistent API
+- `useThemedColors()`: 構造化されたカラーオブジェクトを取得
+- `useColorScheme()`: システムテーマ（'light' | 'dark'）を検出
+- Design tokens: `Spacing`, `Typography`, `BorderRadius`を直接インポート
 
 ### 2. StyleSheet for All Styling
 
 - No CSS or inline style libraries
 - Platform variants via `Platform.select()`
-- Example: Fonts defined as `Platform.select({ ios: {...}, default: {...}, web: {...} })`
 
-### 3. Component Composition
+### 3. Feature Module Pattern
 
-- Prefer small, focused components (e.g., ThemedText, ThemedView)
-- Reuse via props, not creation of dozens of variants
-- Export type props for component contract clarity
+新機能は`features/`配下にモジュールとして配置：
 
-### 4. Tab Navigation Pattern
+```
+features/my-feature/
+├── components/     # UI components
+├── hooks/          # Custom hooks (useMyFeature)
+├── services/       # Repository, API, query keys
+├── types.ts        # Type definitions
+└── index.ts        # Public exports
+```
 
-- Use `(tabs)` route group with `_layout.tsx` for tab bar
-- Define screens in tab layout, not as separate routes
-- Access `colorScheme` in tab layout to set tint colors dynamically
+**参照実装**: `features/_example/`
+
+### 4. Data Layer Pattern
+
+```typescript
+// Repository pattern (database/client.ts or features/*/services/repository.ts)
+export const itemRepository = {
+  getAll: () => db.select().from(items),
+  create: (data: NewItem) => db.insert(items).values(data),
+  // ...
+};
+
+// TanStack Query integration
+export const useItemList = () => useQuery({
+  queryKey: itemQueryKeys.all,
+  queryFn: () => itemRepository.getAll(),
+});
+```
+
+### 5. State Management Pattern
+
+- **Server state**: TanStack Query（キャッシュ、フェッチ）
+- **Client state**: Zustand（UI状態、ユーザー設定）
+- **Local DB**: Drizzle ORM（永続化データ）
 
 ## Development Commands
 
@@ -145,7 +193,15 @@ pnpm start        # Start Expo dev server
 pnpm ios          # Run on iOS simulator
 pnpm android      # Run on Android emulator
 pnpm web          # Run on web
-pnpm lint         # Run ESLint (expo lint)
+pnpm dev:ios      # Run on iOS with dev-client and tunnel
+
+pnpm lint         # Run ESLint
+pnpm check        # Run all checks (format + lint + typecheck + test)
+pnpm test         # Run Jest tests
+pnpm test <pattern>  # Run specific test (e.g., pnpm test button)
+
+pnpm db:generate  # Generate Drizzle migrations
+pnpm db:studio    # Open Drizzle Studio
 ```
 
 ## Configuration Files
