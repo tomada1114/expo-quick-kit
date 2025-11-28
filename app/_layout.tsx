@@ -21,10 +21,6 @@ import { setupForegroundHandler } from '@/services/notifications';
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
-// Setup foreground notification handler
-// This configures how notifications are displayed when app is in foreground
-setupForegroundHandler();
-
 /**
  * Initialization timeout in milliseconds
  */
@@ -118,6 +114,11 @@ export default function RootLayout() {
   useEffect(() => {
     initializeApp();
   }, [initializeApp]);
+
+  // Setup foreground notification handler (safe for hot-reload)
+  useEffect(() => {
+    setupForegroundHandler();
+  }, []);
 
   // Show nothing while initializing (splash screen is visible)
   if (!appReady) {
