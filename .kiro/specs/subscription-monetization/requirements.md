@@ -20,7 +20,7 @@ TODO3.md ならびに TEMPLATE_ARCHITECTURE.md さらにClaude Skills の `expo-
 2. When SDKの初期化が実行される, the Subscription SDK shall 開発モードでDEBUGレベルのログを有効化する
 3. When APIキーが環境変数に存在しない, then the Subscription SDK shall 明確なエラーメッセージを表示し、初期化を失敗させる
 4. The Subscription SDK shall expo-dev-clientを使用した開発ビルド環境で動作する
-5. The Subscription SDK shall `services/revenue-cat.ts` に初期化ロジックを実装する
+5. The Subscription SDK shall `features/subscription/core/sdk.ts` に初期化ロジックを実装する
 
 ### Requirement 2: サブスクリプションアーキテクチャ
 
@@ -112,11 +112,12 @@ TODO3.md ならびに TEMPLATE_ARCHITECTURE.md さらにClaude Skills の `expo-
 
 #### Acceptance Criteria
 
-1. The Paywall Screen shall 利用可能なすべてのサブスクリプションプラン(月額・年額)をカード形式で表示する
-2. When 各プランが表示される, the Paywall shall タイトル、価格文字列、期間、割引情報(年額の場合)を表示する
-3. When ユーザーがプランを選択する, the Paywall shall 選択されたプランを視覚的にハイライトする
-4. When 購入処理中である, the Paywall shall ローディングインジケーターを表示し、ボタンを無効化する
-5. The Paywall Screen shall `features/subscription/components/Paywall.tsx` に実装される
+1. The Paywall Screen shall RevenueCatの組み込みPaywall UI (`react-native-purchases-ui`) を使用する
+2. The Paywall shall RevenueCat Dashboardで設定されたOffering(月額・年額プラン)を自動的に表示する
+3. When 購入処理中である, the Paywall shall 自動的にローディング状態を管理し、重複購入を防ぐ
+4. The Paywall shall 購入、復元、キャンセル、エラーの各イベントに対応したコールバックを提供する
+5. The Paywall Screen shall `features/subscription/components/Paywall.tsx` にRevenueCat UIのラッパーとして実装される
+6. The Paywall shall 閉じるボタンを表示し、ユーザーがPaywallを簡単に終了できるようにする
 
 ### Requirement 10: エラーハンドリングとロギング
 
