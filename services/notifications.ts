@@ -26,6 +26,17 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 /**
+ * Get EAS project ID from expo-constants
+ * Used for push token retrieval in EAS Build environments
+ */
+function getProjectId(): string | undefined {
+  return (
+    Constants?.expoConfig?.extra?.eas?.projectId ??
+    Constants?.easConfig?.projectId
+  );
+}
+
+/**
  * Notification permission result
  */
 export type PermissionResult =
@@ -96,12 +107,8 @@ export async function requestNotificationPermissions(): Promise<PermissionResult
     }
 
     // Get push token with projectId (required for EAS Build)
-    const projectId =
-      Constants?.expoConfig?.extra?.eas?.projectId ??
-      Constants?.easConfig?.projectId;
-
     const token = await Notifications.getExpoPushTokenAsync({
-      projectId: projectId ?? undefined,
+      projectId: getProjectId(),
     });
     return { status: 'granted', token: token.data };
   } catch (error) {
@@ -119,6 +126,7 @@ export async function requestNotificationPermissions(): Promise<PermissionResult
  * @param body - Notification body message
  * @param trigger - Trigger configuration (seconds from now or specific date)
  * @returns Notification identifier for cancellation
+ * @throws Error if seconds is not positive
  *
  * @example
  * // Schedule 5 seconds from now
@@ -132,6 +140,11 @@ export async function scheduleNotification(
   body: string,
   trigger: { seconds: number } | { date: Date }
 ): Promise<string> {
+  // Validate seconds parameter
+  if ('seconds' in trigger && trigger.seconds <= 0) {
+    throw new Error('seconds must be positive');
+  }
+
   // Build trigger with proper type for expo-notifications API
   const notificationTrigger =
     'seconds' in trigger
