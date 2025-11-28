@@ -616,18 +616,38 @@ expo-boilerplate/
 
 ## 技術スタック サマリー
 
-| カテゴリ               | 採用技術                        | 理由                   |
-| ---------------------- | ------------------------------- | ---------------------- |
-| フレームワーク         | Expo SDK 54                     | 公式、安定             |
-| 言語                   | TypeScript                      | 型安全                 |
-| パッケージマネージャー | pnpm                            | 高速、ディスク効率     |
-| ルーティング           | expo-router                     | ファイルベース         |
-| 状態管理               | Zustand                         | シンプル、学習コスト低 |
-| 非同期状態             | TanStack Query                  | キャッシュ管理         |
-| DB                     | expo-sqlite + Drizzle           | ローカル完結、型安全   |
-| スタイリング           | StyleSheet + テーマ定数         | テスト安全             |
-| バリデーション         | Zod                             | 型推論                 |
-| 日付処理               | date-fns                        | 軽量                   |
-| 課金                   | RevenueCat                      | 業界標準               |
-| テスト                 | Jest + RNTL                     | Expo公式推奨           |
-| リント                 | ESLint (Flat Config) + Prettier | 品質管理               |
+| カテゴリ               | 採用技術                        | 理由                   | 状態 |
+| ---------------------- | ------------------------------- | ---------------------- | ---- |
+| フレームワーク         | Expo SDK 54                     | 公式、安定             | ✅ |
+| 言語                   | TypeScript                      | 型安全                 | ✅ |
+| パッケージマネージャー | pnpm                            | 高速、ディスク効率     | ✅ |
+| ルーティング           | expo-router                     | ファイルベース         | ✅ |
+| 状態管理               | Zustand                         | シンプル、学習コスト低 | ✅ |
+| 非同期状態             | TanStack Query                  | キャッシュ管理         | ✅ |
+| DB                     | expo-sqlite + Drizzle           | ローカル完結、型安全   | ✅ |
+| スタイリング           | StyleSheet + テーマ定数         | テスト安全             | ✅ |
+| バリデーション         | Zod                             | 型推論                 | ✅ |
+| 日付処理               | date-fns                        | 軽量                   | ✅ |
+| セキュアストレージ     | expo-secure-store               | 暗号化保存             | ✅ |
+| プッシュ通知           | expo-notifications              | ローカル通知           | ✅ |
+| 課金                   | RevenueCat                      | 業界標準               | 🔲 |
+| テスト                 | Jest + RNTL                     | Expo公式推奨           | ✅ |
+| リント                 | ESLint (Flat Config) + Prettier | 品質管理               | ✅ |
+
+### ライブラリ統合詳細
+
+新規追加されたライブラリの設定ファイルと使用方法：
+
+| ライブラリ | 設定ファイル | ドキュメント |
+| ---------- | ------------ | ------------ |
+| Zod | `lib/validation.ts` | `lib/README.md` |
+| date-fns | `lib/date.ts` | `lib/README.md` |
+| expo-secure-store | `lib/secure-storage.ts` | `lib/README.md` |
+| expo-notifications | `services/notifications.ts` | `lib/README.md` |
+
+**サンプル実装**: `features/_example/components/` 配下に各ライブラリのデモコンポーネントを配置
+
+- `validation-demo.tsx` - zodバリデーションデモ
+- `date-demo.tsx` - date-fnsフォーマットデモ
+- `secure-storage-demo.tsx` - セキュアストレージデモ
+- `notification-demo.tsx` - プッシュ通知デモ
