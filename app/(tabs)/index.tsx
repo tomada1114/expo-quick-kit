@@ -1,107 +1,130 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+/**
+ * Home Screen
+ * ボイラープレートのメインホーム画面
+ */
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { StyleSheet, ScrollView, View } from 'react-native';
+
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Card } from '@/components/ui/card';
+import { Spacer } from '@/components/ui/spacer';
+import { Spacing, Typography } from '@/constants/theme';
+import { useThemedColors } from '@/hooks/use-theme-color';
+
+interface FeatureItem {
+  title: string;
+  description: string;
+}
+
+const features: FeatureItem[] = [
+  {
+    title: 'Zustand',
+    description: 'シンプルで軽量な状態管理。persist ミドルウェアで永続化対応。',
+  },
+  {
+    title: 'Drizzle ORM',
+    description: '型安全なSQLiteデータベース操作。expo-sqlite と連携。',
+  },
+  {
+    title: 'TanStack Query',
+    description: '非同期データのキャッシュとフェッチ管理。',
+  },
+  {
+    title: 'expo-router',
+    description: 'ファイルベースのルーティング。型安全なナビゲーション。',
+  },
+];
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{' '}
-          to see changes. Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction
-              title="Action"
-              icon="cube"
-              onPress={() => alert('Action pressed')}
-            />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const { colors } = useThemedColors();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
+  return (
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.background.base }]}
+      contentContainerStyle={styles.contentContainer}
+      testID="home-container"
+    >
+      <ThemedView style={styles.header}>
+        <ThemedText style={styles.title}>expo-quick-kit</ThemedText>
+        <Spacer size="sm" />
+        <ThemedText style={styles.subtitle}>
+          Expo SDK 54 ボイラープレート
         </ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">
-            npm run reset-project
-          </ThemedText>{' '}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{' '}
-          directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
+
+      <Spacer size="lg" />
+
+      <View style={styles.featuresSection}>
+        <ThemedText style={styles.sectionTitle}>主要機能</ThemedText>
+        <Spacer size="sm" />
+
+        {features.map((feature, index) => (
+          <View key={feature.title}>
+            <Card style={styles.featureCard}>
+              <ThemedText style={styles.featureTitle}>
+                {feature.title}
+              </ThemedText>
+              <Spacer size="xs" />
+              <ThemedText style={styles.featureDescription}>
+                {feature.description}
+              </ThemedText>
+            </Card>
+            {index < features.length - 1 && <Spacer size="sm" />}
+          </View>
+        ))}
+      </View>
+
+      <Spacer size="lg" />
+
+      <ThemedView style={styles.footer}>
+        <ThemedText style={styles.footerText}>
+          詳細は features/_example/ を参照してください
         </ThemedText>
       </ThemedView>
-    </ParallaxScrollView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: Spacing.lg,
+    paddingTop: Spacing.xl,
+  },
+  header: {
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    ...Typography.largeTitle,
+    fontWeight: '700',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  subtitle: {
+    ...Typography.body,
+  },
+  featuresSection: {
+    flex: 1,
+  },
+  sectionTitle: {
+    ...Typography.headline,
+  },
+  featureCard: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+  },
+  featureTitle: {
+    ...Typography.headline,
+  },
+  featureDescription: {
+    ...Typography.subheadline,
+  },
+  footer: {
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+  },
+  footerText: {
+    ...Typography.caption1,
   },
 });

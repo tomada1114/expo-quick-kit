@@ -96,15 +96,15 @@ describe('TabLayout', () => {
       expect(indexScreenCall[0].options.title).toBe('Home');
     });
 
-    it('should configure explore screen with Explore title', () => {
+    it('should not configure explore screen (removed from boilerplate)', () => {
       render(<TabLayout />);
 
       const exploreScreenCall = mockTabsScreen.mock.calls.find(
         (call) => call[0].name === 'explore'
       );
 
-      expect(exploreScreenCall).toBeTruthy();
-      expect(exploreScreenCall[0].options.title).toBe('Explore');
+      // exploreタブはボイラープレートから削除されたため存在しない
+      expect(exploreScreenCall).toBeFalsy();
     });
   });
 
@@ -268,21 +268,15 @@ describe('TabLayout', () => {
       expect(iconElement.props.size).toBe(28);
     });
 
-    it('should configure Explore tab with paperplane.fill icon', () => {
+    it('should not have Explore tab icon (removed from boilerplate)', () => {
       render(<TabLayout />);
 
       const exploreScreenCall = mockTabsScreen.mock.calls.find(
         (call) => call[0].name === 'explore'
       );
 
-      expect(exploreScreenCall).toBeTruthy();
-      expect(exploreScreenCall[0].options.tabBarIcon).toBeDefined();
-
-      // Render the icon function to verify it produces correct icon
-      const iconFn = exploreScreenCall[0].options.tabBarIcon;
-      const iconElement = iconFn({ color: '#007AFF' });
-      expect(iconElement.props.name).toBe('paperplane.fill');
-      expect(iconElement.props.size).toBe(28);
+      // exploreタブはボイラープレートから削除されたため存在しない
+      expect(exploreScreenCall).toBeFalsy();
     });
   });
 });
