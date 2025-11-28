@@ -3,6 +3,7 @@
  *
  * Exports all core subscription functionality including:
  * - SDK configuration
+ * - Repository layer
  * - Domain types
  *
  * @module features/subscription/core
@@ -15,6 +16,13 @@ export {
   getApiKey,
   resetConfiguration,
 } from './sdk';
+
+// Repository
+export {
+  subscriptionRepository,
+  toSubscription,
+  toSubscriptionError,
+} from './repository';
 
 // Domain Types
 export type {

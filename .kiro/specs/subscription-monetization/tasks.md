@@ -32,7 +32,7 @@
 
 ## 2. Repository Layerの実装
 
-- [ ] 2.1 (P) Subscription Repositoryを実装
+- [x] 2.1 (P) Subscription Repositoryを実装
   - RevenueCat SDK の `Purchases.getCustomerInfo()` を呼び出して状態を取得
   - `CustomerInfo` をドメインエンティティ `Subscription` に変換する `toSubscription()` 関数を実装
   - `entitlements.active["premium"]` の有無で tier を判定
@@ -42,7 +42,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 2.3, 10.1, 10.2, 10.3_
 
-- [ ] 2.2 (P) 購入・復元フローのRepository実装
+- [x] 2.2 (P) 購入・復元フローのRepository実装
   - `purchasePackage(packageId)` メソッドを実装し、RevenueCat の `Purchases.purchasePackage()` を呼び出し
   - 購入成功時に更新された `CustomerInfo` を取得し、`Subscription` に変換して返却
   - `restorePurchases()` メソッドを実装し、RevenueCat の `Purchases.restorePurchases()` を呼び出し
