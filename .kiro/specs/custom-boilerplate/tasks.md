@@ -139,7 +139,7 @@ UIについては Claude Skill を参照して実装してください。
 
 UIについては Claude Skill を参照して実装してください。
 
-- [ ] 8.1 features/\_example/サンプル機能の作成
+- [x] 8.1 features/\_example/サンプル機能の作成
   - `features/_example/`ディレクトリに機能別モジュールのリファレンス実装を作成する
   - `components/`、`hooks/`、`services/`のサブディレクトリ構造を示す
   - `services/repository.ts`でDrizzle ORMを使用したDB操作パターン（CRUD）を実装する
