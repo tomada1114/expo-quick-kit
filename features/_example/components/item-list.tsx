@@ -37,6 +37,10 @@ export interface ItemListProps {
   refreshing?: boolean;
   /** Test ID for testing */
   testID?: string;
+  /** Header component */
+  ListHeaderComponent?: React.ComponentType | React.ReactElement | null;
+  /** Footer component */
+  ListFooterComponent?: React.ComponentType | React.ReactElement | null;
 }
 
 function EmptyState() {
@@ -72,6 +76,8 @@ export function ItemList({
   onRefresh,
   refreshing = false,
   testID,
+  ListHeaderComponent,
+  ListFooterComponent,
 }: ItemListProps) {
   const { colors } = useThemedColors();
 
@@ -100,6 +106,8 @@ export function ItemList({
       ]}
       showsVerticalScrollIndicator={false}
       ListEmptyComponent={EmptyState}
+      ListHeaderComponent={ListHeaderComponent}
+      ListFooterComponent={ListFooterComponent}
       {...(onRefresh && {
         refreshControl: (
           <RefreshControl
