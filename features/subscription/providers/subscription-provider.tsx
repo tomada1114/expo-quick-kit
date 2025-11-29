@@ -121,12 +121,16 @@ export function SubscriptionProvider({
    * Called on mount and when refetchSubscription is invoked.
    */
   const fetchSubscription = useCallback(async () => {
-    if (isProcessing.current) {
+    // Capture and set atomically to prevent race conditions in concurrent mode
+    const wasProcessing = isProcessing.current;
+    isProcessing.current = true;
+
+    if (wasProcessing) {
       return;
     }
 
-    isProcessing.current = true;
     setLoading(true);
+    setError(null);
 
     try {
       const result = await service.getSubscription();
@@ -155,11 +159,13 @@ export function SubscriptionProvider({
    */
   const purchasePackage = useCallback(
     async (packageId: string): Promise<void> => {
-      if (isProcessing.current) {
+      // Capture and set atomically to prevent race conditions in concurrent mode
+      const wasProcessing = isProcessing.current;
+      isProcessing.current = true;
+
+      if (wasProcessing) {
         return;
       }
-
-      isProcessing.current = true;
       setLoading(true);
       setError(null);
 
@@ -184,11 +190,13 @@ export function SubscriptionProvider({
    * Restore previous purchases.
    */
   const restorePurchases = useCallback(async (): Promise<void> => {
-    if (isProcessing.current) {
+    // Capture and set atomically to prevent race conditions in concurrent mode
+    const wasProcessing = isProcessing.current;
+    isProcessing.current = true;
+
+    if (wasProcessing) {
       return;
     }
-
-    isProcessing.current = true;
     setLoading(true);
     setError(null);
 

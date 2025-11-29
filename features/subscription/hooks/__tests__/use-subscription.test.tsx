@@ -8,13 +8,7 @@
  */
 
 import React from 'react';
-import {
-  render,
-  renderHook,
-  waitFor,
-  act,
-} from '@testing-library/react-native';
-import { Text } from 'react-native';
+import { renderHook, waitFor, act } from '@testing-library/react-native';
 
 import { useSubscription } from '../use-subscription';
 import {
