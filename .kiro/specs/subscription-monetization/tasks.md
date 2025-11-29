@@ -141,7 +141,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
 
-- [ ] 7.2 (P) Subscription Service のユニットテストを実装
+- [x] 7.2 (P) Subscription Service のユニットテストを実装
   - `getUsageLimits('free')` が正しい制限を返すことを検証
   - `getUsageLimits('premium')` が正しい制限を返すことを検証
   - `canAccessFeature('basic')` が常に `true` を返すことを検証
