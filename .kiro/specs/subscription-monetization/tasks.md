@@ -53,7 +53,7 @@
 
 ## 3. Application Service Layerの実装
 
-- [ ] 3.1 (P) Subscription Serviceを実装
+- [x] 3.1 (P) Subscription Serviceを実装
   - サブスクリプション状態に基づいた `UsageLimits` 計算ロジックを実装
   - Free tier: `maxItems: 10, maxExports: 1, hasAds: true`
   - Premium tier: `maxItems: Infinity, maxExports: Infinity, hasAds: false`

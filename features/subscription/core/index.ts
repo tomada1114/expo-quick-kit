@@ -24,6 +24,13 @@ export {
   toSubscriptionError,
 } from './repository';
 
+// Application Service
+export {
+  getUsageLimits,
+  canAccessFeature,
+  getDefaultSubscription,
+} from './service';
+
 // Domain Types
 export type {
   Subscription,
