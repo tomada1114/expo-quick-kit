@@ -79,7 +79,7 @@
 
 ## 4. Presentation Layerの実装
 
-- [ ] 4.1 Subscription Providerを実装
+- [x] 4.1 Subscription Providerを実装
   - React Context で サブスクリプション状態（subscription, loading, error）を管理
   - 初回マウント時に Repository から `fetchCustomerInfo()` を呼び出し
   - 購入・復元アクション関数（purchasePackage, restorePurchases, refetchSubscription）を提供
