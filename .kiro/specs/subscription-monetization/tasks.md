@@ -87,7 +87,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 7.1, 7.2_
 
-- [ ] 4.2 (P) useSubscription Hookを実装
+- [x] 4.2 (P) useSubscription Hookを実装
   - Subscription Context から状態とアクションを取得
   - 派生状態（isPremium, isFree, usageLimits）を `useMemo` で計算
   - Feature Gating 用の `canAccessFeature(level)` 関数を提供
