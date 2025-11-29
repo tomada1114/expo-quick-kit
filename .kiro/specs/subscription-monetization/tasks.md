@@ -103,7 +103,7 @@
 
 ## 5. Paywall UI の実装
 
-- [ ] 5.1 (P) RevenueCat Paywall UIラッパーを実装
+- [x] 5.1 (P) RevenueCat Paywall UIラッパーを実装
   - `react-native-purchases-ui` の `<RevenueCatUI.Paywall>` コンポーネントをラップ
   - 購入・復元・キャンセル・エラーの各イベントに対するコールバックを実装
   - `onPurchaseCompleted` / `onRestoreCompleted` で `refetchSubscription()` を呼び出し
@@ -112,7 +112,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
 
-- [ ] 5.2 (P) Paywallスクリーンを expo-router に追加
+- [x] 5.2 (P) Paywallスクリーンを expo-router に追加
   - `app/paywall.tsx` として独立したルートに配置
   - iOS Design System のカラーとタイポグラフィを適用（`useThemedColors()` を使用）
   - RevenueCat Dashboard で設定された Offering を自動表示
