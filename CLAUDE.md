@@ -168,6 +168,24 @@ Kiro-style Spec Driven Development implementation on AI-DLC (AI Development Life
 
 refer to `expo-design-system` Claude Skill.
 
+## Skill Activation Rules
+
+When the user asks about the following, ALWAYS use the Skill tool to invoke the specified skill:
+
+### expo-design-system
+- Theme implementation, iOS System Colors, Semantic Colors
+- Dark Mode setup, color scheme implementation
+- UI components (Button, Card, Input, etc.) styling
+- Apple Human Interface Guidelines patterns
+- Color constants, background colors, text colors
+
+### expo-subscription-monetization
+- Subscription, monetization, in-app purchase implementation
+- RevenueCat integration and setup
+- Feature gating, premium features, tier system
+- Free/Premium plan implementation
+- Paywall design and purchase flow
+
 ## Project Context
 
 ### Paths
