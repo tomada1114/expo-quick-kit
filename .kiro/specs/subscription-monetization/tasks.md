@@ -103,7 +103,7 @@
 
 ## 5. Paywall UI の実装
 
-- [ ] 5.1 (P) RevenueCat Paywall UIラッパーを実装
+- [x] 5.1 (P) RevenueCat Paywall UIラッパーを実装
   - `react-native-purchases-ui` の `<RevenueCatUI.Paywall>` コンポーネントをラップ
   - 購入・復元・キャンセル・エラーの各イベントに対するコールバックを実装
   - `onPurchaseCompleted` / `onRestoreCompleted` で `refetchSubscription()` を呼び出し
