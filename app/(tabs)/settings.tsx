@@ -21,21 +21,31 @@ import { Card } from '@/components/ui/card';
 import { Spacer } from '@/components/ui/spacer';
 import { Spacing, Typography } from '@/constants/theme';
 import { useSubscription } from '@/features/subscription/hooks';
+import type { SubscriptionErrorCode } from '@/features/subscription/core/types';
 import { useThemedColors } from '@/hooks/use-theme-color';
 
 /**
- * Error messages for different error codes (Japanese)
+ * Error messages for different error codes
  */
-const ERROR_MESSAGES: Record<string, string> = {
+const ERROR_MESSAGES: Record<SubscriptionErrorCode, string> = {
+  PURCHASE_CANCELLED: '', // Silent handling - no message shown
+  PURCHASE_NOT_ALLOWED:
+    'Purchases are not allowed on this device. Please check your settings.',
+  PURCHASE_INVALID: 'Invalid purchase. Please try again.',
+  PRODUCT_ALREADY_PURCHASED: 'This product has already been purchased.',
   NETWORK_ERROR:
-    'ネットワークエラーが発生しました。接続を確認して再度お試しください。',
+    'A network error occurred. Please check your connection and try again.',
   STORE_PROBLEM_ERROR:
-    'ストアサービスが一時的に利用できません。しばらくしてから再度お試しください。',
+    'The store service is temporarily unavailable. Please try again later.',
   CONFIGURATION_ERROR:
-    'アプリの設定エラーが発生しました。サポートにお問い合わせください。',
-  INVALID_CREDENTIALS_ERROR: '認証に失敗しました。再度お試しください。',
-  RECEIPT_ALREADY_IN_USE_ERROR: 'この購入は別のアカウントで使用されています。',
-  UNKNOWN_ERROR: 'エラーが発生しました。再度お試しください。',
+    'A configuration error occurred. Please contact support.',
+  INVALID_CREDENTIALS_ERROR: 'Authentication failed. Please try again.',
+  UNEXPECTED_BACKEND_RESPONSE_ERROR:
+    'A server error occurred. Please try again later.',
+  RECEIPT_ALREADY_IN_USE_ERROR:
+    'This purchase is already associated with another account.',
+  NO_ACTIVE_SUBSCRIPTION: '', // Handled separately as info, not error
+  UNKNOWN_ERROR: 'An error occurred. Please try again.',
 };
 
 export default function SettingsScreen() {
@@ -63,10 +73,16 @@ export default function SettingsScreen() {
       await refetchSubscription();
 
       // Show success message - restorePurchases throws if no active subscription found
-      Alert.alert('Success', '購入を復元しました', [{ text: 'OK' }]);
+      Alert.alert('Success', 'Your purchases have been restored.', [
+        { text: 'OK' },
+      ]);
     } catch (error) {
-      const errorCode =
-        error instanceof Error ? error.message : 'UNKNOWN_ERROR';
+      // Extract error code from error object (supports both Error.message and typed errors)
+      const errorCode: SubscriptionErrorCode =
+        error instanceof Error &&
+        Object.keys(ERROR_MESSAGES).includes(error.message)
+          ? (error.message as SubscriptionErrorCode)
+          : 'UNKNOWN_ERROR';
 
       // Handle user cancellation silently
       if (errorCode === 'PURCHASE_CANCELLED') {
@@ -76,7 +92,9 @@ export default function SettingsScreen() {
 
       // Handle no active subscription as info, not error
       if (errorCode === 'NO_ACTIVE_SUBSCRIPTION') {
-        Alert.alert('Info', '復元可能な購入がありません', [{ text: 'OK' }]);
+        Alert.alert('Info', 'No purchases available to restore.', [
+          { text: 'OK' },
+        ]);
         setIsRestoring(false);
         return;
       }

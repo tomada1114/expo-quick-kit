@@ -212,7 +212,7 @@ describe('SettingsScreen', () => {
 
     // Given: Restore operation succeeds with active subscription
     // When: restorePurchases resolves successfully
-    // Then: Success alert should be shown with Japanese message and refetch is called
+    // Then: Success alert should be shown and refetch is called
     it('should show success alert when restore finds active subscription', async () => {
       // Simulate that after restore, subscription becomes active
       mockRestorePurchases.mockImplementation(async () => {
@@ -234,7 +234,7 @@ describe('SettingsScreen', () => {
         expect(mockRefetchSubscription).toHaveBeenCalledTimes(1);
         expect(alertSpy).toHaveBeenCalledWith(
           'Success',
-          '購入を復元しました',
+          'Your purchases have been restored.',
           expect.any(Array)
         );
       });
@@ -264,7 +264,7 @@ describe('SettingsScreen', () => {
       await waitFor(() => {
         expect(alertSpy).toHaveBeenCalledWith(
           'Info',
-          '復元可能な購入がありません',
+          'No purchases available to restore.',
           expect.any(Array)
         );
       });
@@ -389,7 +389,7 @@ describe('SettingsScreen', () => {
       await waitFor(() => {
         expect(alertSpy).toHaveBeenCalledWith(
           'Error',
-          expect.stringContaining('ネットワークエラー'),
+          expect.stringContaining('network error'),
           expect.any(Array)
         );
       });
@@ -416,7 +416,88 @@ describe('SettingsScreen', () => {
       await waitFor(() => {
         expect(alertSpy).toHaveBeenCalledWith(
           'Error',
-          expect.stringContaining('ストアサービス'),
+          expect.stringContaining('store service'),
+          expect.any(Array)
+        );
+      });
+    });
+
+    // Given: App configuration is invalid
+    // When: User presses restore and configuration error occurs
+    // Then: Error alert should suggest contacting support
+    it('should show error alert on configuration error', async () => {
+      mockRestorePurchases.mockImplementation(async () => {
+        mockError = {
+          code: 'CONFIGURATION_ERROR',
+          message: 'Configuration error',
+          retryable: false,
+        };
+        throw new Error('CONFIGURATION_ERROR');
+      });
+
+      render(<SettingsScreen />);
+
+      const restoreButton = screen.getByTestId('restore-purchases-button');
+      fireEvent.press(restoreButton);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          'Error',
+          expect.stringContaining('configuration error'),
+          expect.any(Array)
+        );
+      });
+    });
+
+    // Given: Authentication credentials are invalid
+    // When: User presses restore and credentials error occurs
+    // Then: Error alert should indicate authentication failure
+    it('should show error alert on invalid credentials error', async () => {
+      mockRestorePurchases.mockImplementation(async () => {
+        mockError = {
+          code: 'INVALID_CREDENTIALS_ERROR',
+          message: 'Invalid credentials',
+          retryable: false,
+        };
+        throw new Error('INVALID_CREDENTIALS_ERROR');
+      });
+
+      render(<SettingsScreen />);
+
+      const restoreButton = screen.getByTestId('restore-purchases-button');
+      fireEvent.press(restoreButton);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          'Error',
+          expect.stringContaining('Authentication failed'),
+          expect.any(Array)
+        );
+      });
+    });
+
+    // Given: Receipt is already associated with another account
+    // When: User presses restore and receipt error occurs
+    // Then: Error alert should indicate receipt is in use
+    it('should show error alert on receipt already in use error', async () => {
+      mockRestorePurchases.mockImplementation(async () => {
+        mockError = {
+          code: 'RECEIPT_ALREADY_IN_USE_ERROR',
+          message: 'Receipt already in use',
+          retryable: false,
+        };
+        throw new Error('RECEIPT_ALREADY_IN_USE_ERROR');
+      });
+
+      render(<SettingsScreen />);
+
+      const restoreButton = screen.getByTestId('restore-purchases-button');
+      fireEvent.press(restoreButton);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          'Error',
+          expect.stringContaining('already associated with another account'),
           expect.any(Array)
         );
       });
@@ -469,10 +550,157 @@ describe('SettingsScreen', () => {
       await waitFor(() => {
         expect(alertSpy).toHaveBeenCalledWith(
           'Error',
-          expect.stringContaining('エラーが発生しました'),
+          expect.stringContaining('An error occurred'),
           expect.any(Array)
         );
       });
+    });
+
+    // Given: An unrecognized error code is received
+    // When: User presses restore
+    // Then: Generic error message should be shown as fallback
+    it('should show generic error alert on unrecognized error code', async () => {
+      mockRestorePurchases.mockImplementation(async () => {
+        throw new Error('SOME_UNEXPECTED_ERROR_CODE');
+      });
+
+      render(<SettingsScreen />);
+
+      const restoreButton = screen.getByTestId('restore-purchases-button');
+      fireEvent.press(restoreButton);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          'Error',
+          expect.stringContaining('An error occurred'),
+          expect.any(Array)
+        );
+      });
+    });
+
+    // Given: Network error occurs during restore
+    // When: Error is handled
+    // Then: Loading state should be reset and button re-enabled
+    it('should reset loading state after error', async () => {
+      mockRestorePurchases.mockRejectedValue(new Error('NETWORK_ERROR'));
+
+      render(<SettingsScreen />);
+
+      const restoreButton = screen.getByTestId('restore-purchases-button');
+      fireEvent.press(restoreButton);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalled();
+      });
+
+      // Loading state should be reset and button re-enabled
+      await waitFor(() => {
+        const button = screen.getByTestId('restore-purchases-button');
+        expect(button.props.accessibilityState?.disabled).toBe(false);
+      });
+    });
+  });
+
+  describe('Subscription Status Display', () => {
+    // Given: A user has a premium subscription with expiry date
+    // When: The screen is rendered
+    // Then: Should display expiry date
+    it('should display subscription expiry date for premium users', () => {
+      mockIsPremium = true;
+      mockSubscription = {
+        isActive: true,
+        tier: 'premium',
+        expiresAt: new Date('2025-12-31'),
+        productId: 'monthly_plan',
+      };
+
+      render(<SettingsScreen />);
+
+      expect(screen.getByText('Expires:')).toBeTruthy();
+      // Date format depends on locale, just check the label is shown
+      expect(screen.getByText(/12\/31\/2025|31\/12\/2025|2025/)).toBeTruthy();
+    });
+
+    // Given: A user has a free subscription
+    // When: The screen is rendered
+    // Then: Should not display expiry section
+    it('should not display expiry date for free users', () => {
+      mockIsPremium = false;
+      mockSubscription = {
+        isActive: false,
+        tier: 'free',
+        expiresAt: null,
+        productId: null,
+      };
+
+      render(<SettingsScreen />);
+
+      expect(screen.queryByText('Expires:')).toBeNull();
+    });
+
+    // Given: Subscription is null (initial loading state)
+    // When: The screen is rendered
+    // Then: Should render without crashing
+    it('should handle null subscription object', () => {
+      mockIsPremium = false;
+      mockSubscription = null;
+
+      render(<SettingsScreen />);
+
+      expect(screen.getByText('Settings')).toBeTruthy();
+      expect(screen.getByText('Free')).toBeTruthy();
+    });
+  });
+
+  describe('Button Visibility', () => {
+    // Given: A user has a free subscription
+    // When: The screen is rendered
+    // Then: Should display upgrade button
+    it('should show upgrade button for free users', () => {
+      mockIsPremium = false;
+
+      render(<SettingsScreen />);
+
+      expect(screen.getByTestId('upgrade-premium-button')).toBeTruthy();
+    });
+
+    // Given: A user has a premium subscription
+    // When: The screen is rendered
+    // Then: Should not display upgrade button
+    it('should hide upgrade button for premium users', () => {
+      mockIsPremium = true;
+      mockSubscription = {
+        isActive: true,
+        tier: 'premium',
+        expiresAt: new Date('2025-12-31'),
+        productId: 'monthly_plan',
+      };
+
+      render(<SettingsScreen />);
+
+      expect(screen.queryByTestId('upgrade-premium-button')).toBeNull();
+    });
+
+    // Given: Any subscription status
+    // When: The screen is rendered
+    // Then: Restore purchases button should always be visible (iOS App Store compliance)
+    it('should always show restore purchases button regardless of subscription status', () => {
+      // Test with free subscription
+      mockIsPremium = false;
+      const { unmount } = render(<SettingsScreen />);
+      expect(screen.getByTestId('restore-purchases-button')).toBeTruthy();
+      unmount();
+
+      // Test with premium subscription
+      mockIsPremium = true;
+      mockSubscription = {
+        isActive: true,
+        tier: 'premium',
+        expiresAt: new Date('2025-12-31'),
+        productId: 'monthly_plan',
+      };
+      render(<SettingsScreen />);
+      expect(screen.getByTestId('restore-purchases-button')).toBeTruthy();
     });
   });
 
