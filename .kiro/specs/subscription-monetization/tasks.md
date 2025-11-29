@@ -62,7 +62,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 2.2, 3.3, 3.4, 8.1, 8.2, 8.4_
 
-- [ ] 3.2 (P) 購入・復元のService層ロジックを実装
+- [x] 3.2 (P) 購入・復元のService層ロジックを実装
   - Repository から取得した `Result` を評価し、成功時にサブスクリプション状態を更新
   - エラー時に適切なエラーハンドリング（キャンセル、ネットワークエラー、システムエラー）
   - `PRODUCT_ALREADY_PURCHASED` エラー時に自動的に `restorePurchases()` を実行

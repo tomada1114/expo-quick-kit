@@ -12,8 +12,39 @@ import {
   canAccessFeature,
   FREE_TIER_LIMITS,
   PREMIUM_TIER_LIMITS,
+  createSubscriptionService,
 } from '../service';
-import type { FeatureLevel } from '../types';
+import type {
+  FeatureLevel,
+  Subscription,
+  SubscriptionError,
+  Result,
+} from '../types';
+import { DEFAULT_FREE_SUBSCRIPTION } from '../types';
+
+// Mock repository type for testing
+type MockSubscriptionRepository = {
+  getCustomerInfo: jest.Mock<Promise<Result<Subscription, SubscriptionError>>>;
+  purchasePackage: jest.Mock<
+    Promise<Result<Subscription, SubscriptionError>>,
+    [string]
+  >;
+  restorePurchases: jest.Mock<
+    Promise<Result<Subscription | null, SubscriptionError>>
+  >;
+};
+
+// Factory to create mock repository
+function createMockRepository(
+  overrides: Partial<MockSubscriptionRepository> = {}
+): MockSubscriptionRepository {
+  return {
+    getCustomerInfo: jest.fn(),
+    purchasePackage: jest.fn(),
+    restorePurchases: jest.fn(),
+    ...overrides,
+  };
+}
 
 describe('Subscription Service', () => {
   describe('getUsageLimits', () => {
@@ -91,6 +122,379 @@ describe('Subscription Service', () => {
           expect(typeof canAccessFeature(level, tier)).toBe('boolean');
         }
       }
+    });
+  });
+
+  describe('createSubscriptionService', () => {
+    let mockRepository: MockSubscriptionRepository;
+    let onStateChange: jest.Mock<void, [Subscription]>;
+
+    beforeEach(() => {
+      mockRepository = createMockRepository();
+      onStateChange = jest.fn();
+    });
+
+    describe('purchasePackage', () => {
+      it('should update subscription state on successful purchase', async () => {
+        const premiumSubscription: Subscription = {
+          isActive: true,
+          tier: 'premium',
+          expiresAt: new Date('2025-12-31'),
+          productId: 'monthly_plan',
+        };
+
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: true,
+          data: premiumSubscription,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.purchasePackage('$rc_monthly');
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data).toEqual(premiumSubscription);
+        }
+        expect(onStateChange).toHaveBeenCalledWith(premiumSubscription);
+      });
+
+      it('should handle purchase cancellation without logging error', async () => {
+        const cancelledError: SubscriptionError = {
+          code: 'PURCHASE_CANCELLED',
+          message: 'User cancelled purchase',
+          retryable: false,
+        };
+
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: false,
+          error: cancelledError,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.purchasePackage('$rc_monthly');
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.code).toBe('PURCHASE_CANCELLED');
+        }
+        // State should NOT be updated on cancellation
+        expect(onStateChange).not.toHaveBeenCalled();
+      });
+
+      it('should handle network error with retryable flag', async () => {
+        const networkError: SubscriptionError = {
+          code: 'NETWORK_ERROR',
+          message: 'Network connection failed',
+          retryable: true,
+        };
+
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: false,
+          error: networkError,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.purchasePackage('$rc_monthly');
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.code).toBe('NETWORK_ERROR');
+          expect(result.error.retryable).toBe(true);
+        }
+        expect(onStateChange).not.toHaveBeenCalled();
+      });
+
+      it('should auto-restore when PRODUCT_ALREADY_PURCHASED error occurs', async () => {
+        const alreadyPurchasedError: SubscriptionError = {
+          code: 'PRODUCT_ALREADY_PURCHASED',
+          message: 'Product already purchased',
+          retryable: false,
+        };
+
+        const premiumSubscription: Subscription = {
+          isActive: true,
+          tier: 'premium',
+          expiresAt: new Date('2025-12-31'),
+          productId: 'monthly_plan',
+        };
+
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: false,
+          error: alreadyPurchasedError,
+        });
+
+        mockRepository.restorePurchases.mockResolvedValue({
+          success: true,
+          data: premiumSubscription,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.purchasePackage('$rc_monthly');
+
+        expect(mockRepository.restorePurchases).toHaveBeenCalled();
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data).toEqual(premiumSubscription);
+        }
+        expect(onStateChange).toHaveBeenCalledWith(premiumSubscription);
+      });
+
+      it('should return restore error when auto-restore fails after PRODUCT_ALREADY_PURCHASED', async () => {
+        const alreadyPurchasedError: SubscriptionError = {
+          code: 'PRODUCT_ALREADY_PURCHASED',
+          message: 'Product already purchased',
+          retryable: false,
+        };
+
+        const restoreError: SubscriptionError = {
+          code: 'NETWORK_ERROR',
+          message: 'Restore failed',
+          retryable: true,
+        };
+
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: false,
+          error: alreadyPurchasedError,
+        });
+
+        mockRepository.restorePurchases.mockResolvedValue({
+          success: false,
+          error: restoreError,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.purchasePackage('$rc_monthly');
+
+        expect(mockRepository.restorePurchases).toHaveBeenCalled();
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.code).toBe('NETWORK_ERROR');
+        }
+      });
+    });
+
+    describe('restorePurchases', () => {
+      it('should update subscription state on successful restore', async () => {
+        const premiumSubscription: Subscription = {
+          isActive: true,
+          tier: 'premium',
+          expiresAt: new Date('2025-12-31'),
+          productId: 'monthly_plan',
+        };
+
+        mockRepository.restorePurchases.mockResolvedValue({
+          success: true,
+          data: premiumSubscription,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.restorePurchases();
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data).toEqual(premiumSubscription);
+        }
+        expect(onStateChange).toHaveBeenCalledWith(premiumSubscription);
+      });
+
+      it('should return NO_ACTIVE_SUBSCRIPTION when no subscription found', async () => {
+        mockRepository.restorePurchases.mockResolvedValue({
+          success: true,
+          data: null,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.restorePurchases();
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.code).toBe('NO_ACTIVE_SUBSCRIPTION');
+          expect(result.error.retryable).toBe(false);
+        }
+        // State should NOT be updated when no subscription found
+        expect(onStateChange).not.toHaveBeenCalled();
+      });
+
+      it('should handle restore error', async () => {
+        const networkError: SubscriptionError = {
+          code: 'NETWORK_ERROR',
+          message: 'Network connection failed',
+          retryable: true,
+        };
+
+        mockRepository.restorePurchases.mockResolvedValue({
+          success: false,
+          error: networkError,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.restorePurchases();
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.code).toBe('NETWORK_ERROR');
+          expect(result.error.retryable).toBe(true);
+        }
+        expect(onStateChange).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('getSubscription', () => {
+      it('should fetch and update subscription state', async () => {
+        const premiumSubscription: Subscription = {
+          isActive: true,
+          tier: 'premium',
+          expiresAt: new Date('2025-12-31'),
+          productId: 'monthly_plan',
+        };
+
+        mockRepository.getCustomerInfo.mockResolvedValue({
+          success: true,
+          data: premiumSubscription,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.getSubscription();
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data).toEqual(premiumSubscription);
+        }
+        expect(onStateChange).toHaveBeenCalledWith(premiumSubscription);
+      });
+
+      it('should fallback to free tier when subscription is expired', async () => {
+        const expiredSubscription: Subscription = {
+          isActive: false,
+          tier: 'free',
+          expiresAt: new Date('2023-01-01'), // Past date
+          productId: 'monthly_plan',
+        };
+
+        mockRepository.getCustomerInfo.mockResolvedValue({
+          success: true,
+          data: expiredSubscription,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.getSubscription();
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          // Should still return the data but tier should be 'free'
+          expect(result.data.tier).toBe('free');
+          expect(result.data.isActive).toBe(false);
+        }
+        expect(onStateChange).toHaveBeenCalledWith(expiredSubscription);
+      });
+
+      it('should handle fetch error and return default subscription', async () => {
+        const networkError: SubscriptionError = {
+          code: 'NETWORK_ERROR',
+          message: 'Network connection failed',
+          retryable: true,
+        };
+
+        mockRepository.getCustomerInfo.mockResolvedValue({
+          success: false,
+          error: networkError,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.getSubscription();
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.code).toBe('NETWORK_ERROR');
+        }
+        // State should still update to free tier on error
+        expect(onStateChange).toHaveBeenCalledWith(DEFAULT_FREE_SUBSCRIPTION);
+      });
+    });
+
+    describe('getCurrentSubscription', () => {
+      it('should return current subscription state without fetching', () => {
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = service.getCurrentSubscription();
+
+        // Initial state should be default free subscription
+        expect(result).toEqual(DEFAULT_FREE_SUBSCRIPTION);
+        expect(mockRepository.getCustomerInfo).not.toHaveBeenCalled();
+      });
+
+      it('should return updated subscription after state change', async () => {
+        const premiumSubscription: Subscription = {
+          isActive: true,
+          tier: 'premium',
+          expiresAt: new Date('2025-12-31'),
+          productId: 'monthly_plan',
+        };
+
+        mockRepository.getCustomerInfo.mockResolvedValue({
+          success: true,
+          data: premiumSubscription,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        // Fetch to update internal state
+        await service.getSubscription();
+
+        // Now getCurrentSubscription should return updated state
+        const result = service.getCurrentSubscription();
+        expect(result).toEqual(premiumSubscription);
+      });
     });
   });
 });

@@ -29,6 +29,13 @@ export {
   getUsageLimits,
   canAccessFeature,
   getDefaultSubscription,
+  createSubscriptionService,
+} from './service';
+
+export type {
+  SubscriptionRepository,
+  SubscriptionServiceConfig,
+  SubscriptionService,
 } from './service';
 
 // Domain Types
