@@ -149,14 +149,14 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 3.3, 3.4, 8.1, 8.2_
 
-- [ ] 7.3 (P) Subscription Repository のユニットテストを実装
+- [x] 7.3 (P) Subscription Repository のユニットテストを実装
   - `toSubscription(CustomerInfo)` が正しくドメインエンティティに変換することを検証
   - `toSubscriptionError(PurchasesError)` がエラーコードを正しくマッピングすることを検証
   - `entitlements.active["premium"]` の有無で tier が正しく判定されることを検証
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 2.3, 10.1_
 
-- [ ] 7.4 (P) useSubscription Hook のユニットテストを実装
+- [x] 7.4 (P) useSubscription Hook のユニットテストを実装
   - 派生状態（isPremium, isFree）が subscription state に基づいて正しく計算されることを検証
   - Context 外で呼び出された場合にエラーが throw されることを検証
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
