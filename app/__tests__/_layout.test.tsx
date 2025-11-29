@@ -137,6 +137,49 @@ jest.mock('@/lib/query-client', () => ({
   queryClient: {},
 }));
 
+// Mock SubscriptionProvider
+jest.mock('@/features/subscription/providers', () => {
+  const { View } = require('react-native');
+  return {
+    SubscriptionProvider: ({
+      children,
+      service,
+    }: {
+      children: React.ReactNode;
+      service: unknown;
+    }) => (
+      <View testID="subscription-provider" data-service={!!service}>
+        {children}
+      </View>
+    ),
+    useSubscriptionContext: jest.fn(() => ({
+      subscription: null,
+      loading: true,
+      error: null,
+      purchasePackage: jest.fn(),
+      restorePurchases: jest.fn(),
+      refetchSubscription: jest.fn(),
+    })),
+  };
+});
+
+// Mock subscription service creation
+jest.mock('@/features/subscription/core', () => ({
+  subscriptionRepository: {
+    getCustomerInfo: jest.fn(),
+    purchasePackage: jest.fn(),
+    restorePurchases: jest.fn(),
+    getAvailablePackages: jest.fn(),
+  },
+  createSubscriptionService: jest.fn(() => ({
+    getCurrentSubscription: jest.fn(),
+    getSubscription: jest.fn(),
+    purchasePackage: jest.fn(),
+    restorePurchases: jest.fn(),
+  })),
+  syncSubscriptionToStore: jest.fn(),
+}));
+
 // Import after mocks
 import { render, waitFor, screen } from '@testing-library/react-native';
 import * as SplashScreen from 'expo-splash-screen';
@@ -305,6 +348,14 @@ describe('RootLayout', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('theme-provider')).toBeTruthy();
+      });
+    });
+
+    it('should wrap app with SubscriptionProvider', async () => {
+      render(<RootLayout />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('subscription-provider')).toBeTruthy();
       });
     });
   });

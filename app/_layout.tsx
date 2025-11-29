@@ -18,6 +18,12 @@ import { useStore } from '@/store';
 import { queryClient } from '@/lib/query-client';
 import { setupForegroundHandler } from '@/services/notifications';
 import { configurePurchases } from '@/features/subscription/core/sdk';
+import { SubscriptionProvider } from '@/features/subscription/providers';
+import {
+  subscriptionRepository,
+  createSubscriptionService,
+  syncSubscriptionToStore,
+} from '@/features/subscription/core';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -26,6 +32,15 @@ SplashScreen.preventAutoHideAsync();
  * Initialization timeout in milliseconds
  */
 const INIT_TIMEOUT_MS = 5000;
+
+/**
+ * Subscription service instance for the entire app.
+ * Created once at module level to maintain consistent state.
+ */
+const subscriptionService = createSubscriptionService({
+  repository: subscriptionRepository,
+  onStateChange: syncSubscriptionToStore,
+});
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -164,16 +179,20 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: 'modal', title: 'Modal' }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <SubscriptionProvider service={subscriptionService}>
+        <ThemeProvider
+          value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="modal"
+              options={{ presentation: 'modal', title: 'Modal' }}
+            />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </SubscriptionProvider>
     </QueryClientProvider>
   );
 }

@@ -95,7 +95,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 7.3, 7.4, 5.5, 6.5_
 
-- [ ] 4.3 app/_layout.tsx に Subscription Providerを統合
+- [x] 4.3 app/_layout.tsx に Subscription Providerを統合
   - `<QueryClientProvider>` と同階層に `<SubscriptionProvider>` を配置
   - アプリ全体にサブスクリプション状態を提供
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
