@@ -36,6 +36,8 @@ export type {
   SubscriptionRepository,
   SubscriptionServiceConfig,
   SubscriptionService,
+  SubscriptionLogger,
+  LogLevel,
 } from './service';
 
 // Zustand Store Integration

@@ -496,5 +496,122 @@ describe('Subscription Service', () => {
         expect(result).toEqual(premiumSubscription);
       });
     });
+
+    describe('logger', () => {
+      it('should call logger on successful purchase', async () => {
+        const logger = jest.fn();
+        const premiumSubscription: Subscription = {
+          isActive: true,
+          tier: 'premium',
+          expiresAt: new Date('2025-12-31'),
+          productId: 'monthly_plan',
+        };
+
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: true,
+          data: premiumSubscription,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+          logger,
+        });
+
+        await service.purchasePackage('$rc_monthly');
+
+        expect(logger).toHaveBeenCalledWith('info', 'Starting purchase', {
+          packageId: '$rc_monthly',
+        });
+        expect(logger).toHaveBeenCalledWith('info', 'Purchase successful', {
+          packageId: '$rc_monthly',
+        });
+      });
+
+      it('should call logger on purchase error', async () => {
+        const logger = jest.fn();
+        const networkError: SubscriptionError = {
+          code: 'NETWORK_ERROR',
+          message: 'Network connection failed',
+          retryable: true,
+        };
+
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: false,
+          error: networkError,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+          logger,
+        });
+
+        await service.purchasePackage('$rc_monthly');
+
+        expect(logger).toHaveBeenCalledWith('error', 'Purchase failed', {
+          packageId: '$rc_monthly',
+          errorCode: 'NETWORK_ERROR',
+          errorMessage: 'Network connection failed',
+          retryable: true,
+        });
+      });
+
+      it('should log info (not error) on purchase cancellation', async () => {
+        const logger = jest.fn();
+        const cancelledError: SubscriptionError = {
+          code: 'PURCHASE_CANCELLED',
+          message: 'User cancelled purchase',
+          retryable: false,
+        };
+
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: false,
+          error: cancelledError,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+          logger,
+        });
+
+        await service.purchasePackage('$rc_monthly');
+
+        expect(logger).toHaveBeenCalledWith(
+          'info',
+          'Purchase cancelled by user',
+          { packageId: '$rc_monthly' }
+        );
+        // Should NOT log as error
+        expect(logger).not.toHaveBeenCalledWith(
+          'error',
+          expect.any(String),
+          expect.any(Object)
+        );
+      });
+
+      it('should not throw when logger is not provided', async () => {
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: false,
+          error: {
+            code: 'NETWORK_ERROR',
+            message: 'Network error',
+            retryable: true,
+          },
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+          // No logger provided
+        });
+
+        // Should not throw
+        await expect(
+          service.purchasePackage('$rc_monthly')
+        ).resolves.toBeDefined();
+      });
+    });
   });
 });

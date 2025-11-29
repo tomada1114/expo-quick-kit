@@ -117,6 +117,18 @@ export interface SubscriptionRepository {
 }
 
 /**
+ * Log levels for subscription service operations.
+ */
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+/**
+ * Logger interface for subscription service observability.
+ */
+export interface SubscriptionLogger {
+  (level: LogLevel, message: string, context?: Record<string, unknown>): void;
+}
+
+/**
  * Configuration options for creating a subscription service.
  */
 export interface SubscriptionServiceConfig {
@@ -124,6 +136,8 @@ export interface SubscriptionServiceConfig {
   repository: SubscriptionRepository;
   /** Callback invoked when subscription state changes */
   onStateChange?: (subscription: Subscription) => void;
+  /** Optional logger for error observability and debugging */
+  logger?: SubscriptionLogger;
 }
 
 /**
@@ -179,16 +193,31 @@ export interface SubscriptionService {
 export function createSubscriptionService(
   config: SubscriptionServiceConfig
 ): SubscriptionService {
-  const { repository, onStateChange } = config;
+  const { repository, onStateChange, logger } = config;
 
   // Internal state
   let currentSubscription: Subscription = DEFAULT_FREE_SUBSCRIPTION;
+
+  /**
+   * Log a message if logger is configured.
+   */
+  function log(
+    level: LogLevel,
+    message: string,
+    context?: Record<string, unknown>
+  ): void {
+    logger?.(level, message, context);
+  }
 
   /**
    * Update internal subscription state and notify listeners.
    */
   function updateState(subscription: Subscription): void {
     currentSubscription = subscription;
+    log('debug', 'Subscription state updated', {
+      tier: subscription.tier,
+      isActive: subscription.isActive,
+    });
     onStateChange?.(subscription);
   }
 
@@ -198,6 +227,7 @@ export function createSubscriptionService(
     },
 
     async getSubscription(): Promise<Result<Subscription, SubscriptionError>> {
+      log('info', 'Fetching subscription state');
       const result = await repository.getCustomerInfo();
 
       if (result.success) {
@@ -206,6 +236,11 @@ export function createSubscriptionService(
       }
 
       // On error, fallback to free tier
+      log('warn', 'Failed to fetch subscription, falling back to free tier', {
+        errorCode: result.error.code,
+        errorMessage: result.error.message,
+        retryable: result.error.retryable,
+      });
       updateState(DEFAULT_FREE_SUBSCRIPTION);
       return result;
     },
@@ -213,27 +248,41 @@ export function createSubscriptionService(
     async purchasePackage(
       packageId: string
     ): Promise<Result<Subscription, SubscriptionError>> {
+      log('info', 'Starting purchase', { packageId });
       const result = await repository.purchasePackage(packageId);
 
       if (result.success) {
+        log('info', 'Purchase successful', { packageId });
         updateState(result.data);
         return result;
       }
 
       // Handle PRODUCT_ALREADY_PURCHASED by auto-restoring
       if (result.error.code === 'PRODUCT_ALREADY_PURCHASED') {
+        log('info', 'Product already purchased, attempting auto-restore', {
+          packageId,
+        });
         const restoreResult = await repository.restorePurchases();
 
         if (restoreResult.success && restoreResult.data) {
+          log(
+            'info',
+            'Auto-restore successful after PRODUCT_ALREADY_PURCHASED'
+          );
           updateState(restoreResult.data);
           return { success: true, data: restoreResult.data };
         }
 
         if (!restoreResult.success) {
+          log('error', 'Auto-restore failed after PRODUCT_ALREADY_PURCHASED', {
+            errorCode: restoreResult.error.code,
+            errorMessage: restoreResult.error.message,
+          });
           return restoreResult;
         }
 
         // Restore succeeded but no active subscription found
+        log('warn', 'Auto-restore returned no active subscription');
         return {
           success: false,
           error: {
@@ -244,21 +293,40 @@ export function createSubscriptionService(
         };
       }
 
-      // For other errors (PURCHASE_CANCELLED, NETWORK_ERROR, etc.)
+      // For PURCHASE_CANCELLED, don't log as error (user action)
+      if (result.error.code === 'PURCHASE_CANCELLED') {
+        log('info', 'Purchase cancelled by user', { packageId });
+      } else {
+        // For other errors (NETWORK_ERROR, etc.)
+        log('error', 'Purchase failed', {
+          packageId,
+          errorCode: result.error.code,
+          errorMessage: result.error.message,
+          retryable: result.error.retryable,
+        });
+      }
+
       // Don't update state, just return the error
       return result;
     },
 
     async restorePurchases(): Promise<Result<Subscription, SubscriptionError>> {
+      log('info', 'Starting restore purchases');
       const result = await repository.restorePurchases();
 
       if (!result.success) {
         // Restore failed with an error
+        log('error', 'Restore purchases failed', {
+          errorCode: result.error.code,
+          errorMessage: result.error.message,
+          retryable: result.error.retryable,
+        });
         return result;
       }
 
       if (result.data === null) {
         // Restore succeeded but no active subscription found
+        log('info', 'Restore completed but no active subscription found');
         return {
           success: false,
           error: {
@@ -270,6 +338,7 @@ export function createSubscriptionService(
       }
 
       // Restore succeeded with active subscription
+      log('info', 'Restore successful', { tier: result.data.tier });
       updateState(result.data);
       return { success: true, data: result.data };
     },

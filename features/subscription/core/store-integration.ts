@@ -19,6 +19,11 @@ import type { Subscription } from './types';
  * Updates the `isPremium` flag in the store based on the subscription tier.
  * This function directly mutates the store state using Zustand's getState().setPremium().
  *
+ * Design Decision: We check both `tier` AND `isActive` to determine premium status.
+ * - `tier === 'premium'` alone would grant access to expired subscriptions
+ * - `isActive` ensures the subscription hasn't expired
+ * - This prevents users with expired premium subscriptions from accessing premium features
+ *
  * @param subscription - The current subscription state to sync
  *
  * @example
@@ -26,10 +31,14 @@ import type { Subscription } from './types';
  * const subscription = { tier: 'premium', isActive: true, ... };
  * syncSubscriptionToStore(subscription);
  * // useStore.getState().isPremium is now true
+ *
+ * const expiredSubscription = { tier: 'premium', isActive: false, ... };
+ * syncSubscriptionToStore(expiredSubscription);
+ * // useStore.getState().isPremium is now false (expired)
  * ```
  */
 export function syncSubscriptionToStore(subscription: Subscription): void {
-  const isPremium = subscription.tier === 'premium';
+  const isPremium = subscription.tier === 'premium' && subscription.isActive;
   useStore.getState().setPremium(isPremium);
 }
 

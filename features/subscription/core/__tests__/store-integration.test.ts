@@ -55,7 +55,7 @@ describe('Zustand Store Integration', () => {
       expect(useStore.getState().isPremium).toBe(false);
     });
 
-    it('should set isPremium to false when subscription is inactive premium', () => {
+    it('should set isPremium to false when subscription is inactive premium (expired)', () => {
       const expiredPremiumSubscription: Subscription = {
         isActive: false,
         tier: 'premium',
@@ -65,9 +65,9 @@ describe('Zustand Store Integration', () => {
 
       syncSubscriptionToStore(expiredPremiumSubscription);
 
-      // Inactive premium should still be treated as premium tier
-      // The isActive flag is for display purposes, tier determines access
-      expect(useStore.getState().isPremium).toBe(true);
+      // Expired premium subscriptions should NOT grant premium access
+      // Both tier === 'premium' AND isActive === true are required
+      expect(useStore.getState().isPremium).toBe(false);
     });
   });
 
