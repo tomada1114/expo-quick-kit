@@ -1,6 +1,6 @@
 ---
 name: expo-subscription-monetization
-description: Implement monthly and annual subscription monetization in Expo apps using RevenueCat with Clean Architecture and Domain-Driven Design patterns. Use this skill when building subscription features, setting up RevenueCat products, implementing feature gates, or adding tiered pricing to React Native/Expo applications. Covers product setup, architecture implementation, feature gating, testing strategies, and troubleshooting.
+description: Implement subscription monetization in Expo apps using RevenueCat with Clean Architecture patterns. Use PROACTIVELY when building subscription features, setting up RevenueCat, implementing feature gates, adding tiered pricing, or working with in-app purchases. Examples: <example>Context: User asks about monetization user: 'Add subscription to my app' assistant: 'I will use expo-subscription-monetization skill' <commentary>Triggered by subscription/monetization request</commentary></example>
 ---
 
 # Expo Subscription Monetization with RevenueCat

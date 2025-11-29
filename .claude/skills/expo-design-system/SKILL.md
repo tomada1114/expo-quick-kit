@@ -1,6 +1,6 @@
 ---
 name: expo-design-system
-description: Design system based on Apple Human Interface Guidelines. Instantly implement iOS System Colors, Semantic Colors, and Dark Mode support in Expo/React Native apps. Use when implementing theme system, setting up colors, configuring Dark Mode, building UI components, or following iOS design patterns in Expo apps.
+description: Design system based on Apple Human Interface Guidelines. Instantly implement iOS System Colors, Semantic Colors, and Dark Mode support in Expo/React Native apps. Use PROACTIVELY when implementing theme system, setting up colors, configuring Dark Mode, building UI components, or following iOS design patterns. Examples: <example>Context: User asks about UI implementation user: 'Add a card component with proper colors' assistant: 'I will use expo-design-system skill' <commentary>Triggered by UI component and color implementation request</commentary></example>
 ---
 
 # Expo Design System - iOS System Colors
