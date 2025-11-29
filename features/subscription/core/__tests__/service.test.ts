@@ -10,6 +10,7 @@
 import {
   getUsageLimits,
   canAccessFeature,
+  getDefaultSubscription,
   FREE_TIER_LIMITS,
   PREMIUM_TIER_LIMITS,
   createSubscriptionService,
@@ -122,6 +123,34 @@ describe('Subscription Service', () => {
           expect(typeof canAccessFeature(level, tier)).toBe('boolean');
         }
       }
+    });
+
+    it('should deny access for unknown feature levels (defensive)', () => {
+      // Test the default case in switch statement
+      // Using type assertion to simulate an unexpected feature level
+      const unknownLevel = 'unknown' as FeatureLevel;
+
+      expect(canAccessFeature(unknownLevel, 'free')).toBe(false);
+      expect(canAccessFeature(unknownLevel, 'premium')).toBe(false);
+    });
+  });
+
+  describe('getDefaultSubscription', () => {
+    it('should return the default free subscription', () => {
+      const subscription = getDefaultSubscription();
+
+      expect(subscription).toEqual(DEFAULT_FREE_SUBSCRIPTION);
+      expect(subscription.tier).toBe('free');
+      expect(subscription.isActive).toBe(false);
+      expect(subscription.expiresAt).toBeNull();
+      expect(subscription.productId).toBeNull();
+    });
+
+    it('should return the same reference (immutable constant)', () => {
+      const subscription1 = getDefaultSubscription();
+      const subscription2 = getDefaultSubscription();
+
+      expect(subscription1).toBe(subscription2);
     });
   });
 
@@ -290,6 +319,44 @@ describe('Subscription Service', () => {
         if (!result.success) {
           expect(result.error.code).toBe('NETWORK_ERROR');
         }
+      });
+
+      it('should return NO_ACTIVE_SUBSCRIPTION when auto-restore returns null after PRODUCT_ALREADY_PURCHASED', async () => {
+        const alreadyPurchasedError: SubscriptionError = {
+          code: 'PRODUCT_ALREADY_PURCHASED',
+          message: 'Product already purchased',
+          retryable: false,
+        };
+
+        mockRepository.purchasePackage.mockResolvedValue({
+          success: false,
+          error: alreadyPurchasedError,
+        });
+
+        // Auto-restore succeeds but returns null (no active subscription found)
+        mockRepository.restorePurchases.mockResolvedValue({
+          success: true,
+          data: null,
+        });
+
+        const service = createSubscriptionService({
+          repository: mockRepository,
+          onStateChange,
+        });
+
+        const result = await service.purchasePackage('$rc_monthly');
+
+        expect(mockRepository.restorePurchases).toHaveBeenCalled();
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.code).toBe('NO_ACTIVE_SUBSCRIPTION');
+          expect(result.error.message).toBe(
+            'No active subscription found after restore'
+          );
+          expect(result.error.retryable).toBe(false);
+        }
+        // State should NOT be updated when no subscription found
+        expect(onStateChange).not.toHaveBeenCalled();
       });
     });
 
