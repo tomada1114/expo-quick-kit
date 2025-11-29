@@ -24,6 +24,30 @@ export {
   toSubscriptionError,
 } from './repository';
 
+// Application Service
+export {
+  getUsageLimits,
+  canAccessFeature,
+  getDefaultSubscription,
+  createSubscriptionService,
+} from './service';
+
+export type {
+  SubscriptionRepository,
+  SubscriptionServiceConfig,
+  SubscriptionService,
+  SubscriptionLogger,
+  LogLevel,
+} from './service';
+
+// Zustand Store Integration
+export {
+  syncSubscriptionToStore,
+  createStoreIntegration,
+} from './store-integration';
+
+export type { StoreIntegrationConfig } from './store-integration';
+
 // Domain Types
 export type {
   Subscription,

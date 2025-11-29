@@ -53,7 +53,7 @@
 
 ## 3. Application Service Layerの実装
 
-- [ ] 3.1 (P) Subscription Serviceを実装
+- [x] 3.1 (P) Subscription Serviceを実装
   - サブスクリプション状態に基づいた `UsageLimits` 計算ロジックを実装
   - Free tier: `maxItems: 10, maxExports: 1, hasAds: true`
   - Premium tier: `maxItems: Infinity, maxExports: Infinity, hasAds: false`
@@ -62,7 +62,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 2.2, 3.3, 3.4, 8.1, 8.2, 8.4_
 
-- [ ] 3.2 (P) 購入・復元のService層ロジックを実装
+- [x] 3.2 (P) 購入・復元のService層ロジックを実装
   - Repository から取得した `Result` を評価し、成功時にサブスクリプション状態を更新
   - エラー時に適切なエラーハンドリング（キャンセル、ネットワークエラー、システムエラー）
   - `PRODUCT_ALREADY_PURCHASED` エラー時に自動的に `restorePurchases()` を実行
@@ -70,7 +70,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 5.2, 5.3, 5.4, 6.2, 6.3, 7.5_
 
-- [ ] 3.3 (P) Zustandストアとの統合（オプション）
+- [x] 3.3 (P) Zustandストアとの統合（オプション）
   - Subscription Service の `updateSubscriptionState()` で Zustand の `isPremium` フラグを同期
   - `useStore.getState().setPremium(subscription.tier === 'premium')` を呼び出し
   - 既存の `store/slices/app-slice.ts` と互換性を保つ
