@@ -122,7 +122,7 @@
 
 ## 6. Settings 画面への復元ボタン統合
 
-- [ ] 6.1 Settings 画面に「購入を復元」ボタンを追加
+- [x] 6.1 Settings 画面に「購入を復元」ボタンを追加
   - `useSubscription` Hook から `restorePurchases()` を取得
   - iOS App Store ガイドライン準拠のため、ボタンを必ず表示
   - 復元処理中はローディングインジケーターを表示
