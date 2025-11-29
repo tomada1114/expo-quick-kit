@@ -70,7 +70,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 5.2, 5.3, 5.4, 6.2, 6.3, 7.5_
 
-- [ ] 3.3 (P) Zustandストアとの統合（オプション）
+- [x] 3.3 (P) Zustandストアとの統合（オプション）
   - Subscription Service の `updateSubscriptionState()` で Zustand の `isPremium` フラグを同期
   - `useStore.getState().setPremium(subscription.tier === 'premium')` を呼び出し
   - 既存の `store/slices/app-slice.ts` と互換性を保つ

@@ -1,6 +1,11 @@
 // Pre-setup file - runs before modules are loaded
 // Used to suppress warnings that occur during module import
 
+// Mock AsyncStorage before any modules are loaded
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
+
 // Suppress console output during module import phase
 // This catches warnings from expo-notifications and other libraries
 // that emit warnings when their modules are first imported
