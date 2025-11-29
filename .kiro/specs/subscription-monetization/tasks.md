@@ -112,7 +112,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
 
-- [ ] 5.2 (P) Paywallスクリーンを expo-router に追加
+- [x] 5.2 (P) Paywallスクリーンを expo-router に追加
   - `app/paywall.tsx` として独立したルートに配置
   - iOS Design System のカラーとタイポグラフィを適用（`useThemedColors()` を使用）
   - RevenueCat Dashboard で設定された Offering を自動表示
