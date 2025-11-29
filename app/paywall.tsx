@@ -30,7 +30,7 @@
  * ```
  */
 
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useThemedColors } from '@/hooks/use-theme-color';

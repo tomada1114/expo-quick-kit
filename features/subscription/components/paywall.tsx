@@ -142,11 +142,13 @@ export function Paywall({
 
   /**
    * Handle paywall dismissal.
-   * Calls the dismiss callback and navigates back.
+   * Calls the dismiss callback and navigates back if possible.
    */
   const handleDismiss = useCallback(() => {
     onDismiss?.();
-    router.back();
+    if (router.canGoBack()) {
+      router.back();
+    }
   }, [onDismiss, router]);
 
   // Build options with type assertion to handle type mismatch between

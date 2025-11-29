@@ -20,10 +20,11 @@ import { resetPaywallMock } from '../../../../__mocks__/react-native-purchases-u
 
 // Mock expo-router
 const mockRouterBack = jest.fn();
+const mockCanGoBack = jest.fn().mockReturnValue(true);
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     back: mockRouterBack,
-    canGoBack: () => true,
+    canGoBack: mockCanGoBack,
   }),
 }));
 
@@ -32,6 +33,7 @@ describe('Paywall Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetPaywallMock();
+    mockCanGoBack.mockReturnValue(true);
   });
 
   /**
@@ -196,6 +198,22 @@ describe('Paywall Component', () => {
       // Then
       await waitFor(() => {
         expect(onDismiss).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('should not call router.back() when canGoBack returns false', async () => {
+      // Given
+      mockCanGoBack.mockReturnValue(false);
+      const onDismiss = jest.fn();
+      const { getByTestId } = render(<Paywall onDismiss={onDismiss} />);
+
+      // When
+      fireEvent.press(getByTestId('mock-dismiss-button'));
+
+      // Then
+      await waitFor(() => {
+        expect(onDismiss).toHaveBeenCalledTimes(1);
+        expect(mockRouterBack).not.toHaveBeenCalled();
       });
     });
   });
