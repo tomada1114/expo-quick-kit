@@ -133,7 +133,7 @@
 
 ## 7. テスト実装
 
-- [ ] 7.1 (P) RevenueCat SDK モックを作成
+- [x] 7.1 (P) RevenueCat SDK モックを作成
   - `__mocks__/react-native-purchases.ts` に配置
   - `setupFreeUserMock()` 関数で無料ユーザーの状態を設定
   - `setupPremiumUserMock()` 関数でプレミアムユーザーの状態を設定
