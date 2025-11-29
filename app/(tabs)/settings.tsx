@@ -10,7 +10,7 @@
  * - Display success/error messages for restore operations
  */
 
-import { router, Href } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import React, { useState, useCallback } from 'react';
 import { StyleSheet, ScrollView, View, Alert } from 'react-native';
 
@@ -40,24 +40,17 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 export default function SettingsScreen() {
   const { colors } = useThemedColors();
-  const {
-    isPremium,
-    subscription,
-    loading: subscriptionLoading,
-    restorePurchases,
-  } = useSubscription();
+  const { isPremium, subscription, restorePurchases, refetchSubscription } =
+    useSubscription();
 
   const [isRestoring, setIsRestoring] = useState(false);
-
-  // Combined loading state
-  const loading = subscriptionLoading || isRestoring;
 
   /**
    * Handle restore purchases button press
    * Implements iOS App Store guideline requirement for restore functionality
    */
   const handleRestorePurchases = useCallback(async () => {
-    if (loading) {
+    if (isRestoring) {
       return; // Prevent duplicate calls
     }
 
@@ -66,8 +59,10 @@ export default function SettingsScreen() {
     try {
       await restorePurchases();
 
-      // Check if subscription was restored (will need to refetch state)
-      // Show success message
+      // Refetch subscription state to get updated premium status
+      await refetchSubscription();
+
+      // Show success message - restorePurchases throws if no active subscription found
       Alert.alert('Success', '購入を復元しました', [{ text: 'OK' }]);
     } catch (error) {
       const errorCode =
@@ -92,12 +87,13 @@ export default function SettingsScreen() {
     } finally {
       setIsRestoring(false);
     }
-  }, [loading, restorePurchases]);
+  }, [isRestoring, restorePurchases, refetchSubscription]);
 
   /**
    * Handle upgrade to premium button press
    */
   const handleUpgrade = useCallback(() => {
+    // Note: Type assertion needed because expo-router typed routes may not be regenerated
     router.push('/paywall' as Href);
   }, []);
 
@@ -164,8 +160,8 @@ export default function SettingsScreen() {
           testID="restore-purchases-button"
           variant="secondary"
           onPress={handleRestorePurchases}
-          loading={loading}
-          disabled={loading}
+          loading={isRestoring}
+          disabled={isRestoring}
         >
           Restore Purchases
         </Button>

@@ -81,7 +81,7 @@ jest.mock('@/hooks/use-color-scheme', () => ({
 
 // Mock useSubscription hook - will be configured per test
 const mockRestorePurchases = jest.fn();
-let mockLoading = false;
+const mockRefetchSubscription = jest.fn();
 let mockError: { code: string; message: string; retryable: boolean } | null =
   null;
 let mockSubscription: {
@@ -100,12 +100,11 @@ jest.mock('@/features/subscription/hooks', () => ({
       ? { maxItems: Infinity, maxExports: Infinity, hasAds: false }
       : { maxItems: 10, maxExports: 1, hasAds: true },
     subscription: mockSubscription,
-    loading: mockLoading,
     error: mockError,
     purchasePackage: jest.fn(),
     restorePurchases: mockRestorePurchases,
     canAccessFeature: jest.fn(),
-    refetchSubscription: jest.fn(),
+    refetchSubscription: mockRefetchSubscription,
   }),
 }));
 
@@ -124,11 +123,11 @@ import SettingsScreen from '../settings';
 describe('SettingsScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockLoading = false;
     mockError = null;
     mockSubscription = null;
     mockIsPremium = false;
     mockRestorePurchases.mockResolvedValue(undefined);
+    mockRefetchSubscription.mockResolvedValue(undefined);
   });
 
   describe('Rendering', () => {
@@ -213,7 +212,7 @@ describe('SettingsScreen', () => {
 
     // Given: Restore operation succeeds with active subscription
     // When: restorePurchases resolves successfully
-    // Then: Success alert should be shown with Japanese message
+    // Then: Success alert should be shown with Japanese message and refetch is called
     it('should show success alert when restore finds active subscription', async () => {
       // Simulate that after restore, subscription becomes active
       mockRestorePurchases.mockImplementation(async () => {
@@ -232,6 +231,7 @@ describe('SettingsScreen', () => {
       fireEvent.press(restoreButton);
 
       await waitFor(() => {
+        expect(mockRefetchSubscription).toHaveBeenCalledTimes(1);
         expect(alertSpy).toHaveBeenCalledWith(
           'Success',
           '購入を復元しました',
@@ -273,32 +273,60 @@ describe('SettingsScreen', () => {
 
   describe('Loading State', () => {
     // Given: Restore operation is in progress
-    // When: loading is true
+    // When: Button is pressed and restore is pending
     // Then: Button should show loading indicator
-    it('should show loading indicator during restore', () => {
-      mockLoading = true;
+    it('should show loading indicator during restore', async () => {
+      // Keep the restore promise pending to test loading state
+      let resolveRestore: () => void;
+      mockRestorePurchases.mockImplementation(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveRestore = resolve;
+          })
+      );
 
       render(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
-      // Button should have loading prop
-      expect(restoreButton).toBeTruthy();
-      // Check for loading indicator
-      expect(
-        screen.getByTestId('restore-purchases-button-loading')
-      ).toBeTruthy();
+      fireEvent.press(restoreButton);
+
+      // Check for loading indicator while restore is in progress
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('restore-purchases-button-loading')
+        ).toBeTruthy();
+      });
+
+      // Cleanup: resolve the promise
+      resolveRestore!();
     });
 
     // Given: Restore operation is in progress
-    // When: loading is true
+    // When: Button is pressed and restore is pending
     // Then: Button should be disabled
-    it('should disable button during restore', () => {
-      mockLoading = true;
+    it('should disable button during restore', async () => {
+      // Keep the restore promise pending to test loading state
+      let resolveRestore: () => void;
+      mockRestorePurchases.mockImplementation(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveRestore = resolve;
+          })
+      );
 
       render(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
-      expect(restoreButton.props.accessibilityState?.disabled).toBe(true);
+      fireEvent.press(restoreButton);
+
+      // Check button is disabled while restore is in progress
+      await waitFor(() => {
+        const button = screen.getByTestId('restore-purchases-button');
+        expect(button.props.accessibilityState?.disabled).toBe(true);
+      });
+
+      // Cleanup: resolve the promise
+      resolveRestore!();
     });
   });
 
@@ -312,28 +340,26 @@ describe('SettingsScreen', () => {
         resolveRestore = resolve;
       });
 
-      mockRestorePurchases.mockImplementation(() => {
-        mockLoading = true;
-        return restorePromise;
-      });
+      mockRestorePurchases.mockImplementation(() => restorePromise);
 
-      const { rerender } = render(<SettingsScreen />);
+      render(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
 
-      // First press
+      // First press - starts restore
       fireEvent.press(restoreButton);
 
-      // Immediately rerender with loading state
-      mockLoading = true;
-      rerender(<SettingsScreen />);
+      // Wait for button to become disabled (loading state)
+      await waitFor(() => {
+        const button = screen.getByTestId('restore-purchases-button');
+        expect(button.props.accessibilityState?.disabled).toBe(true);
+      });
 
-      // Second press should be ignored due to loading
+      // Second press should be ignored due to disabled state
       fireEvent.press(screen.getByTestId('restore-purchases-button'));
 
       // Complete the restore
       resolveRestore!();
-      mockLoading = false;
 
       await waitFor(() => {
         expect(mockRestorePurchases).toHaveBeenCalledTimes(1);
