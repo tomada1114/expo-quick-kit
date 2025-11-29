@@ -79,7 +79,7 @@
 
 ## 4. Presentation Layerの実装
 
-- [ ] 4.1 Subscription Providerを実装
+- [x] 4.1 Subscription Providerを実装
   - React Context で サブスクリプション状態（subscription, loading, error）を管理
   - 初回マウント時に Repository から `fetchCustomerInfo()` を呼び出し
   - 購入・復元アクション関数（purchasePackage, restorePurchases, refetchSubscription）を提供
@@ -87,7 +87,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 7.1, 7.2_
 
-- [ ] 4.2 (P) useSubscription Hookを実装
+- [x] 4.2 (P) useSubscription Hookを実装
   - Subscription Context から状態とアクションを取得
   - 派生状態（isPremium, isFree, usageLimits）を `useMemo` で計算
   - Feature Gating 用の `canAccessFeature(level)` 関数を提供
