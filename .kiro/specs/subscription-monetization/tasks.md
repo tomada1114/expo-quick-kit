@@ -133,7 +133,7 @@
 
 ## 7. テスト実装
 
-- [ ] 7.1 (P) RevenueCat SDK モックを作成
+- [x] 7.1 (P) RevenueCat SDK モックを作成
   - `__mocks__/react-native-purchases.ts` に配置
   - `setupFreeUserMock()` 関数で無料ユーザーの状態を設定
   - `setupPremiumUserMock()` 関数でプレミアムユーザーの状態を設定
@@ -141,7 +141,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
 
-- [ ] 7.2 (P) Subscription Service のユニットテストを実装
+- [x] 7.2 (P) Subscription Service のユニットテストを実装
   - `getUsageLimits('free')` が正しい制限を返すことを検証
   - `getUsageLimits('premium')` が正しい制限を返すことを検証
   - `canAccessFeature('basic')` が常に `true` を返すことを検証
@@ -149,20 +149,20 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 3.3, 3.4, 8.1, 8.2_
 
-- [ ] 7.3 (P) Subscription Repository のユニットテストを実装
+- [x] 7.3 (P) Subscription Repository のユニットテストを実装
   - `toSubscription(CustomerInfo)` が正しくドメインエンティティに変換することを検証
   - `toSubscriptionError(PurchasesError)` がエラーコードを正しくマッピングすることを検証
   - `entitlements.active["premium"]` の有無で tier が正しく判定されることを検証
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 2.3, 10.1_
 
-- [ ] 7.4 (P) useSubscription Hook のユニットテストを実装
+- [x] 7.4 (P) useSubscription Hook のユニットテストを実装
   - 派生状態（isPremium, isFree）が subscription state に基づいて正しく計算されることを検証
   - Context 外で呼び出された場合にエラーが throw されることを検証
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 7.3, 7.4_
 
-- [ ]* 7.5 統合テストを実装（オプション）
+- [x]* 7.5 統合テストを実装（オプション）
   - Mock SDK を使用し、購入フロー全体（`purchasePackage()` から状態更新まで）を検証
   - Mock SDK を使用し、復元フロー全体（`restorePurchases()` から状態更新まで）を検証
   - Subscription Provider が初回マウント時に `fetchCustomerInfo()` を呼び出すことを検証

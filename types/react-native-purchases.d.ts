@@ -216,4 +216,21 @@ declare module 'react-native-purchases' {
 
   const Purchases: Purchases;
   export default Purchases;
+
+  // Test utilities (only available in test environment via __mocks__)
+  export function resetMock(): void;
+  export function setupFreeUserMock(): void;
+  export function setupPremiumUserMock(): void;
+  export function setupExpiredSubscriptionMock(daysAgo?: number): void;
+  export function setupTrialSubscriptionMock(trialDaysRemaining: number): void;
+  export function setupCancelledSubscriptionMock(expiresInDays: number): void;
+  export function setupBillingIssueMock(): void;
+  export function setupLifetimeSubscriptionMock(): void;
+  export function setupPurchaseError(errorCode: number): void;
+  export function setupRestoreError(errorCode: number): void;
+  export function setupOfferingsError(errorCode: number): void;
+  export function setupOperationInProgress(): void;
+  export function createMockPremiumCustomerInfo(): CustomerInfo;
+  export const mockFreeCustomerInfo: CustomerInfo;
+  export const mockPremiumCustomerInfo: CustomerInfo;
 }
