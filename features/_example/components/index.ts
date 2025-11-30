@@ -15,3 +15,7 @@ export {
   NotificationDemo,
   type NotificationDemoProps,
 } from './notification-demo';
+export {
+  SubscriptionDemo,
+  type SubscriptionDemoProps,
+} from './subscription-demo';
