@@ -172,12 +172,12 @@
 
 ## 8. ドキュメンテーションとサンプルコード
 
-- [ ] 8.1 (P) features/subscription/README.md を作成
+- [x] 8.1 (P) features/subscription/README.md を作成
   - アーキテクチャ概要（Clean Architecture, DDD レイヤー構造）を記載
   - 使用方法（`useSubscription` Hook の例、購入・復元フロー）を記載
   - UsageLimits のカスタマイズ例（AI アプリ、ファイルストレージアプリ、プロジェクト管理アプリ）を提供
   - RevenueCat Dashboard での製品設定手順をステップバイステップで説明
-  - トラブルシューティングセクション（「購入できない」「復元できない」）を追加
+  - ただし全体として簡潔に記載すること。
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 13.1, 13.2, 13.3, 13.5_
 
@@ -188,14 +188,6 @@
   - Feature Gating の例（`canAccessFeature` でプレミアム機能を制限）
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 13.4_
-
-- [ ] 8.3 (P) .env.local 設定手順を README.md に追加
-  - 環境変数の設定方法（`EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE` と `GOOGLE`）を記載
-  - RevenueCat Dashboard から API キーを取得する手順を説明
-  - `.gitignore` に `.env.local` が含まれていることを確認
-  - 本番環境では Expo Secrets または環境変数管理サービスを推奨
-  - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
-  - _Requirements: 12.3, 12.4, 12.5_
 
 ## 9. 品質保証とビルド検証
 
