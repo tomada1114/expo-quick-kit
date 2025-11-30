@@ -162,7 +162,7 @@
   - `pnpm check` を実行し、すべてのチェックにパスすることを確認。
   - _Requirements: 7.3, 7.4_
 
-- [ ]* 7.5 統合テストを実装（オプション）
+- [x]* 7.5 統合テストを実装（オプション）
   - Mock SDK を使用し、購入フロー全体（`purchasePackage()` から状態更新まで）を検証
   - Mock SDK を使用し、復元フロー全体（`restorePurchases()` から状態更新まで）を検証
   - Subscription Provider が初回マウント時に `fetchCustomerInfo()` を呼び出すことを検証

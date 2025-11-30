@@ -420,10 +420,11 @@ export function setupOperationInProgress(): void {
 }
 
 /**
- * Reset all mock state to defaults.
+ * Reset all mock state to defaults and restore mock implementations.
  * Call this in beforeEach to ensure clean test state.
  */
 export function resetMock(): void {
+  // Reset state variables
   mockCustomerInfo = mockFreeCustomerInfo;
   mockShouldFailPurchase = false;
   mockPurchaseErrorCode = null;
@@ -432,6 +433,59 @@ export function resetMock(): void {
   mockShouldFailOfferings = false;
   mockOfferingsErrorCode = null;
   mockOperationInProgress = false;
+
+  // Restore mock implementations (in case jest.clearAllMocks() was called)
+  (Purchases.getCustomerInfo as jest.Mock).mockImplementation(() => {
+    return Promise.resolve(mockCustomerInfo);
+  });
+
+  (Purchases.getOfferings as jest.Mock).mockImplementation(() => {
+    if (mockShouldFailOfferings) {
+      const error = new Error('Failed to get offerings');
+      (error as Error & { code: number }).code =
+        mockOfferingsErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
+      return Promise.reject(error);
+    }
+    return Promise.resolve(defaultMockOfferings);
+  });
+
+  (Purchases.purchasePackage as jest.Mock).mockImplementation(
+    (pkg: MockPurchasesPackage) => {
+      if (mockOperationInProgress) {
+        const error = new Error('Operation already in progress');
+        (error as Error & { code: number }).code =
+          PURCHASES_ERROR_CODE.OPERATION_ALREADY_IN_PROGRESS_ERROR;
+        return Promise.reject(error);
+      }
+
+      if (mockShouldFailPurchase) {
+        const error = new Error('Purchase failed');
+        (error as Error & { code: number }).code =
+          mockPurchaseErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
+        return Promise.reject(error);
+      }
+      const freshPremiumInfo = createMockPremiumCustomerInfo();
+      mockCustomerInfo = freshPremiumInfo;
+      return Promise.resolve({ customerInfo: freshPremiumInfo });
+    }
+  );
+
+  (Purchases.restorePurchases as jest.Mock).mockImplementation(() => {
+    if (mockOperationInProgress) {
+      const error = new Error('Operation already in progress');
+      (error as Error & { code: number }).code =
+        PURCHASES_ERROR_CODE.OPERATION_ALREADY_IN_PROGRESS_ERROR;
+      return Promise.reject(error);
+    }
+
+    if (mockShouldFailRestore) {
+      const error = new Error('Restore failed');
+      (error as Error & { code: number }).code =
+        mockRestoreErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
+      return Promise.reject(error);
+    }
+    return Promise.resolve(mockCustomerInfo);
+  });
 }
 
 // LOG_LEVEL enum
