@@ -420,6 +420,62 @@ export function setupOperationInProgress(): void {
 }
 
 /**
+ * Implementation factory functions for mock methods.
+ * These are used to reduce duplication between initial setup and resetMock().
+ */
+namespace MockImplementations {
+  export function getCustomerInfo() {
+    return Promise.resolve(mockCustomerInfo);
+  }
+
+  export function getOfferings() {
+    if (mockShouldFailOfferings) {
+      const error = new Error('Failed to get offerings');
+      (error as Error & { code: number }).code =
+        mockOfferingsErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
+      return Promise.reject(error);
+    }
+    return Promise.resolve(defaultMockOfferings);
+  }
+
+  export function purchasePackage(_pkg: MockPurchasesPackage) {
+    if (mockOperationInProgress) {
+      const error = new Error('Operation already in progress');
+      (error as Error & { code: number }).code =
+        PURCHASES_ERROR_CODE.OPERATION_ALREADY_IN_PROGRESS_ERROR;
+      return Promise.reject(error);
+    }
+
+    if (mockShouldFailPurchase) {
+      const error = new Error('Purchase failed');
+      (error as Error & { code: number }).code =
+        mockPurchaseErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
+      return Promise.reject(error);
+    }
+    const freshPremiumInfo = createMockPremiumCustomerInfo();
+    mockCustomerInfo = freshPremiumInfo;
+    return Promise.resolve({ customerInfo: freshPremiumInfo });
+  }
+
+  export function restorePurchases() {
+    if (mockOperationInProgress) {
+      const error = new Error('Operation already in progress');
+      (error as Error & { code: number }).code =
+        PURCHASES_ERROR_CODE.OPERATION_ALREADY_IN_PROGRESS_ERROR;
+      return Promise.reject(error);
+    }
+
+    if (mockShouldFailRestore) {
+      const error = new Error('Restore failed');
+      (error as Error & { code: number }).code =
+        mockRestoreErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
+      return Promise.reject(error);
+    }
+    return Promise.resolve(mockCustomerInfo);
+  }
+}
+
+/**
  * Reset all mock state to defaults and restore mock implementations.
  * Call this in beforeEach to ensure clean test state.
  */
@@ -435,57 +491,21 @@ export function resetMock(): void {
   mockOperationInProgress = false;
 
   // Restore mock implementations (in case jest.clearAllMocks() was called)
-  (Purchases.getCustomerInfo as jest.Mock).mockImplementation(() => {
-    return Promise.resolve(mockCustomerInfo);
-  });
-
-  (Purchases.getOfferings as jest.Mock).mockImplementation(() => {
-    if (mockShouldFailOfferings) {
-      const error = new Error('Failed to get offerings');
-      (error as Error & { code: number }).code =
-        mockOfferingsErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
-      return Promise.reject(error);
-    }
-    return Promise.resolve(defaultMockOfferings);
-  });
-
-  (Purchases.purchasePackage as jest.Mock).mockImplementation(
-    (pkg: MockPurchasesPackage) => {
-      if (mockOperationInProgress) {
-        const error = new Error('Operation already in progress');
-        (error as Error & { code: number }).code =
-          PURCHASES_ERROR_CODE.OPERATION_ALREADY_IN_PROGRESS_ERROR;
-        return Promise.reject(error);
-      }
-
-      if (mockShouldFailPurchase) {
-        const error = new Error('Purchase failed');
-        (error as Error & { code: number }).code =
-          mockPurchaseErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
-        return Promise.reject(error);
-      }
-      const freshPremiumInfo = createMockPremiumCustomerInfo();
-      mockCustomerInfo = freshPremiumInfo;
-      return Promise.resolve({ customerInfo: freshPremiumInfo });
-    }
+  (Purchases.getCustomerInfo as jest.Mock).mockImplementation(
+    MockImplementations.getCustomerInfo
   );
 
-  (Purchases.restorePurchases as jest.Mock).mockImplementation(() => {
-    if (mockOperationInProgress) {
-      const error = new Error('Operation already in progress');
-      (error as Error & { code: number }).code =
-        PURCHASES_ERROR_CODE.OPERATION_ALREADY_IN_PROGRESS_ERROR;
-      return Promise.reject(error);
-    }
+  (Purchases.getOfferings as jest.Mock).mockImplementation(
+    MockImplementations.getOfferings
+  );
 
-    if (mockShouldFailRestore) {
-      const error = new Error('Restore failed');
-      (error as Error & { code: number }).code =
-        mockRestoreErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
-      return Promise.reject(error);
-    }
-    return Promise.resolve(mockCustomerInfo);
-  });
+  (Purchases.purchasePackage as jest.Mock).mockImplementation(
+    MockImplementations.purchasePackage
+  );
+
+  (Purchases.restorePurchases as jest.Mock).mockImplementation(
+    MockImplementations.restorePurchases
+  );
 }
 
 // LOG_LEVEL enum
@@ -608,58 +628,19 @@ const Purchases = {
   setLogLevel: jest.fn(),
   isConfigured: jest.fn().mockReturnValue(false),
 
-  getCustomerInfo: jest.fn().mockImplementation(() => {
-    return Promise.resolve(mockCustomerInfo);
-  }),
+  getCustomerInfo: jest
+    .fn()
+    .mockImplementation(MockImplementations.getCustomerInfo),
 
-  getOfferings: jest.fn().mockImplementation(() => {
-    if (mockShouldFailOfferings) {
-      const error = new Error('Failed to get offerings');
-      (error as Error & { code: number }).code =
-        mockOfferingsErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
-      return Promise.reject(error);
-    }
-    return Promise.resolve(defaultMockOfferings);
-  }),
+  getOfferings: jest.fn().mockImplementation(MockImplementations.getOfferings),
 
-  purchasePackage: jest.fn().mockImplementation((pkg: MockPurchasesPackage) => {
-    // Check for operation in progress
-    if (mockOperationInProgress) {
-      const error = new Error('Operation already in progress');
-      (error as Error & { code: number }).code =
-        PURCHASES_ERROR_CODE.OPERATION_ALREADY_IN_PROGRESS_ERROR;
-      return Promise.reject(error);
-    }
+  purchasePackage: jest
+    .fn()
+    .mockImplementation(MockImplementations.purchasePackage),
 
-    if (mockShouldFailPurchase) {
-      const error = new Error('Purchase failed');
-      (error as Error & { code: number }).code =
-        mockPurchaseErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
-      return Promise.reject(error);
-    }
-    // Simulate successful purchase - user becomes premium with fresh timestamps
-    const freshPremiumInfo = createMockPremiumCustomerInfo();
-    mockCustomerInfo = freshPremiumInfo;
-    return Promise.resolve({ customerInfo: freshPremiumInfo });
-  }),
-
-  restorePurchases: jest.fn().mockImplementation(() => {
-    // Check for operation in progress
-    if (mockOperationInProgress) {
-      const error = new Error('Operation already in progress');
-      (error as Error & { code: number }).code =
-        PURCHASES_ERROR_CODE.OPERATION_ALREADY_IN_PROGRESS_ERROR;
-      return Promise.reject(error);
-    }
-
-    if (mockShouldFailRestore) {
-      const error = new Error('Restore failed');
-      (error as Error & { code: number }).code =
-        mockRestoreErrorCode ?? PURCHASES_ERROR_CODE.UNKNOWN_ERROR;
-      return Promise.reject(error);
-    }
-    return Promise.resolve(mockCustomerInfo);
-  }),
+  restorePurchases: jest
+    .fn()
+    .mockImplementation(MockImplementations.restorePurchases),
 };
 
 export default Purchases;
