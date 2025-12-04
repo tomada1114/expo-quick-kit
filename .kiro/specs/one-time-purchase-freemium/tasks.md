@@ -233,11 +233,12 @@
   - _Requirements: 6.4_
   - ✅ Completed: RestoreService returns RestoreResult with restoredCount, newCount, updatedCount for UI notifications. Comprehensive tests verify notification counts. All 16 tests passing.
 
-- [ ] 8.3 復元エラーハンドリング
+- [x] 8.3 復元エラーハンドリング
   - ネットワークエラー時：リトライ UI 表示
   - プラットフォームエラー時：詳細エラー説明と manual retry オプション
   - Loading indicator 表示中の UI 無効化
   - _Requirements: 6.5, 6.6, 8.2_
+  - ✅ Completed: Implemented RestoreErrorHandler for error classification and localized messaging, and RestoreUIHandler for UI state management. 39 comprehensive tests (22 error handler + 17 UI handler) covering happy/sad/edge/unhappy paths. Integration tests verify error handling workflows. All 514 purchase tests passing with zero regressions.
 
 ---
 
