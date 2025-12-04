@@ -103,35 +103,25 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     infoPlist: {
       // REMOVE IF NOT NEEDED: Camera permission
       // NSCameraUsageDescription: 'Used to take profile photos and scan documents',
-
       // REMOVE IF NOT NEEDED: Photo library permission
       // NSPhotoLibraryUsageDescription: 'Used to select images for your profile',
-
       // REMOVE IF NOT NEEDED: Microphone permission
       // NSMicrophoneUsageDescription: 'Used to record voice messages',
-
       // REMOVE IF NOT NEEDED: Location permission (when in use)
       // NSLocationWhenInUseUsageDescription: 'Used to show nearby locations',
-
       // REMOVE IF NOT NEEDED: Location permission (always)
       // NSLocationAlwaysUsageDescription: 'Used for location-based reminders',
-
       // REMOVE IF NOT NEEDED: Face ID permission
       // NSFaceIDUsageDescription: 'Used for secure authentication',
-
       // REMOVE IF NOT NEEDED: Contacts permission
       // NSContactsUsageDescription: 'Used to invite friends to the app',
-
       // REMOVE IF NOT NEEDED: Calendar permission
       // NSCalendarsUsageDescription: 'Used to create event reminders',
-
       // REMOVE IF NOT NEEDED: Health data permission
       // NSHealthShareUsageDescription: 'Used to display your health data',
       // NSHealthUpdateUsageDescription: 'Used to save workout data',
-
       // REMOVE IF NOT NEEDED: Motion & Fitness permission
       // NSMotionUsageDescription: 'Used to track steps and activity',
-
       // REMOVE IF NOT NEEDED: App Tracking Transparency (ATT) permission
       // Required for advertising tracking in iOS 14.5+
       // NSUserTrackingUsageDescription: 'Used to provide personalized ads',

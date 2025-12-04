@@ -25,6 +25,8 @@ import {
   syncSubscriptionToStore,
 } from '@/features/subscription/core';
 
+export { ErrorBoundary } from '@/components/ui/error-fallback';
+
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
