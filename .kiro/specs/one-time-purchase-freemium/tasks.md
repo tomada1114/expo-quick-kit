@@ -270,10 +270,11 @@
   - _Requirements: 8.6_
   - ✅ Completed: Implemented LogExporter service with gzip compression via pako, file export via expo-file-system, native sharing via expo-sharing. Supports flexible filtering (date range, error codes, platforms), concurrent operation prevention, and error handling for all failure scenarios. 22 comprehensive tests passing covering happy/sad/edge/unhappy paths with proper Given/When/Then structure.
 
-- [ ] 9.5 ローカル購入記録の破損検出と復旧
+- [x] 9.5 ローカル購入記録の破損検出と復旧
   - DB 읽기 실패時의 에러 감지
   - Transaction 履歴から再構成を試みる（RecoveryHandler）
   - _Requirements: 3.6_
+  - ✅ Completed: Implemented RecoveryHandler with comprehensive corruption detection and recovery. 20 tests covering happy/sad/edge/unhappy paths (healthy DB detection, corruption detection with error details, transaction history recovery, record reconstruction, result validation, auto-recovery on startup). All tests passing with 100% coverage including deduplication and partial recovery scenarios.
 
 ---
 
