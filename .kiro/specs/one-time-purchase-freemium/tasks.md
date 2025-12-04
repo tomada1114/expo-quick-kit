@@ -47,7 +47,7 @@
   - ON DELETE CASCADE で Purchase 削除時の自動クリーンアップ
   - _Requirements: 4.6_
 
-- [ ] 2.3 マイグレーションファイルの生成
+- [x] 2.3 マイグレーションファイルの生成
   - pnpm db:generate で新規マイグレーションファイルを作成
   - スキーマの整合性確認（pnpm typecheck で型チェック）
   - _Requirements: 3.1_

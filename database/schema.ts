@@ -5,7 +5,7 @@
  */
 
 import { sql } from 'drizzle-orm';
-import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { index, integer, real, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 /**
  * Items table - Sample table for demonstrating CRUD operations
@@ -40,19 +40,26 @@ export type NewItem = typeof items.$inferInsert;
  * - isSynced: server synchronization status (for offline support)
  * - Indexes: transactionId (unique), productId, isSynced for common query patterns
  */
-export const purchases = sqliteTable('purchases', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  transactionId: text('transaction_id').unique().notNull(),
-  productId: text('product_id').notNull(),
-  purchasedAt: integer('purchased_at').notNull(),
-  price: real('price').notNull(),
-  currencyCode: text('currency_code').notNull(),
-  isVerified: integer('is_verified', { mode: 'boolean' }).default(false),
-  isSynced: integer('is_synced', { mode: 'boolean' }).default(false),
-  syncedAt: integer('synced_at'),
-  createdAt: integer('created_at').default(sql`(unixepoch())`),
-  updatedAt: integer('updated_at').default(sql`(unixepoch())`),
-});
+export const purchases = sqliteTable(
+  'purchases',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    transactionId: text('transaction_id').unique().notNull(),
+    productId: text('product_id').notNull(),
+    purchasedAt: integer('purchased_at').notNull(),
+    price: real('price').notNull(),
+    currencyCode: text('currency_code').notNull(),
+    isVerified: integer('is_verified', { mode: 'boolean' }).default(false),
+    isSynced: integer('is_synced', { mode: 'boolean' }).default(false),
+    syncedAt: integer('synced_at'),
+    createdAt: integer('created_at').default(sql`(unixepoch())`),
+    updatedAt: integer('updated_at').default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    productIdIdx: index('idx_product_id').on(table.productId),
+    isSyncedIdx: index('idx_is_synced').on(table.isSynced),
+  })
+);
 
 /**
  * Type for selecting purchases (includes all columns)
@@ -74,12 +81,23 @@ export type NewPurchase = typeof purchases.$inferInsert;
  * - Constraints: unique(purchase_id, feature_id) and indexes defined in migration
  * - Query patterns: by purchaseId (find features for a purchase), by featureId (find purchases that unlock feature)
  */
-export const purchaseFeatures = sqliteTable('purchase_features', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  purchaseId: integer('purchase_id').notNull(),
-  featureId: text('feature_id').notNull(),
-  createdAt: integer('created_at').default(sql`(unixepoch())`),
-});
+export const purchaseFeatures = sqliteTable(
+  'purchase_features',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    purchaseId: integer('purchase_id').notNull(),
+    featureId: text('feature_id').notNull(),
+    createdAt: integer('created_at').default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    purchaseIdFeatureIdUnique: uniqueIndex('purchase_features_purchase_id_feature_id_unique').on(
+      table.purchaseId,
+      table.featureId
+    ),
+    purchaseIdIdx: index('idx_purchase_id').on(table.purchaseId),
+    featureIdIdx: index('idx_feature_id').on(table.featureId),
+  })
+);
 
 /**
  * Type for selecting purchase features (includes all columns)
