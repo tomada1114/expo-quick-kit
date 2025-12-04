@@ -181,28 +181,32 @@
 ### 7. アプリケーション層 - FeatureGatingService（機能ロック管理）の実装
 
 
-- [ ] 7.1 (P) canAccessSync メソッド（同期的なアクセス判定）
+- [x] 7.1 (P) canAccessSync メソッド（同期的なアクセス判定）
   - ローカル DB から購入履歴を同期的に取得
   - feature id に紐付いた productId の購入状態を確認
   - free feature は常に true、premium feature は購入状態に依存
   - オフライン環境でもキャッシュされた購入状態を利用可能
   - _Requirements: 4.2, 4.3, 3.4_
+  - ✅ Completed: Implemented FeatureGatingService with canAccessSync, getFeatureDefinitions, getFeaturesByLevel, getFeatureDefinition, getRequiredProduct methods. 24 comprehensive tests covering happy/sad/edge/unhappy paths (free features, premium with/without purchase, database errors, offline support, feature management). All 1185 tests passing.
 
-- [ ] 7.2 (P) canAccess メソッド（非同期アクセス判定、Subscription 統合）
+- [x] 7.2 (P) canAccess メソッド（非同期アクセス判定、Subscription 統合）
   - Subscription tier（existing）と Purchase state の統合ロジック
   - Subscription tier = 'premium' → 全 premium feature access
   - Subscription tier < 'premium' → Purchase 状態で individual feature unlock
   - _Requirements: 4.2, 4.3_
+  - ✅ Completed: Implemented canAccess() async method integrating subscription tier with purchase-based feature gating. Dynamic import of subscription service avoids circular dependencies. Injection API (setSubscriptionServiceGetter) enables flexible testing. 15 comprehensive tests covering: happy path (free features always accessible, premium subscribers get all premium features, free users with individual purchases), sad path (free users without purchases denied), subscription/purchase integration logic (premium subscription short-circuits purchase check), edge cases, service failures, and offline support. All 39 tests passing (24 existing + 15 new).
 
-- [ ] 7.3 (P) FeatureDefinition メタデータの提供
+- [x] 7.3 (P) FeatureDefinition メタデータの提供
   - Feature definition（id, level, name, description, requiredProductId）を返却
   - getFeaturesByLevel で level 別フィルタリング
   - _Requirements: 4.1_
+  - ✅ Completed: Implemented getFeatureDefinition() and getFeaturesByLevel() methods in FeatureGatingService. Methods provide access to feature metadata with proper filtering. Comprehensive test suite with 24 passing tests covering happy/sad/edge/unhappy paths and multiple feature scenarios.
 
-- [ ] 7.4 (P) Trial period support
+- [x] 7.4 (P) Trial period support
   - TrialManager で trial feature に対して、残り試用日数を計算・返却
   - Trial 終了後は購入が必須となるロジック
   - _Requirements: 4.5_
+  - ✅ Completed: Implemented TrialManager class with three core methods (getRemainingTrialDays, isTrialExpired, calculateTrialEndDate). 38 comprehensive tests covering happy/sad/edge/unhappy paths and integration scenarios. All tests passing. Features: day-based calculation (ignores partial hours), validation of inputs (no future dates, non-negative durations, valid feature IDs), correct month/year boundary handling, and leap year support.
 
 - [ ] 7.5 複数機能バンドルサポート
   - 1つの Purchase で複数 feature を unlock するロジック（purchaseFeatures テーブル参照）
