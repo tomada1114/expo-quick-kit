@@ -1043,3 +1043,401 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
     });
   });
 });
+
+// ============================================================================
+// Task 9.2: Network Error Automatic Retry with Exponential Backoff
+// ============================================================================
+
+describe('PurchaseService - Task 9.2: Network Error Retry with Exponential Backoff', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Mock Platform for iOS
+    require('react-native').Platform.OS = 'ios';
+  });
+
+  const { purchaseRepository: mockPurchaseRepository } = require('../../core/repository');
+
+  /**
+   * Test: HAPPY PATH - Successful purchase on first attempt
+   *
+   * Given: purchaseRepository returns successful transaction
+   * When: purchaseProduct is called
+   * Then: Should return success without retrying
+   */
+  it('should return success on first attempt when purchaseRepository succeeds', async () => {
+    // Given: Successful transaction from repository
+    const transaction: Transaction = {
+      transactionId: 'txn-success-first',
+      productId: 'premium_unlock',
+      purchaseDate: new Date(),
+      receiptData: 'valid.receipt.jws',
+    };
+
+    mockPurchaseRepository.launchPurchaseFlow.mockResolvedValue({
+      success: true,
+      data: transaction,
+    });
+
+    // Mock successful verification and metadata save
+    const verificationResult: VerificationResult = {
+      isValid: true,
+      transactionId: 'txn-success-first',
+      productId: 'premium_unlock',
+      purchaseDate: new Date(),
+    };
+
+    mockReceiptVerifier.verifyReceiptSignature.mockResolvedValue({
+      success: true,
+      data: verificationResult,
+    });
+
+    mockVerificationMetadataStore.saveVerificationMetadata.mockResolvedValue({
+      success: true,
+      data: undefined,
+    });
+
+    // When: purchaseProduct is called
+    const result = await purchaseService.purchaseProduct('premium_unlock');
+
+    // Then: Should return success
+    expect(result.success).toBe(true);
+    expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(1);
+  });
+
+  /**
+   * Test: HAPPY PATH - Retry succeeds after network error
+   *
+   * Given: purchaseRepository fails with network error, then succeeds on retry
+   * When: purchaseProduct is called with retry logic
+   * Then: Should retry automatically and eventually succeed
+   */
+  it('should retry automatically on network error and succeed on second attempt', async () => {
+    // Given: Network error on first attempt, success on second
+    const transaction: Transaction = {
+      transactionId: 'txn-retry-success',
+      productId: 'premium_unlock',
+      purchaseDate: new Date(),
+      receiptData: 'valid.receipt.jws',
+    };
+
+    const networkError = {
+      success: false,
+      error: {
+        code: 'NETWORK_ERROR' as const,
+        message: 'Network connection failed',
+        retryable: true,
+        platform: 'ios' as const,
+      },
+    };
+
+    const successResponse = {
+      success: true,
+      data: transaction,
+    };
+
+    // Mock to fail first time, succeed on retry
+    mockPurchaseRepository.launchPurchaseFlow
+      .mockResolvedValueOnce(networkError)
+      .mockResolvedValueOnce(successResponse);
+
+    // Mock successful verification
+    const verificationResult: VerificationResult = {
+      isValid: true,
+      transactionId: 'txn-retry-success',
+      productId: 'premium_unlock',
+      purchaseDate: new Date(),
+    };
+
+    mockReceiptVerifier.verifyReceiptSignature.mockResolvedValue({
+      success: true,
+      data: verificationResult,
+    });
+
+    mockVerificationMetadataStore.saveVerificationMetadata.mockResolvedValue({
+      success: true,
+      data: undefined,
+    });
+
+    // When: purchaseProduct is called
+    const result = await purchaseService.purchaseProduct('premium_unlock');
+
+    // Then: Should succeed after retry
+    expect(result.success).toBe(true);
+    expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(2);
+  });
+
+  /**
+   * Test: SAD PATH - All retries exhausted after network errors
+   *
+   * Given: purchaseRepository consistently fails with network errors
+   * When: purchaseProduct is called with max retries
+   * Then: Should return network error after exhausting retries
+   */
+  it(
+    'should return network error after max retries exhausted',
+    async () => {
+      // Given: Network error that persists across all attempts
+      const networkError = {
+        success: false,
+        error: {
+          code: 'NETWORK_ERROR' as const,
+          message: 'Network connection failed',
+          retryable: true,
+          platform: 'ios' as const,
+        },
+      };
+
+      // Mock to always fail with network error
+      mockPurchaseRepository.launchPurchaseFlow.mockResolvedValue(networkError);
+
+      // When: purchaseProduct is called
+      const result = await purchaseService.purchaseProduct('premium_unlock');
+
+      // Then: Should return error after max retries
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('NETWORK_ERROR');
+        expect(result.error.retryable).toBe(true);
+      }
+      // Verify multiple attempts were made (initial + retries)
+      expect(mockPurchaseRepository.launchPurchaseFlow.mock.calls.length).toBeGreaterThan(1);
+    },
+    20000 // 20 second timeout for retries with exponential backoff
+  );
+
+  /**
+   * Test: EDGE CASE - Non-retryable error should fail immediately
+   *
+   * Given: purchaseRepository fails with non-retryable error (e.g., PURCHASE_CANCELLED)
+   * When: purchaseProduct is called
+   * Then: Should fail immediately without retrying
+   */
+  it('should not retry on non-retryable error (PURCHASE_CANCELLED)', async () => {
+    // Given: Non-retryable purchase cancelled error
+    const cancelledError = {
+      success: false,
+      error: {
+        code: 'PURCHASE_CANCELLED' as const,
+        message: 'User cancelled purchase',
+        retryable: false,
+      },
+    };
+
+    mockPurchaseRepository.launchPurchaseFlow.mockResolvedValue(cancelledError);
+
+    // When: purchaseProduct is called
+    const result = await purchaseService.purchaseProduct('premium_unlock');
+
+    // Then: Should fail immediately without retrying
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe('CANCELLED');
+    }
+    // Should only be called once (no retries for non-retryable error)
+    expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(1);
+  });
+
+  /**
+   * Test: EDGE CASE - Exponential backoff delay verification
+   *
+   * Given: Network errors triggering retries
+   * When: purchaseProduct retries with exponential backoff
+   * Then: Each retry should have increasing delays (1s → 2s → 4s)
+   */
+  it(
+    'should apply exponential backoff delays between retries',
+    async () => {
+      // Given: Network error that triggers retries
+      const networkError = {
+        success: false,
+        error: {
+          code: 'NETWORK_ERROR' as const,
+          message: 'Network timeout',
+          retryable: true,
+          platform: 'ios' as const,
+        },
+      };
+
+      const transaction: Transaction = {
+        transactionId: 'txn-backoff-test',
+        productId: 'premium_unlock',
+        purchaseDate: new Date(),
+        receiptData: 'valid.receipt.jws',
+      };
+
+      // Fail twice, succeed on third attempt
+      mockPurchaseRepository.launchPurchaseFlow
+        .mockResolvedValueOnce(networkError)
+        .mockResolvedValueOnce(networkError)
+        .mockResolvedValueOnce({ success: true, data: transaction });
+
+      // Mock successful verification
+      const verificationResult: VerificationResult = {
+        isValid: true,
+        transactionId: 'txn-backoff-test',
+        productId: 'premium_unlock',
+        purchaseDate: new Date(),
+      };
+
+      mockReceiptVerifier.verifyReceiptSignature.mockResolvedValue({
+        success: true,
+        data: verificationResult,
+      });
+
+      mockVerificationMetadataStore.saveVerificationMetadata.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
+
+      // When: purchaseProduct is called
+      const startTime = Date.now();
+      const result = await purchaseService.purchaseProduct('premium_unlock');
+      const elapsed = Date.now() - startTime;
+
+      // Then: Should succeed and have taken at least the sum of exponential backoff delays
+      expect(result.success).toBe(true);
+      // Minimum expected: 1s (first retry) + 2s (second retry) = 3000ms
+      // Allow some variance for execution time
+      expect(elapsed).toBeGreaterThanOrEqual(2800); // Account for timing variance
+      expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(3);
+    },
+    20000 // 20 second timeout for retries with exponential backoff
+  );
+
+  /**
+   * Test: UNHAPPY PATH - Verification fails after successful retry
+   *
+   * Given: Network error on first attempt, success on retry, verification fails
+   * When: purchaseProduct processes retry success but verification fails
+   * Then: Should return verification error without further retries
+   */
+  it('should not retry when verification fails after successful purchase retry', async () => {
+    // Given: Network error first, then successful transaction, but verification fails
+    const networkError = {
+      success: false,
+      error: {
+        code: 'NETWORK_ERROR' as const,
+        message: 'Network timeout',
+        retryable: true,
+        platform: 'ios' as const,
+      },
+    };
+
+    const transaction: Transaction = {
+      transactionId: 'txn-verify-fail',
+      productId: 'premium_unlock',
+      purchaseDate: new Date(),
+      receiptData: 'invalid.receipt.jws',
+    };
+
+    mockPurchaseRepository.launchPurchaseFlow
+      .mockResolvedValueOnce(networkError)
+      .mockResolvedValueOnce({ success: true, data: transaction });
+
+    // Mock verification failure
+    mockReceiptVerifier.verifyReceiptSignature.mockResolvedValue({
+      success: false,
+      error: {
+        code: 'INVALID_SIGNATURE' as const,
+        message: 'Signature verification failed',
+      },
+    });
+
+    // When: purchaseProduct is called
+    const result = await purchaseService.purchaseProduct('premium_unlock');
+
+    // Then: Should return verification error
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe('VERIFICATION_FAILED');
+    }
+    // Should have called repository twice (retry), but not for verification
+    expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(2);
+    // Should not call metadata save since verification failed
+    expect(mockVerificationMetadataStore.saveVerificationMetadata).not.toHaveBeenCalled();
+  });
+
+  /**
+   * Test: EDGE CASE - Invalid product ID should not trigger retries
+   *
+   * Given: Invalid product ID passed to purchaseProduct
+   * When: purchaseProduct is called
+   * Then: Should fail immediately with validation error and no retries
+   */
+  it('should fail immediately with invalid product ID without retrying', async () => {
+    // When: purchaseProduct is called with empty product ID
+    const result = await purchaseService.purchaseProduct('');
+
+    // Then: Should fail immediately
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe('UNKNOWN_ERROR');
+    }
+    // Should not have called repository at all
+    expect(mockPurchaseRepository.launchPurchaseFlow).not.toHaveBeenCalled();
+  });
+
+  /**
+   * Test: EDGE CASE - Multiple retries with alternating failures
+   *
+   * Given: Network errors alternate with other errors
+   * When: purchaseProduct is called
+   * Then: Should handle mixed error scenarios correctly
+   */
+  it(
+    'should handle multiple network errors and succeed on final retry',
+    async () => {
+      // Given: Three network errors before success
+      const networkError = {
+        success: false,
+        error: {
+          code: 'NETWORK_ERROR' as const,
+          message: 'Temporary network issue',
+          retryable: true,
+          platform: 'ios' as const,
+        },
+      };
+
+      const transaction: Transaction = {
+        transactionId: 'txn-multi-retry',
+        productId: 'premium_unlock',
+        purchaseDate: new Date(),
+        receiptData: 'valid.receipt.jws',
+      };
+
+      // Fail 3 times, succeed on 4th attempt
+      mockPurchaseRepository.launchPurchaseFlow
+        .mockResolvedValueOnce(networkError)
+        .mockResolvedValueOnce(networkError)
+        .mockResolvedValueOnce(networkError)
+        .mockResolvedValueOnce({ success: true, data: transaction });
+
+      // Mock successful verification
+      const verificationResult: VerificationResult = {
+        isValid: true,
+        transactionId: 'txn-multi-retry',
+        productId: 'premium_unlock',
+        purchaseDate: new Date(),
+      };
+
+      mockReceiptVerifier.verifyReceiptSignature.mockResolvedValue({
+        success: true,
+        data: verificationResult,
+      });
+
+      mockVerificationMetadataStore.saveVerificationMetadata.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
+
+      // When: purchaseProduct is called
+      const result = await purchaseService.purchaseProduct('premium_unlock');
+
+      // Then: Should eventually succeed
+      expect(result.success).toBe(true);
+      // Should have made 4 attempts
+      expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(4);
+    },
+    20000 // 20 second timeout for retries with exponential backoff
+  );
+});

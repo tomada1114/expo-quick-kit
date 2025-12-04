@@ -252,20 +252,22 @@
   - _Requirements: 8.2, 2.5_
   - ✅ Completed: Implemented ErrorHandler class with comprehensive error classification and user-facing message generation. Methods: getPurchaseUserError, getFlowUserError, getUserError, getRecoveryActions, isCancellation, isNetworkError, formatForLogging. 46 comprehensive tests covering happy/sad/edge/unhappy paths. Supports both PurchaseError and PurchaseFlowError types with appropriate severity levels and recovery actions.
 
-- [ ] 9.2 (P) ネットワークエラーの自動リトライ
+- [x] 9.2 (P) ネットワークエラーの自動リトライ
   - exponential backoff アルゴリズム（max retries: 3、base delay: 1000ms）
   - 再試行ロジックの PurchaseService 内統合
   - _Requirements: 8.1_
+  - ✅ Completed: Integrated automatic retry logic with exponential backoff (1s → 2s → 4s) into purchaseService.purchaseProduct() using retryHandler.executeResultWithRetry(). Max 3 retries (4 total attempts). Non-retryable errors fail immediately without retry. 8 comprehensive tests covering happy/sad/edge/unhappy paths: immediate success, transient failure recovery, max retries exhausted, non-retryable errors, exponential backoff timing, verification failure after retry, invalid input, and multiple network errors. All 522 purchase tests passing with zero regressions.
 
 - [ ] 9.3 SyncReconciler：ローカル/プラットフォーム記録の不一致検出と解決
   - LocalDatabase と platform（StoreKit/GPB）の transaction list を比較
   - 不一致検出時に最新の platform data を信頼し、ローカル DB を更新
   - _Requirements: 8.3, 3.5_
 
-- [ ] 9.4 (P) ログエクスポート機能
+- [x] 9.4 (P) ログエクスポート機能
   - エラーログ圧縮・エクスポート（Support team への提供用）
   - timestamp、error code、metadata を含める
   - _Requirements: 8.6_
+  - ✅ Completed: Implemented LogExporter service with gzip compression via pako, file export via expo-file-system, native sharing via expo-sharing. Supports flexible filtering (date range, error codes, platforms), concurrent operation prevention, and error handling for all failure scenarios. 22 comprehensive tests passing covering happy/sad/edge/unhappy paths with proper Given/When/Then structure.
 
 - [ ] 9.5 ローカル購入記録の破損検出と復旧
   - DB 읽기 실패時의 에러 감지

@@ -28,6 +28,7 @@ import {
   verificationMetadataStore,
   type VerificationMetadata,
 } from '../infrastructure/verification-metadata-store';
+import { retryHandler, DEFAULT_RETRY_CONFIG } from '../infrastructure/retry-handler';
 import { db } from '@/database/client';
 import { purchases } from '@/database/schema';
 
@@ -235,22 +236,47 @@ export const purchaseService = {
    * Task 6.1: Implement purchaseProduct flow
    * Task 6.2: Integrate receipt verification
    * Task 6.4: Integrate verification metadata storage
+   * Task 9.2: Integrate automatic network error retry with exponential backoff
    *
    * Process:
-   * 1. Validate no duplicate purchase in progress
-   * 2. Launch platform purchase flow via PurchaseRepository
+   * 1. Validate product ID
+   * 2. Launch platform purchase flow with automatic retry on network errors
    * 3. Verify receipt with ReceiptVerifier
    * 4. Save verification metadata with VerificationMetadataStore
    * 5. Record purchase in LocalDatabase
    *
+   * Retry Logic (Task 9.2):
+   * - Network errors trigger automatic retry with exponential backoff
+   * - Max 3 retries (4 total attempts): delays of 1s → 2s → 4s
+   * - Non-retryable errors (cancellation, verification failures) fail immediately
+   * - Each retry includes the full purchase flow (repository call)
+   *
    * @param productId - Product identifier to purchase
    * @returns Result containing Purchase entity or PurchaseFlowError
+   *
+   * @example
+   * ```typescript
+   * const result = await purchaseService.purchaseProduct('premium_unlock');
+   *
+   * if (result.success) {
+   *   console.log('Purchase successful:', result.data.transactionId);
+   *   // Feature will be unlocked automatically via FeatureGatingService
+   * } else {
+   *   if (result.error.retryable) {
+   *     // Show retry UI (already retried automatically with exponential backoff)
+   *     console.log('Purchase failed but retried:', result.error.message);
+   *   } else {
+   *     // Show error message (no further retries possible)
+   *     console.error('Purchase error (non-retryable):', result.error.message);
+   *   }
+   * }
+   * ```
    */
   async purchaseProduct(
     productId: string
   ): Promise<Result<Purchase, PurchaseFlowError>> {
     try {
-      // Validate product ID
+      // Validate product ID (non-retryable validation error)
       if (!productId || typeof productId !== 'string' || productId.trim() === '') {
         return {
           success: false,
@@ -262,8 +288,12 @@ export const purchaseService = {
         };
       }
 
-      // Step 1: Launch purchase flow
-      const purchaseResult = await purchaseRepository.launchPurchaseFlow(productId);
+      // Step 1: Launch purchase flow with automatic retry on network errors
+      // Task 9.2: Use retryHandler for exponential backoff on transient errors
+      const purchaseResult = await retryHandler.executeResultWithRetry(
+        async () => purchaseRepository.launchPurchaseFlow(productId),
+        DEFAULT_RETRY_CONFIG
+      );
 
       if (!purchaseResult.success) {
         // Convert PurchaseError to PurchaseFlowError
