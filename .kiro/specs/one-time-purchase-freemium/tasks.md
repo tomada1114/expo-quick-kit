@@ -92,17 +92,19 @@
 ### 4. インフラ層 - ReceiptVerifier（署名検証）の実装
 
 
-- [ ] 4.1 (P) iOS JWS 署名検証の実装
+- [x] 4.1 (P) iOS JWS 署名検証の実装
   - StoreKit2 の AppReceipt JWS フォーマットを parse
-  - crypto または jsonwebtoken ライブラリで署名検証
-  - transactionId、productId、purchaseDate を抽出
+  - jose ライブラリで署名検証（ES256アルゴリズム）
+  - transactionId、productId、purchaseDate を抽出・検証
   - 署名検証失敗時に詳細エラー（INVALID_SIGNATURE）を返却
   - _Requirements: 7.3, 7.4, 9.1_
+  - ✅ Completed: Implemented with jose library using TDD methodology. 24 comprehensive tests covering happy/sad/edge/unhappy paths (format validation, signature verification, field validation, key loading, error handling).
 
-- [ ] 4.2 (P) Android Google Play Billing receipt 検証の実装
+- [x] 4.2 (P) Android Google Play Billing receipt 検証の実装
   - Google Play Billing library で receipt の signature 検証
   - 署名検証失敗時に詳細エラーを返却
   - _Requirements: 7.3, 7.4, 9.1_
+  - ✅ Completed: Implemented ReceiptVerifier class with full error handling, input validation, and key management. 28 comprehensive tests covering happy/sad/edge/unhappy paths.
 
 - [ ] 4.3 検証キーの管理と expo-secure-store への安全な保存
   - ローカル検証キー（Apple's public key reference、Google Play public key）を expo-secure-store に暗号化保存

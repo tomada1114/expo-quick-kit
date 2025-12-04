@@ -12,6 +12,8 @@ import { Platform } from 'react-native';
 import type { Product, Transaction } from '../types';
 
 jest.mock('@react-native-async-storage/async-storage');
+jest.mock('expo-secure-store');
+jest.mock('jose');
 jest.mock('../../infrastructure/storekit2', () => ({
   StoreKit2: {
     loadProducts: jest.fn(),
@@ -32,6 +34,11 @@ jest.mock('../../infrastructure/storekit2', () => ({
 
 import { purchaseRepository } from '../repository';
 import { StoreKit2 } from '../../infrastructure/storekit2';
+import * as secureStore from 'expo-secure-store';
+import * as jose from 'jose';
+
+const mockedSecureStore = secureStore as jest.Mocked<typeof secureStore>;
+const mockedJose = jose as jest.Mocked<typeof jose>;
 
 const mockedStoreKit2 = StoreKit2 as jest.Mocked<typeof StoreKit2>;
 
@@ -39,6 +46,24 @@ describe('Purchase Repository - iOS StoreKit2', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     Platform.OS = 'ios';
+
+    // Mock jose for JWS verification
+    mockedJose.importSPKI = jest.fn().mockResolvedValue({ alg: 'ES256' } as any);
+    mockedJose.jwtVerify = jest.fn().mockResolvedValue({
+      payload: {},
+      protected: 'header',
+    } as any);
+
+    // Mock secure store for verification key
+    mockedSecureStore.getItemAsync = jest.fn().mockResolvedValue(
+      JSON.stringify({
+        alg: 'ES256',
+        crv: 'P-256',
+        kty: 'EC',
+        x: 'test_x',
+        y: 'test_y',
+      })
+    );
   });
 
   describe('loadProductMetadata', () => {
@@ -244,7 +269,8 @@ describe('Purchase Repository - iOS StoreKit2', () => {
   describe('verifyTransaction - Receipt signature validation', () => {
     it('should verify a valid iOS JWS signature successfully', async () => {
       // Valid JWS format: header.payload.signature (3 parts separated by dots)
-      const validJWS = `${Buffer.from('{"alg":"ES256","typ":"JWT"}').toString('base64')}.${Buffer.from('{"data":"purchase"}').toString('base64')}.${Buffer.from('signature').toString('base64')}`;
+      // Payload must include required fields: transactionId, productId, purchaseDate
+      const validJWS = `${Buffer.from('{"alg":"ES256","typ":"JWT"}').toString('base64')}.${Buffer.from('{"transactionId":"ios-txn-valid-001","productId":"premium_unlock","purchaseDate":1704067200000}').toString('base64')}.${Buffer.from('signature').toString('base64')}`;
 
       const validTransaction: Transaction = {
         transactionId: 'ios-txn-valid-001',

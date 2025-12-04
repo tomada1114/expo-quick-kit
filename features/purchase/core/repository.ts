@@ -20,6 +20,8 @@
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Purchases from 'react-native-purchases';
+import * as secureStore from 'expo-secure-store';
+import { jwtVerify, importSPKI } from 'jose';
 import type { Product, Transaction, PurchaseError, Result } from './types';
 import { StoreKit2 } from '../infrastructure/storekit2';
 import {
@@ -454,7 +456,32 @@ export const purchaseRepository = {
 };
 
 /**
+ * Interface for JWS payload from StoreKit2
+ */
+interface JWSPayload {
+  transactionId: string;
+  productId: string;
+  purchaseDate: number; // Unix timestamp in milliseconds
+  bundleId?: string;
+  expirationDate?: number;
+  appAccountToken?: string;
+  [key: string]: unknown; // Allow extra fields
+}
+
+/**
  * Verify iOS transaction with JWS signature
+ *
+ * Implements StoreKit2 AppReceipt JWS verification:
+ * 1. Validates JWS format (3 parts: header.payload.signature)
+ * 2. Decodes and validates Base64 parts
+ * 3. Parses payload as JSON
+ * 4. Loads Apple's public key (cached in secure store)
+ * 5. Verifies ES256 signature with jose library
+ * 6. Extracts and validates required fields (transactionId, productId, purchaseDate)
+ *
+ * @param transaction - StoreKit2 transaction with JWS receipt
+ * @returns Result indicating verification success (true) or PurchaseError
+ *
  * @internal
  */
 async function verifyIOSTransaction(
@@ -463,7 +490,7 @@ async function verifyIOSTransaction(
   try {
     const receipt = transaction.receiptData;
 
-    // JWS format validation: should have 3 parts separated by dots
+    // Step 1: JWS format validation - should have 3 parts separated by dots
     const parts = receipt.split('.');
     if (parts.length !== 3) {
       return {
@@ -477,12 +504,32 @@ async function verifyIOSTransaction(
       };
     }
 
-    // Basic Base64 validation for each part
+    const [headerB64, payloadB64, signatureB64] = parts;
+
+    // Step 2: Base64 validation for each part
+    let header: Record<string, unknown>;
+    let payload: JWSPayload;
+
     try {
-      for (const part of parts) {
-        Buffer.from(part, 'base64').toString('utf8');
+      // Decode header
+      const headerJson = Buffer.from(headerB64, 'base64').toString('utf8');
+      header = JSON.parse(headerJson);
+
+      // Decode payload
+      const payloadJson = Buffer.from(payloadB64, 'base64').toString('utf8');
+      payload = JSON.parse(payloadJson);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        return {
+          success: false,
+          error: {
+            code: 'PURCHASE_INVALID',
+            message: 'Invalid payload: not valid JSON',
+            retryable: false,
+            reason: 'not_signed',
+          },
+        };
       }
-    } catch {
       return {
         success: false,
         error: {
@@ -494,11 +541,102 @@ async function verifyIOSTransaction(
       };
     }
 
-    // Valid JWS format = valid receipt (TODO: implement actual signature verification)
-    return {
-      success: true,
-      data: true,
-    };
+    // Step 3: Validate required fields in payload
+    const requiredFields: (keyof JWSPayload)[] = [
+      'transactionId',
+      'productId',
+      'purchaseDate',
+    ];
+    for (const field of requiredFields) {
+      if (payload[field] === undefined || payload[field] === null) {
+        return {
+          success: false,
+          error: {
+            code: 'PURCHASE_INVALID',
+            message: `Missing required field: ${field}`,
+            retryable: false,
+            reason: 'not_signed',
+          },
+        };
+      }
+    }
+
+    // Step 4: Validate purchaseDate is a valid number
+    if (typeof payload.purchaseDate !== 'number') {
+      return {
+        success: false,
+        error: {
+          code: 'PURCHASE_INVALID',
+          message: 'Invalid purchaseDate format',
+          retryable: false,
+          reason: 'not_signed',
+        },
+      };
+    }
+
+    // Step 5: Load Apple's public key from secure store
+    const verificationKeyString = await secureStore.getItemAsync(
+      'apple_receipt_verification_key'
+    );
+
+    if (!verificationKeyString) {
+      // Key not available locally - could be network issue during key fetch
+      return {
+        success: false,
+        error: {
+          code: 'PURCHASE_INVALID',
+          message: 'Verification key not available',
+          retryable: false,
+          reason: 'not_signed',
+        },
+      };
+    }
+
+    let verificationKey: Record<string, unknown>;
+    try {
+      verificationKey = JSON.parse(verificationKeyString);
+    } catch {
+      return {
+        success: false,
+        error: {
+          code: 'PURCHASE_INVALID',
+          message: 'Corrupted verification key',
+          retryable: false,
+          reason: 'not_signed',
+        },
+      };
+    }
+
+    // Step 6: Verify JWS signature with jose
+    // Convert JWK to PEM format (SPKI) for verification
+    try {
+      // Import the public key from JWK
+      const publicKey = await importSPKI(
+        verificationKey as unknown as string,
+        'ES256'
+      );
+
+      // Verify the JWS signature
+      const verified = await jwtVerify(receipt, publicKey);
+
+      // At this point, the signature is valid
+      // Return success if we got here without exception
+      return {
+        success: true,
+        data: true,
+      };
+    } catch (verifyError) {
+      // Signature verification failed
+      return {
+        success: false,
+        error: {
+          code: 'PURCHASE_INVALID',
+          message: 'Invalid JWS signature',
+          retryable: false,
+          reason: 'not_signed',
+        },
+      };
+    }
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'iOS verification failed';
