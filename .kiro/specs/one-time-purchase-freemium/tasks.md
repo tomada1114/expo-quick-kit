@@ -35,13 +35,13 @@
 ### 2. インフラ層 - ローカルデータベース（Drizzle SQLite）スキーマの構築
 
 
-- [ ] 2.1 (P) purchases テーブルスキーマの定義
+- [x] 2.1 (P) purchases テーブルスキーマの定義
   - transactionId（unique）、productId、purchasedAt、price、currencyCode、isVerified、isSynced、syncedAt の定義
   - created_at、updated_at タイムスタンプの自動管理
   - transactionId、productId、is_synced に対するインデックス作成
   - _Requirements: 3.1, 3.2_
 
-- [ ] 2.2 (P) purchase_features ジャンクションテーブルスキーマの定義
+- [x] 2.2 (P) purchase_features ジャンクションテーブルスキーマの定義
   - purchase_id（外部キー）、feature_id で多対多リレーション実装
   - UNIQUE 制約で重複防止
   - ON DELETE CASCADE で Purchase 削除時の自動クリーンアップ
