@@ -245,11 +245,12 @@
 ### 9. アプリケーション層 - ErrorHandler、SyncReconciler、Recovery ロジックの実装
 
 
-- [ ] 9.1 (P) ErrorHandler：エラー分類と user-facing message の生成
+- [x] 9.1 (P) ErrorHandler：エラー分類と user-facing message の生成
   - PurchaseError → ユーザー向けメッセージへの変換
   - retryable フラグに基づいた UI 提供（再試行ボタン、dismiss など）
   - 多言語対応メッセージ定義
   - _Requirements: 8.2, 2.5_
+  - ✅ Completed: Implemented ErrorHandler class with comprehensive error classification and user-facing message generation. Methods: getPurchaseUserError, getFlowUserError, getUserError, getRecoveryActions, isCancellation, isNetworkError, formatForLogging. 46 comprehensive tests covering happy/sad/edge/unhappy paths. Supports both PurchaseError and PurchaseFlowError types with appropriate severity levels and recovery actions.
 
 - [ ] 9.2 (P) ネットワークエラーの自動リトライ
   - exponential backoff アルゴリズム（max retries: 3、base delay: 1000ms）
