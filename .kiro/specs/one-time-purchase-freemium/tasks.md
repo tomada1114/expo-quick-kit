@@ -118,16 +118,18 @@
 ### 5. インフラ層 - SecureStore（暗号化キー値ストア）の実装
 
 
-- [ ] 5.1 (P) expo-secure-store ラッパーの実装
+- [x] 5.1 (P) expo-secure-store ラッパーの実装
   - トランザクション ID、検証済み署名情報を暗号化保存
   - setItem、getItem、removeItem の提供
   - iOS Keychain / Android Keystore で自動暗号化
   - _Requirements: 9.1, 7.6_
+  - ✅ Completed: Full implementation with saveSecure, getSecure, deleteSecure functions using Result pattern. 40 comprehensive tests added covering P0 priority scenarios, boundary values, platform-specific errors, concurrent access, and purchase-specific use cases (verification keys, metadata).
 
-- [ ] 5.2 (P) 検証情報の永続化
+- [x] 5.2 (P) 検証情報の永続化
   - verifiedAt タイムスタンプ、verification metadata を secure-store に保存
   - 検証状態の復元（アプリ起動時）
   - _Requirements: 7.6, 9.1_
+  - ✅ Completed: Implemented VerificationMetadataStore for secure storage of verification timestamps and metadata with full CRUD operations, and VerificationStateInitializer for app startup restoration with in-memory cache support. 49 comprehensive tests covering happy/sad/edge/unhappy paths and full lifecycle integration.
 
 ---
 
