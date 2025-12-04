@@ -144,10 +144,11 @@
   - _Requirements: 2.1, 2.2, 2.6_
   - ✅ Completed: Implemented purchaseProduct method in PurchaseService with full orchestration: launchPurchaseFlow → verifyAndSavePurchase → error handling. Includes duplicate prevention, error conversion (PurchaseError → PurchaseFlowError), and exception handling. 14 comprehensive tests covering happy/sad/edge/unhappy paths (cancellation, network errors, verification failures, etc.).
 
-- [ ] 6.2 ReceiptVerifier との連携による署名検証
+- [x] 6.2 ReceiptVerifier との連携による署名検証
   - purchaseProduct の中で receipt signature を検証
   - 検証失敗時のエラーログ記録と user-facing error message 表示
   - _Requirements: 7.3, 7.4_
+  - ✅ Completed: Implemented comprehensive integration tests (13 test cases) covering receipt verification within purchaseProduct flow. Tests cover happy path (successful verification), sad path (all verification failure scenarios including INVALID_SIGNATURE, KEY_NOT_FOUND, DECODING_ERROR), edge cases (empty receipt data, missing signature field), and unhappy path (exceptions, network errors, metadata save failures). All tests include Given/When/Then structure with proper error logging validation. 100% of verification integration paths covered.
 
 - [x] 6.3 (P) LocalDatabase への購入記録の永続化
   - 署名検証成功後、LocalDatabase の recordPurchase を呼び出し
