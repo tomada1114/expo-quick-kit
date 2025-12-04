@@ -251,6 +251,64 @@ describe('TabLayout', () => {
       expect(iconElement.props.size).toBe(28);
     });
 
+    // Given: Demo tab is configured
+    // When: Rendering the TabLayout
+    // Then: Demo tab should have flask.fill icon
+    it('should configure Demo tab with flask.fill icon', () => {
+      render(<TabLayout />);
+
+      const demoScreenCall = mockTabsScreen.mock.calls.find(
+        (call) => call[0].name === 'demo'
+      );
+
+      expect(demoScreenCall).toBeTruthy();
+      expect(demoScreenCall[0].options.title).toBe('Demo');
+      expect(demoScreenCall[0].options.tabBarIcon).toBeDefined();
+
+      // Render the icon function to verify it produces correct icon
+      const iconFn = demoScreenCall[0].options.tabBarIcon;
+      const iconElement = iconFn({ color: '#007AFF' });
+      expect(iconElement.props.name).toBe('flask.fill');
+      expect(iconElement.props.size).toBe(28);
+    });
+
+    // Given: Settings tab is configured
+    // When: Rendering the TabLayout
+    // Then: Settings tab should have gearshape.fill icon
+    it('should configure Settings tab with gearshape.fill icon', () => {
+      render(<TabLayout />);
+
+      const settingsScreenCall = mockTabsScreen.mock.calls.find(
+        (call) => call[0].name === 'settings'
+      );
+
+      expect(settingsScreenCall).toBeTruthy();
+      expect(settingsScreenCall[0].options.title).toBe('Settings');
+      expect(settingsScreenCall[0].options.tabBarIcon).toBeDefined();
+
+      // Render the icon function to verify it produces correct icon
+      const iconFn = settingsScreenCall[0].options.tabBarIcon;
+      const iconElement = iconFn({ color: '#007AFF' });
+      expect(iconElement.props.name).toBe('gearshape.fill');
+      expect(iconElement.props.size).toBe(28);
+    });
+
+    // Given: Tab icon is rendered
+    // When: A color is passed to the icon function
+    // Then: The icon should receive the color prop
+    it('should pass color prop to tab icons', () => {
+      render(<TabLayout />);
+
+      const indexScreenCall = mockTabsScreen.mock.calls.find(
+        (call) => call[0].name === 'index'
+      );
+
+      const iconFn = indexScreenCall[0].options.tabBarIcon;
+      const customColor = '#FF3B30';
+      const iconElement = iconFn({ color: customColor });
+      expect(iconElement.props.color).toBe(customColor);
+    });
+
     it('should not have Explore tab icon (removed from boilerplate)', () => {
       render(<TabLayout />);
 
