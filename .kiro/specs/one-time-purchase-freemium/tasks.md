@@ -12,21 +12,20 @@
 
 ### 1. ドメイン層 - Purchase エンティティおよびエラー型の定義
 
-- [ ] 1. Purchase エンティティとドメイン型の定義
 
-- [ ] 1.1 (P) Purchase エンティティの定義
+- [x] 1.1 (P) Purchase エンティティの定義
   - Purchase ドメインエンティティを実装：transactionId（一意）、productId、purchasedAt、価格・通貨情報、検証状態フラグ、同期状態フラグ
   - unlockedFeatures 配列で複数機能の解放をサポート
   - 不変条件の定義：isVerified=true のときのみ unlockedFeatures を有効、isSynced=true のときは syncedAt を必須
   - _Requirements: 1.2, 3.1, 4.1_
 
-- [ ] 1.2 (P) PurchaseError 型の定義
+- [x] 1.2 (P) PurchaseError 型の定義
   - PurchaseError discriminated union：NETWORK_ERROR, STORE_PROBLEM_ERROR, PURCHASE_CANCELLED, PURCHASE_INVALID, PRODUCT_UNAVAILABLE, UNKNOWN_ERROR
   - 各エラーに retryable フラグを含める（transient error の判定用）
   - platform と nativeErrorCode を含めて詳細情報を保持
   - _Requirements: 2.5_
 
-- [ ] 1.3 (P) FeatureLevelVO（値オブジェクト）の定義
+- [x] 1.3 (P) FeatureLevelVO（値オブジェクト）の定義
   - FeatureLevel は 'free' または 'premium' の型安全な定義
   - Feature のメタデータ（id, name, description, level, requiredProductId）を保持
   - _Requirements: 4.1_
@@ -35,7 +34,6 @@
 
 ### 2. インフラ層 - ローカルデータベース（Drizzle SQLite）スキーマの構築
 
-- [ ] 2. SQLite スキーマと Drizzle ORM スキーマの定義
 
 - [ ] 2.1 (P) purchases テーブルスキーマの定義
   - transactionId（unique）、productId、purchasedAt、price、currencyCode、isVerified、isSynced、syncedAt の定義
@@ -58,7 +56,6 @@
 
 ### 3. インフラ層 - PurchaseRepository（プラットフォーム API 抽象化）の実装
 
-- [ ] 3. プラットフォーム購入 API の抽象化
 
 - [ ] 3.1 (P) PurchaseRepository インターフェースと iOS/Android 実装の骨組み
   - loadProductMetadata、getCachedProducts、launchPurchaseFlow、requestAllPurchaseHistory、verifyTransaction メソッドの基本実装構造を定義
@@ -94,7 +91,6 @@
 
 ### 4. インフラ層 - ReceiptVerifier（署名検証）の実装
 
-- [ ] 4. レシート署名検証と整合性確保
 
 - [ ] 4.1 (P) iOS JWS 署名検証の実装
   - StoreKit2 の AppReceipt JWS フォーマットを parse
@@ -118,7 +114,6 @@
 
 ### 5. インフラ層 - SecureStore（暗号化キー値ストア）の実装
 
-- [ ] 5. 機密データの暗号化保存
 
 - [ ] 5.1 (P) expo-secure-store ラッパーの実装
   - トランザクション ID、検証済み署名情報を暗号化保存
@@ -135,7 +130,6 @@
 
 ### 6. アプリケーション層 - PurchaseService（購入フロー オーケストレーション）の実装
 
-- [ ] 6. 購入フロー全体の統合制御
 
 - [ ] 6.1 (P) purchaseProduct フロー実装
   - ユーザーが購入ボタン→確認ダイアログ表示→プラットフォーム決済 API 呼び出し→トランザクション取得の一連の流れを制御
@@ -175,7 +169,6 @@
 
 ### 7. アプリケーション層 - FeatureGatingService（機能ロック管理）の実装
 
-- [ ] 7. 購入状態に基づく機能アクセス制御
 
 - [ ] 7.1 (P) canAccessSync メソッド（同期的なアクセス判定）
   - ローカル DB から購入履歴を同期的に取得
@@ -209,7 +202,6 @@
 
 ### 8. アプリケーション層 - RestoreService（購入復元）の実装
 
-- [ ] 8. 購入履歴の復元と同期
 
 - [ ] 8.1 (P) restorePurchases フロー実装
   - ユーザーが復元ボタンをタップ→プラットフォーム API（StoreKit/GPB）で購入履歴取得
@@ -233,7 +225,6 @@
 
 ### 9. アプリケーション層 - ErrorHandler、SyncReconciler、Recovery ロジックの実装
 
-- [ ] 9. エラー復旧と状態同期
 
 - [ ] 9.1 (P) ErrorHandler：エラー分類と user-facing message の生成
   - PurchaseError → ユーザー向けメッセージへの変換
@@ -265,7 +256,6 @@
 
 ### 10. インフラ層 - AnalyticsEngine（イベント追跡）の実装
 
-- [ ] 10. 購入関連イベント追跡と監視
 
 - [ ] 10.1 (P) イベント記録の実装
   - purchase_initiated, purchase_completed, purchase_failed, paywall_displayed, restore_attempted イベントの記録
@@ -296,7 +286,6 @@
 
 ### 11. アプリケーション層 - LocalDatabase service 実装（CRUD と同期管理）
 
-- [ ] 11. ローカルデータベース操作層
 
 - [ ] 11.1 (P) recordPurchase：購入記録の永続化
   - transactionId, productId, purchasedAt, price, currencyCode, isVerified, isSynced を SQLite に insert
@@ -334,7 +323,6 @@
 
 ### 12. プレゼンテーション層 - PaywallComponent（ペイウォール UI）の実装
 
-- [ ] 12. プレミアム機能への購入オプション提示
 
 - [ ] 12.1 (P) PaywallComponent の基本構造と UI 骨組み
   - featureId prop を受け取り、該当する Product list を表示
@@ -378,7 +366,6 @@
 
 ### 13. プレゼンテーション層 - PurchaseHistoryUI（購入履歴表示）の実装
 
-- [ ] 13. 購入履歴の表示と詳細確認
 
 - [ ] 13.1 (P) PurchaseHistoryUI list component
   - LocalDatabase から全購入を取得
@@ -398,7 +385,6 @@
 
 ### 14. プレゼンテーション層 - Feature-Gated Component and Restore Button の統合
 
-- [ ] 14. 機能ロック UI 統合とユーザーインタラクション
 
 - [ ] 14.1 (P) Feature-Gated Component wrapper
   - FeatureGatingService.canAccessSync でアクセス判定
@@ -416,7 +402,6 @@
 
 ### 15. セキュリティとコンプライアンス機能の実装
 
-- [ ] 15. セキュリティと規制対応
 
 - [ ] 15.1 (P) RateLimiter：リトライレート制限
   - Receipt verification failures に対する自動リトライの制限
@@ -442,7 +427,6 @@
 
 ### 16. 統合テストと end-to-end 検証
 
-- [ ] 16. 購入フロー全体の検証
 
 - [ ] 16.1 (P) PurchaseRepository.loadProductMetadata() ユニットテスト
   - Happy path：RevenueCat からメタデータ取得成功
