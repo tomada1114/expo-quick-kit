@@ -14,6 +14,7 @@ import { decode as base64Decode } from 'base-64';
 import * as SecureStore from 'expo-secure-store';
 import * as Crypto from 'expo-crypto';
 import type { Result } from '../core/types';
+import { VerificationKeyManager } from './verification-key-manager';
 
 /**
  * Verification error type for receipt signature validation
@@ -53,7 +54,7 @@ interface ParsedReceipt {
  *
  * Responsibilities:
  * - Verify JWS signatures on Google Play Billing receipts
- * - Cache verification keys securely
+ * - Cache verification keys securely using VerificationKeyManager
  * - Extract and validate receipt data
  * - Handle errors gracefully with proper typing
  * - Support offline verification with cached keys
@@ -63,6 +64,19 @@ export class ReceiptVerifier {
   private static readonly MAX_RECEIPT_SIZE = 100 * 1024 * 1024; // 100MB
   private static readonly GOOGLE_PLAY_API_KEY_URL =
     'https://www.googleapis.com/androidpublisher/v3/applications/';
+
+  /**
+   * Verification key manager for secure key storage
+   * Handles iOS and Android verification key caching
+   */
+  private keyManager: VerificationKeyManager;
+
+  /**
+   * Constructor - Initializes the ReceiptVerifier with VerificationKeyManager
+   */
+  constructor() {
+    this.keyManager = new VerificationKeyManager();
+  }
 
   /**
    * Verify receipt signature from Android Google Play Billing
@@ -175,29 +189,40 @@ export class ReceiptVerifier {
    * Load verification key from cache or remote source
    *
    * Attempts to load cached public key first, then falls back to remote fetch.
-   * Uses exponential backoff for network failures.
+   * Uses VerificationKeyManager for secure storage and retrieval.
+   * Supports offline verification with cached keys.
    *
    * @returns Result containing public key or error
    *
    * Happy path: Key found in cache
    * Sad path: Key not in cache, network error during fetch
    * Edge case: Expired or revoked key
+   *
+   * Given/When/Then:
+   * - Given: Cached key exists for the platform
+   * - When: loadVerificationKey is called
+   * - Then: Returns the cached key successfully
+   *
+   * - Given: No cached key exists
+   * - When: loadVerificationKey is called
+   * - Then: Returns KEY_NOT_FOUND error
    */
   async loadVerificationKey(): Promise<Result<string, VerificationError>> {
     try {
-      // Try to get cached key
-      const cached = await this.getCachedKey();
-      if (cached) {
-        return { success: true, data: cached };
+      // Determine platform and load using VerificationKeyManager
+      const platform = Platform.OS as 'ios' | 'android';
+      const result = await this.keyManager.loadVerificationKey(platform);
+
+      if (result.success) {
+        return { success: true, data: result.data };
       }
 
-      // Key not cached, would fetch from remote in production
-      // For now, return error as we don't have remote fetch mechanism in MVP
+      // Convert manager error to VerificationError
       return {
         success: false,
         error: {
           code: 'KEY_NOT_FOUND' as const,
-          message: 'Verification key not found. Please sync with server.',
+          message: result.error.message,
         },
       };
     } catch (error) {
@@ -226,15 +251,43 @@ export class ReceiptVerifier {
    * Cache verification key securely
    *
    * Stores public key in encrypted secure store for offline verification.
+   * Uses VerificationKeyManager for platform-specific key storage.
    * Non-blocking: failure to cache doesn't prevent verification.
    *
    * @param key - Public key to cache
    * @returns Result with success/error
+   *
+   * Given/When/Then:
+   * - Given: A valid verification key string
+   * - When: cacheVerificationKey is called
+   * - Then: Key is stored securely and returns success
+   *
+   * - Given: An invalid or empty key
+   * - When: Attempting to cache
+   * - Then: Returns INVALID_KEY_FORMAT error
+   *
+   * - Given: Secure store write fails
+   * - When: Attempting to cache
+   * - Then: Returns UNKNOWN_ERROR with details
    */
   async cacheVerificationKey(key: string): Promise<Result<void, VerificationError>> {
     try {
-      await SecureStore.setItemAsync(ReceiptVerifier.SECURE_STORE_KEY, key);
-      return { success: true, data: undefined };
+      // Determine platform and cache using VerificationKeyManager
+      const platform = Platform.OS as 'ios' | 'android';
+      const result = await this.keyManager.cacheVerificationKey(platform, key);
+
+      if (result.success) {
+        return { success: true, data: undefined };
+      }
+
+      // Convert manager error to VerificationError
+      return {
+        success: false,
+        error: {
+          code: 'UNKNOWN_ERROR' as const,
+          message: result.error.message,
+        },
+      };
     } catch (error) {
       return {
         success: false,

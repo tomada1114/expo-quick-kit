@@ -106,11 +106,12 @@
   - _Requirements: 7.3, 7.4, 9.1_
   - ✅ Completed: Implemented ReceiptVerifier class with full error handling, input validation, and key management. 28 comprehensive tests covering happy/sad/edge/unhappy paths.
 
-- [ ] 4.3 検証キーの管理と expo-secure-store への安全な保存
+- [x] 4.3 検証キーの管理と expo-secure-store への安全な保存
   - ローカル検証キー（Apple's public key reference、Google Play public key）を expo-secure-store に暗号化保存
   - loadVerificationKey、cacheVerificationKey メソッド実装
   - オフライン環境での検証キー再利用（キャッシュから取得）
   - _Requirements: 9.1, 9.3_
+  - ✅ Completed: Implemented VerificationKeyManager class with full key management (load, cache, clear). Integrated into ReceiptVerifier with platform-specific support. 23 comprehensive tests covering happy/sad/edge/unhappy paths and offline scenarios.
 
 ---
 
