@@ -6,7 +6,7 @@
  *   // In app/_layout.tsx
  *   export { ErrorBoundary } from '@/components/ui/error-fallback';
  */
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   View,
   Text,
@@ -31,6 +31,9 @@ export interface ErrorBoundaryProps {
   retry: () => void;
 }
 
+/** 10% opacity in hex (0x1A ≈ 10% of 255) */
+const OVERLAY_OPACITY_10 = '1A';
+
 /**
  * Restarts the application.
  * Uses expo-updates in production, DevSettings in development.
@@ -53,10 +56,6 @@ async function restartApp(): Promise<void> {
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   const { colors } = useThemedColors();
 
-  const handleRetry = useCallback(() => {
-    retry();
-  }, [retry]);
-
   const handleRestart = useCallback(async () => {
     try {
       await restartApp();
@@ -75,7 +74,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
         <View
           style={[
             styles.iconContainer,
-            { backgroundColor: colors.semantic.error + '15' },
+            { backgroundColor: colors.semantic.error + OVERLAY_OPACITY_10 },
           ]}
         >
           <Text style={[styles.icon, { color: colors.semantic.error }]}>!</Text>
@@ -94,7 +93,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
         <View style={styles.buttonContainer}>
           <Button
             title="Retry"
-            onPress={handleRetry}
+            onPress={retry}
             variant="primary"
             size="lg"
             style={styles.button}
@@ -131,7 +130,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
             {error.stack && (
               <ScrollView
                 style={styles.stackScrollView}
-                showsVerticalScrollIndicator
+                showsVerticalScrollIndicator={true}
               >
                 <Text
                   style={[styles.debugStack, { color: colors.text.secondary }]}
