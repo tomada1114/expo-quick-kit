@@ -493,6 +493,88 @@ export const featureGatingService = {
     const feature = FEATURE_DEFINITIONS.find((f) => f.id === featureId);
     return feature?.requiredProductId;
   },
+
+  /**
+   * Get all features unlocked by a specific product (bundle support)
+   *
+   * Task 7.5 Implementation:
+   * - Support single purchase unlocking multiple features
+   * - Filter FEATURE_DEFINITIONS by requiredProductId matching the given productId
+   * - Return all features associated with that product
+   *
+   * Safety Properties:
+   * - Returns empty array for invalid inputs (null, undefined, non-string)
+   * - No database queries required (uses in-memory feature definitions)
+   * - Thread-safe (no mutable state)
+   *
+   * Use Cases:
+   * - Display all features included in a product bundle on paywall
+   * - Verify multiple feature unlocks after purchase
+   * - Feature inventory for marketing/analytics
+   *
+   * Requirements Traceability:
+   * - Req 4.6: Support multiple features per product (bundle support)
+   * - Req 5.3: Display features unlocked by selected option
+   *
+   * Given/When/Then:
+   * - Given: Product ID with multiple features
+   * - When: getUnlockedFeaturesByProduct called
+   * - Then: Returns all features requiring that product ID
+   *
+   * - Given: Product ID with no features
+   * - When: getUnlockedFeaturesByProduct called
+   * - Then: Returns empty array
+   *
+   * - Given: Invalid product ID (null, undefined, non-string)
+   * - When: getUnlockedFeaturesByProduct called
+   * - Then: Returns empty array (safe default)
+   *
+   * @param productId - Product ID to find features for
+   * @returns Array of feature definitions unlocked by this product
+   *
+   * @example
+   * ```typescript
+   * // Get all features in a bundle
+   * const bundleFeatures = featureGatingService.getUnlockedFeaturesByProduct('premium_unlock');
+   * // Returns: [
+   * //   { id: 'advanced_search', level: 'premium', name: 'Advanced Search', ... },
+   * //   { id: 'advanced_analytics', level: 'premium', name: 'Advanced Analytics', ... }
+   * // ]
+   *
+   * // Display in paywall
+   * bundleFeatures.forEach(f => {
+   *   console.log(`- ${f.name}: ${f.description}`);
+   * });
+   *
+   * // Handle product with no features
+   * const noFeatures = featureGatingService.getUnlockedFeaturesByProduct('unknown_product');
+   * // Returns: []
+   * ```
+   */
+  getUnlockedFeaturesByProduct(productId: string): FeatureDefinition[] {
+    try {
+      // Step 1: Validate input
+      if (!productId || typeof productId !== 'string') {
+        // Invalid input (null, undefined, non-string) - return empty array
+        return [];
+      }
+
+      // Step 2: Filter features by requiredProductId matching the given productId
+      const unlockedFeatures = FEATURE_DEFINITIONS.filter(
+        (feature) => feature.requiredProductId === productId
+      );
+
+      // Step 3: Return filtered features (can be empty array if no features match)
+      return unlockedFeatures;
+    } catch (error) {
+      // Unexpected error - log and return safe default (empty array)
+      console.error(
+        `[FeatureGatingService] Unexpected error in getUnlockedFeaturesByProduct for "${productId}":`,
+        error
+      );
+      return [];
+    }
+  },
 };
 
 export type FeatureGatingService = typeof featureGatingService;

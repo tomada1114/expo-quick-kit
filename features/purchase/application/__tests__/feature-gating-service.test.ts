@@ -452,6 +452,133 @@ describe('FeatureGatingService.canAccessSync', () => {
  * - If subscription tier < 'premium' (i.e., 'free') → check purchase state for individual feature unlock
  * - Free features are always accessible regardless of subscription or purchase state
  */
+/**
+ * Task 7.5: Multiple Feature Bundle Support
+ *
+ * Tests for getUnlockedFeaturesByProduct method
+ *
+ * Purpose:
+ * - Support single purchase unlocking multiple features
+ * - Query purchase_features junction table
+ * - Return all features unlocked by a specific product
+ */
+describe('FeatureGatingService.getUnlockedFeaturesByProduct', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  describe('Happy Path: Features Unlocked by Product', () => {
+    it('should return all features unlocked by a specific product', () => {
+      // Given: A product that unlocks multiple features
+      // Feature definitions show premium_unlock unlocks: advanced_search and advanced_analytics
+
+      // When: Getting features unlocked by premium_unlock product
+      const features = featureGatingService.getUnlockedFeaturesByProduct('premium_unlock');
+
+      // Then: Should return all features associated with that product
+      expect(Array.isArray(features)).toBe(true);
+      expect(features.length).toBeGreaterThan(0);
+      // Should include advanced_search (requiredProductId: 'premium_unlock')
+      expect(features.some((f) => f.id === 'advanced_search')).toBe(true);
+      // Should include advanced_analytics (requiredProductId: 'premium_unlock')
+      expect(features.some((f) => f.id === 'advanced_analytics')).toBe(true);
+    });
+
+    it('should return features for data_export product', () => {
+      // Given: data_export product that unlocks specific features
+
+      // When: Getting features unlocked by data_export
+      const features = featureGatingService.getUnlockedFeaturesByProduct('data_export');
+
+      // Then: Should return features associated with data_export
+      expect(Array.isArray(features)).toBe(true);
+      expect(features.some((f) => f.id === 'export_data')).toBe(true);
+    });
+  });
+
+  describe('Edge Path: No Features for Product', () => {
+    it('should return empty array for product with no features', () => {
+      // Given: A product ID that has no associated features
+
+      // When: Getting features for non-existent product
+      const features = featureGatingService.getUnlockedFeaturesByProduct('non_existent_product');
+
+      // Then: Should return empty array
+      expect(Array.isArray(features)).toBe(true);
+      expect(features.length).toBe(0);
+    });
+
+    it('should handle empty product ID gracefully', () => {
+      // Given: Empty product ID
+
+      // When: Calling with empty string
+      const features = featureGatingService.getUnlockedFeaturesByProduct('');
+
+      // Then: Should return empty array
+      expect(Array.isArray(features)).toBe(true);
+      expect(features.length).toBe(0);
+    });
+  });
+
+  describe('Unhappy Path: Invalid Input', () => {
+    it('should handle null product ID', () => {
+      // Given: Null product ID
+
+      // When: Calling with null
+      const features = featureGatingService.getUnlockedFeaturesByProduct(null as any);
+
+      // Then: Should return empty array (safe default)
+      expect(Array.isArray(features)).toBe(true);
+      expect(features.length).toBe(0);
+    });
+
+    it('should handle undefined product ID', () => {
+      // Given: Undefined product ID
+
+      // When: Calling with undefined
+      const features = featureGatingService.getUnlockedFeaturesByProduct(undefined as any);
+
+      // Then: Should return empty array (safe default)
+      expect(Array.isArray(features)).toBe(true);
+      expect(features.length).toBe(0);
+    });
+
+    it('should handle non-string product ID', () => {
+      // Given: Non-string product ID
+
+      // When: Calling with number
+      const features = featureGatingService.getUnlockedFeaturesByProduct(123 as any);
+
+      // Then: Should return empty array (safe default)
+      expect(Array.isArray(features)).toBe(true);
+      expect(features.length).toBe(0);
+    });
+  });
+
+  describe('Feature Access Integration with Bundle Support', () => {
+    it('should correctly identify all features accessible via bundle purchase', () => {
+      // Given: User checks access to multiple features that share same product
+      // All features requiring premium_unlock should be accessible with that product
+
+      // When: Getting features for premium_unlock bundle
+      const bundledFeatures = featureGatingService.getUnlockedFeaturesByProduct('premium_unlock');
+
+      // Then: Should return all premium features requiring that product
+      expect(bundledFeatures.length).toBeGreaterThanOrEqual(2);
+
+      // All returned features should be premium level
+      expect(bundledFeatures.every((f) => f.level === 'premium')).toBe(true);
+
+      // All returned features should require premium_unlock
+      expect(bundledFeatures.every((f) => f.requiredProductId === 'premium_unlock')).toBe(true);
+    });
+  });
+});
+
 describe('FeatureGatingService.canAccess', () => {
   beforeEach(() => {
     jest.clearAllMocks();

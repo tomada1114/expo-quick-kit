@@ -208,10 +208,11 @@
   - _Requirements: 4.5_
   - ✅ Completed: Implemented TrialManager class with three core methods (getRemainingTrialDays, isTrialExpired, calculateTrialEndDate). 38 comprehensive tests covering happy/sad/edge/unhappy paths and integration scenarios. All tests passing. Features: day-based calculation (ignores partial hours), validation of inputs (no future dates, non-negative durations, valid feature IDs), correct month/year boundary handling, and leap year support.
 
-- [ ] 7.5 複数機能バンドルサポート
+- [x] 7.5 複数機能バンドルサポート
   - 1つの Purchase で複数 feature を unlock するロジック（purchaseFeatures テーブル参照）
   - feature lookup by purchase product id
   - _Requirements: 4.6_
+  - ✅ Completed: Implemented getUnlockedFeaturesByProduct method in FeatureGatingService. Method filters FEATURE_DEFINITIONS by requiredProductId to return all features unlocked by a specific product. 8 comprehensive tests covering happy/sad/edge/unhappy paths (bundle features, no features, invalid inputs, integration scenarios). All tests passing.
 
 ---
 
