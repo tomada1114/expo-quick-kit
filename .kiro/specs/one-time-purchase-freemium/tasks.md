@@ -57,26 +57,26 @@
 ### 3. インフラ層 - PurchaseRepository（プラットフォーム API 抽象化）の実装
 
 
-- [ ] 3.1 (P) PurchaseRepository インターフェースと iOS/Android 実装の骨組み
+- [x] 3.1 (P) PurchaseRepository インターフェースと iOS/Android 実装の骨組み
   - loadProductMetadata、getCachedProducts、launchPurchaseFlow、requestAllPurchaseHistory、verifyTransaction メソッドの基本実装構造を定義
   - iOS（StoreKit2）と Android（Google Play Billing）のプラットフォーム分岐ロジック準備
   - _Requirements: 1.1, 1.3, 1.4, 2.2, 6.2_
 
-- [ ] 3.2 (P) iOS StoreKit2 統合（Product メタデータ取得と購入フロー）
+- [x] 3.2 (P) iOS StoreKit2 統合（Product メタデータ取得と購入フロー）
   - StoreKit2 Product API を使用してメタデータ取得
   - launchPurchaseFlow で native purchase dialog 起動
   - Transaction オブジェクト（receipt data JWS）の取得と返却
   - Network 接続不可時のキャッシュフォールバック
   - _Requirements: 1.1, 1.3, 1.4, 2.2, 3.2_
 
-- [ ] 3.3 (P) Android Google Play Billing v7+ 統合（Product メタデータ取得と購入フロー）
+- [x] 3.3 (P) Android Google Play Billing v7+ 統合（Product メタデータ取得と購入フロー）
   - Google Play Billing library を使用してメタデータ取得
   - BillingClient.launchBillingFlow でネイティブ購入フロー起動
   - ProductDetails と PurchaseDetails の取得と Transaction 型への正規化
   - ネットワーク接続不可時のキャッシュフォールバック
   - _Requirements: 1.1, 1.3, 1.4, 2.2, 3.2_
 
-- [ ] 3.4 (P) RevenueCat フォールバック（offerings メタデータ取得）
+- [x] 3.4 (P) RevenueCat フォールバック（offerings メタデータ取得）
   - RevenueCat SDK の getCustomerInfo で offerings を取得（iOS/Android 統一インターフェース）
   - ローカルメタデータと統合
   - RevenueCat unavailable 時は local cache に fallback
