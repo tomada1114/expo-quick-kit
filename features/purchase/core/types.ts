@@ -99,7 +99,6 @@ export type PurchaseError =
       code: 'STORE_PROBLEM_ERROR';
       message: string;
       retryable: true;
-      platform: 'ios' | 'android';
       nativeErrorCode: number;
     }
   | {
