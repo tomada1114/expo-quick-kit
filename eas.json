@@ -1,0 +1,35 @@
+{
+  "cli": {
+    "version": ">= 13.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "distribution": "store",
+      "env": {
+        "_comment": "Environment variables are injected from EAS Secrets. Example: REVENUECAT_API_KEY_IOS, REVENUECAT_API_KEY_ANDROID"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "_comment": "Replace with your Apple ID, App Store Connect App ID, and Apple Team ID",
+        "appleId": "your-apple-id@example.com",
+        "ascAppId": "1234567890",
+        "appleTeamId": "ABCDE12345"
+      },
+      "android": {
+        "_comment": "Path to Google Play service account JSON file",
+        "serviceAccountKeyPath": "./service-account.json",
+        "track": "internal"
+      }
+    }
+  }
+}
