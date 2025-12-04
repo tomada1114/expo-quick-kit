@@ -19,43 +19,18 @@
 
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Purchases, { PURCHASES_ERROR_CODE } from 'react-native-purchases';
+import Purchases from 'react-native-purchases';
 import type { Product, Transaction, PurchaseError, Result } from './types';
-import { StoreKit2, isStoreKit2Error } from '../infrastructure/storekit2';
+import { StoreKit2 } from '../infrastructure/storekit2';
+import {
+  mapStoreKit2Error,
+  mapRevenueCatError,
+  isNetworkError,
+} from '../infrastructure/error-mapper';
 
 const CACHE_KEY = 'purchase_products_cache';
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-/**
- * Type guard for network errors
- */
-function isNetworkError(error: unknown): boolean {
-  if (error instanceof Error) {
-    const msg = error.message.toLowerCase();
-    return (
-      msg.includes('network') ||
-      msg.includes('timeout') ||
-      msg.includes('connection')
-    );
-  }
-  return false;
-}
-
-/**
- * Type guard for RevenueCat SDK errors
- */
-function isRevenueCatError(
-  error: unknown
-): error is { code: number; message: string } {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'code' in error &&
-    'message' in error &&
-    typeof (error as { code: unknown }).code === 'number' &&
-    typeof (error as { message: unknown }).message === 'string'
-  );
-}
 
 /**
  * Convert RevenueCat Package to domain Product
@@ -83,139 +58,6 @@ function toProduct(pkg: {
   };
 }
 
-/**
- * Convert RevenueCat errors to domain PurchaseError
- */
-function toRevenueCatPurchaseError(error: unknown): PurchaseError {
-  const message =
-    error instanceof Error ? error.message : 'An unknown error occurred';
-
-  if (isRevenueCatError(error)) {
-    const { code } = error;
-
-    // Check for network errors
-    if (isNetworkError(error)) {
-      return {
-        code: 'NETWORK_ERROR',
-        message,
-        retryable: true,
-        platform: 'revenueCat',
-      };
-    }
-
-    // Map RevenueCat error codes
-    switch (code) {
-      case PURCHASES_ERROR_CODE.NETWORK_ERROR:
-      case PURCHASES_ERROR_CODE.OFFLINE_CONNECTION_ERROR:
-        return {
-          code: 'NETWORK_ERROR',
-          message,
-          retryable: true,
-          platform: 'revenueCat',
-        };
-
-      case PURCHASES_ERROR_CODE.STORE_PROBLEM_ERROR:
-        return {
-          code: 'STORE_PROBLEM_ERROR',
-          message,
-          retryable: true,
-          nativeErrorCode: code,
-        };
-
-      default:
-        return {
-          code: 'UNKNOWN_ERROR',
-          message,
-          retryable: false,
-        };
-    }
-  }
-
-  // Check for network-related errors by message content
-  if (isNetworkError(error)) {
-    return {
-      code: 'NETWORK_ERROR',
-      message,
-      retryable: true,
-      platform: 'revenueCat',
-    };
-  }
-
-  // Default to unknown error
-  return {
-    code: 'UNKNOWN_ERROR',
-    message,
-    retryable: false,
-  };
-}
-
-/**
- * Convert native StoreKit2 errors to domain PurchaseError
- */
-function toStoreKit2PurchaseError(error: unknown): PurchaseError {
-  // Handle generic JavaScript errors first (network/timeout)
-  if (isNetworkError(error)) {
-    return {
-      code: 'NETWORK_ERROR',
-      message:
-        error instanceof Error ? error.message : 'Network error occurred',
-      retryable: true,
-      platform: 'ios',
-    };
-  }
-
-  if (isStoreKit2Error(error)) {
-    // Map known StoreKit2 error codes
-    switch (error.code) {
-      case 'USER_CANCELLED':
-        return {
-          code: 'PURCHASE_CANCELLED',
-          message: error.message,
-          retryable: false,
-        };
-
-      case 'STORE_PROBLEM':
-        return {
-          code: 'STORE_PROBLEM_ERROR',
-          message: error.message,
-          retryable: true,
-          nativeErrorCode: error.nativeErrorCode ?? 0,
-          platform: 'ios',
-        };
-
-      case 'NETWORK_ERROR':
-        return {
-          code: 'NETWORK_ERROR',
-          message: error.message,
-          retryable: true,
-          platform: 'ios',
-        };
-
-      case 'INVALID_PRODUCT':
-        return {
-          code: 'PRODUCT_UNAVAILABLE',
-          message: `Product unavailable: ${error.message}`,
-          retryable: false,
-          productId: 'unknown',
-        };
-
-      default:
-        return {
-          code: 'UNKNOWN_ERROR',
-          message: error.message,
-          retryable: false,
-        };
-    }
-  }
-
-  const message =
-    error instanceof Error ? error.message : 'An unknown error occurred';
-  return {
-    code: 'UNKNOWN_ERROR',
-    message,
-    retryable: false,
-  };
-}
 
 /**
  * Save products to local cache
@@ -323,7 +165,7 @@ export const purchaseRepository = {
         }
 
         // Try RevenueCat fallback
-        return purchaseRepository._loadProductMetadataFromRevenueCat(
+        return await purchaseRepository._loadProductMetadataFromRevenueCat(
           productIds
         );
       }
@@ -417,7 +259,7 @@ export const purchaseRepository = {
       // Both RevenueCat and cache failed
       return {
         success: false,
-        error: toRevenueCatPurchaseError(error),
+        error: mapRevenueCatError(error),
       };
     }
   },
@@ -482,7 +324,7 @@ export const purchaseRepository = {
       } catch (error) {
         return {
           success: false,
-          error: toStoreKit2PurchaseError(error),
+          error: mapStoreKit2Error(error),
         };
       }
     }
@@ -535,7 +377,7 @@ export const purchaseRepository = {
       } catch (error) {
         return {
           success: false,
-          error: toStoreKit2PurchaseError(error),
+          error: mapStoreKit2Error(error),
         };
       }
     }

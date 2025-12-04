@@ -100,6 +100,7 @@ export type PurchaseError =
       message: string;
       retryable: true;
       nativeErrorCode: number;
+      platform?: 'ios' | 'android' | 'revenueCat';
     }
   | {
       code: 'PURCHASE_CANCELLED';

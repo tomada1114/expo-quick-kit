@@ -82,7 +82,7 @@
   - RevenueCat unavailable 時は local cache に fallback
   - _Requirements: 1.1, 1.3, 1.4_
 
-- [ ] 3.5 エラーマッピングと PurchaseError 型への変換
+- [x] 3.5 エラーマッピングと PurchaseError 型への変換
   - StoreKit2、Google Play Billing、RevenueCat のエラーコード → PurchaseError discriminated union へのマッピング
   - platform-specific error code を domain error として統一
   - _Requirements: 1.5, 2.5_
