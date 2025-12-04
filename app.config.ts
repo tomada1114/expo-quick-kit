@@ -83,7 +83,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // TODO: CHANGE THIS - iOS bundle identifier
     // Format: com.{company}.{appname}
     // WARNING: Cannot be changed after App Store registration!
-    bundleIdentifier: 'com.yourcompany.appname',
+    bundleIdentifier: 'com.tomada.expo-quick-kit',
 
     // TODO: UPDATE WITH EACH BUILD - iOS build number (must increment with each TestFlight/App Store submission)
     // Must be a string, incremented manually or via CI/CD
@@ -169,7 +169,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // TODO: CHANGE THIS - Android package name
     // Format: com.{company}.{appname}
     // WARNING: Cannot be changed after Play Store registration!
-    package: 'com.yourcompany.appname',
+    package: 'com.tomada.expoquickkit',
 
     // TODO: UPDATE WITH EACH BUILD - Android version code (must increment with each Play Store submission)
     // Must be an integer, incremented manually or via CI/CD
