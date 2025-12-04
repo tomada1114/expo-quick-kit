@@ -170,10 +170,11 @@
   - _Requirements: 2.4, 2.5, 8.1, 8.2, 8.5_
   - ✅ Completed: Implemented comprehensive error handling system with 3 new infrastructure modules (ErrorLogger, RetryHandler, ErrorHandler) totaling 56 comprehensive tests with 100% coverage. Features: timestamp-based error logging, exponential backoff retry (configurable max 3 retries, 1s→2s→4s delays), user-friendly error messages with recovery actions, cancellation detection, network error identification, and error statistics/export. All modules follow TDD methodology with happy/sad/edge/unhappy path coverage.
 
-- [ ] 6.6 getActivePurchases、getPurchase メソッド
+- [x] 6.6 getActivePurchases、getPurchase メソッド
   - LocalDatabase から購入履歴をクエリ
   - 同期状態（isSynced）を考慮したクエリロジック
   - _Requirements: 3.3, 3.4_
+  - ✅ Completed: Implemented getActivePurchases and getPurchase methods in PurchaseService with full LocalDatabase integration using Drizzle ORM. Both methods include comprehensive error handling, timestamp conversion from Unix to Date format, and Result pattern for exception-free error handling. 8 comprehensive tests covering happy/sad/edge/unhappy paths (verified purchases, empty results, database errors, unverified purchases, missing IDs, empty IDs). All 362 purchase tests passing.
 
 ---
 

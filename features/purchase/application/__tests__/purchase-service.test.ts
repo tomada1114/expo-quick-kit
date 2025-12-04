@@ -14,6 +14,28 @@ jest.mock('react-native', () => ({
   },
 }), { virtual: true });
 
+// Mock database client to avoid native module initialization
+jest.mock('@/database/client', () => ({
+  db: {
+    select: jest.fn(() => ({
+      from: jest.fn(function() {
+        return {
+          where: jest.fn(function() {
+            return {
+              all: jest.fn(() => []),
+              get: jest.fn(() => undefined),
+            };
+          }),
+        };
+      }),
+    })),
+  },
+  initializeDatabase: jest.fn(),
+  isDatabaseInitialized: jest.fn(() => true),
+  resetDatabaseState: jest.fn(),
+  DatabaseInitError: Error,
+}));
+
 // Mock all upstream dependencies that purchase-service imports
 jest.mock('../../core/repository', () => ({
   purchaseRepository: {
@@ -45,10 +67,300 @@ const { receiptVerifier: mockReceiptVerifier } = require('../../infrastructure/r
 const { verificationMetadataStore: mockVerificationMetadataStore } = require(
   '../../infrastructure/verification-metadata-store'
 );
+const { db: mockDb } = require('@/database/client');
 
 describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  // ============================================================================
+  // Task 6.6: getActivePurchases and getPurchase - LocalDatabase Integration
+  // ============================================================================
+
+  describe('getActivePurchases() - Task 6.6: LocalDatabase Query', () => {
+    /**
+     * HAPPY PATH: Get all active (verified) purchases
+     */
+
+    it('should return all verified purchases from local database', async () => {
+      // Given: LocalDatabase contains multiple verified purchases
+      const dbPurchases = [
+        {
+          id: 1,
+          transactionId: 'txn-001',
+          productId: 'premium_unlock',
+          purchasedAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+          price: 9.99,
+          currencyCode: 'USD',
+          isVerified: true,
+          isSynced: true,
+          syncedAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+          createdAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+          updatedAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+        },
+        {
+          id: 2,
+          transactionId: 'txn-002',
+          productId: 'premium_unlock',
+          purchasedAt: Math.floor(new Date('2025-11-15').getTime() / 1000),
+          price: 9.99,
+          currencyCode: 'USD',
+          isVerified: true,
+          isSynced: false,
+          syncedAt: null,
+          createdAt: Math.floor(new Date('2025-11-15').getTime() / 1000),
+          updatedAt: Math.floor(new Date('2025-11-15').getTime() / 1000),
+        },
+      ];
+
+      // Setup mock to return verified purchases
+      const mockSelect = jest.fn(() => ({
+        from: jest.fn(function() {
+          return {
+            where: jest.fn(function() {
+              return {
+                all: jest.fn(() => dbPurchases),
+                get: jest.fn(() => undefined),
+              };
+            }),
+          };
+        }),
+      }));
+      mockDb.select = mockSelect;
+
+      // When: getActivePurchases is called
+      const result = await purchaseService.getActivePurchases();
+
+      // Then: Should return success with array of verified purchases
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(Array.isArray(result.data)).toBe(true);
+        expect(result.data.length).toBe(2);
+        // Verify all returned purchases are from the database
+        expect(result.data[0].transactionId).toBe('txn-001');
+        expect(result.data[1].transactionId).toBe('txn-002');
+      }
+    });
+
+    /**
+     * EDGE CASE: Empty purchase history
+     */
+
+    it('should return empty array when no purchases exist', async () => {
+      // Given: LocalDatabase contains no purchase records
+      const mockSelect = jest.fn(() => ({
+        from: jest.fn(function() {
+          return {
+            where: jest.fn(function() {
+              return {
+                all: jest.fn(() => []),
+                get: jest.fn(() => undefined),
+              };
+            }),
+          };
+        }),
+      }));
+      mockDb.select = mockSelect;
+
+      // When: getActivePurchases is called
+      const result = await purchaseService.getActivePurchases();
+
+      // Then: Should return success with empty array
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(Array.isArray(result.data)).toBe(true);
+        expect(result.data.length).toBe(0);
+      }
+    });
+
+    /**
+     * UNHAPPY PATH: Database error during query
+     */
+
+    it('should handle database errors gracefully', async () => {
+      // Given: LocalDatabase experiences an error
+      const mockSelect = jest.fn(() => {
+        throw new Error('Database connection failed');
+      });
+      mockDb.select = mockSelect;
+
+      // When: getActivePurchases is called during a database error
+      const result = await purchaseService.getActivePurchases();
+
+      // Then: Should return error result with DB_ERROR code
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('DB_ERROR');
+        expect(result.error.retryable).toBe(true);
+        expect(result.error.message).toContain('Failed to fetch active purchases');
+      }
+    });
+  });
+
+  describe('getPurchase(transactionId) - Task 6.6: LocalDatabase Single Record Query', () => {
+    /**
+     * HAPPY PATH: Get specific purchase by transaction ID
+     */
+
+    it('should return specific purchase when transaction ID is found', async () => {
+      // Given: LocalDatabase contains a purchase with matching transactionId
+      const transactionId = 'txn-001';
+      const dbPurchase = {
+        id: 1,
+        transactionId,
+        productId: 'premium_unlock',
+        purchasedAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+        price: 9.99,
+        currencyCode: 'USD',
+        isVerified: true,
+        isSynced: true,
+        syncedAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+        createdAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+        updatedAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+      };
+
+      // Setup mock to return specific purchase
+      const mockSelect = jest.fn(() => ({
+        from: jest.fn(function() {
+          return {
+            where: jest.fn(function() {
+              return {
+                all: jest.fn(() => []),
+                get: jest.fn(() => dbPurchase),
+              };
+            }),
+          };
+        }),
+      }));
+      mockDb.select = mockSelect;
+
+      // When: getPurchase is called with a valid transaction ID
+      const result = await purchaseService.getPurchase(transactionId);
+
+      // Then: Should return success with the Purchase entity
+      expect(result.success).toBe(true);
+      if (result.success && result.data) {
+        expect(result.data.transactionId).toBe(transactionId);
+        expect(result.data.isVerified).toBe(true);
+        expect(result.data.productId).toBe('premium_unlock');
+      }
+    });
+
+    /**
+     * EDGE CASE: Transaction ID not found
+     */
+
+    it('should return null when transaction ID is not found', async () => {
+      // Given: LocalDatabase does not contain a purchase with this transactionId
+      const mockSelect = jest.fn(() => ({
+        from: jest.fn(function() {
+          return {
+            where: jest.fn(function() {
+              return {
+                all: jest.fn(() => []),
+                get: jest.fn(() => undefined),
+              };
+            }),
+          };
+        }),
+      }));
+      mockDb.select = mockSelect;
+
+      // When: getPurchase is called with non-existent transaction ID
+      const result = await purchaseService.getPurchase('non-existent-txn');
+
+      // Then: Should return success with null data
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toBeNull();
+      }
+    });
+
+    /**
+     * EDGE CASE: Empty transaction ID
+     */
+
+    it('should handle empty transaction ID gracefully', async () => {
+      // Given: Empty transactionId is provided
+      // When: getPurchase is called with empty string
+      const result = await purchaseService.getPurchase('');
+
+      // Then: Should return success with null (not found)
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toBeNull();
+      }
+    });
+
+    /**
+     * UNHAPPY PATH: Database error
+     */
+
+    it('should handle database errors when querying by transaction ID', async () => {
+      // Given: Database error occurs during query
+      const mockSelect = jest.fn(() => {
+        throw new Error('Database connection lost');
+      });
+      mockDb.select = mockSelect;
+
+      // When: getPurchase is called and database connection fails
+      const result = await purchaseService.getPurchase('txn-001');
+
+      // Then: Should return error result with DB_ERROR code
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.code).toBe('DB_ERROR');
+        expect(result.error.retryable).toBe(true);
+        expect(result.error.message).toContain('Failed to fetch purchase');
+      }
+    });
+
+    /**
+     * EDGE CASE: Query for unverified purchase
+     */
+
+    it('should still return unverified purchase if found by transaction ID', async () => {
+      // Given: LocalDatabase contains an unverified purchase with matching ID
+      const transactionId = 'unverified-txn';
+      const dbPurchase = {
+        id: 2,
+        transactionId,
+        productId: 'premium_unlock',
+        purchasedAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+        price: 9.99,
+        currencyCode: 'USD',
+        isVerified: false, // Unverified
+        isSynced: false,
+        syncedAt: null,
+        createdAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+        updatedAt: Math.floor(new Date('2025-12-01').getTime() / 1000),
+      };
+
+      const mockSelect = jest.fn(() => ({
+        from: jest.fn(function() {
+          return {
+            where: jest.fn(function() {
+              return {
+                all: jest.fn(() => []),
+                get: jest.fn(() => dbPurchase),
+              };
+            }),
+          };
+        }),
+      }));
+      mockDb.select = mockSelect;
+
+      // When: getPurchase is called
+      const result = await purchaseService.getPurchase(transactionId);
+
+      // Then: Should return the purchase even if unverified
+      expect(result.success).toBe(true);
+      if (result.success && result.data !== null) {
+        expect(result.data.transactionId).toBe(transactionId);
+        expect(result.data.isVerified).toBe(false); // Returns even if unverified
+      }
+    });
   });
 
   describe('purchaseProduct() - Task 6.2: Receipt Verification Integration', () => {

@@ -15,6 +15,7 @@
  */
 
 import { Platform } from 'react-native';
+import { eq } from 'drizzle-orm';
 import type {
   Purchase,
   PurchaseError,
@@ -27,6 +28,8 @@ import {
   verificationMetadataStore,
   type VerificationMetadata,
 } from '../infrastructure/verification-metadata-store';
+import { db } from '@/database/client';
+import { purchases } from '@/database/schema';
 
 /**
  * Purchase flow error - extended PurchaseError for orchestration layer
@@ -328,34 +331,198 @@ export const purchaseService = {
   /**
    * Get all active purchases from local database
    *
-   * Returns only verified purchases that are currently active.
+   * Task 6.6: Query LocalDatabase for active purchases
    *
-   * @returns Result containing array of Purchase entities
+   * Process:
+   * 1. Query purchases table where isVerified = true
+   * 2. Convert database records to Purchase entities
+   * 3. Return array of verified purchases
+   *
+   * Given/When/Then:
+   * - Given: LocalDatabase contains verified purchases
+   * - When: getActivePurchases is called
+   * - Then: Returns all verified purchases with sync status consideration
+   *
+   * - Given: LocalDatabase contains unverified purchases
+   * - When: getActivePurchases is called
+   * - Then: Returns only verified purchases (filters out unverified)
+   *
+   * - Given: Database query fails
+   * - When: Query error occurs
+   * - Then: Returns error result with DB_ERROR code and retryable=true
+   *
+   * @returns Result containing array of verified Purchase entities
+   *
+   * @example
+   * ```typescript
+   * const result = await purchaseService.getActivePurchases();
+   *
+   * if (result.success) {
+   *   console.log(`Found ${result.data.length} active purchases`);
+   *   result.data.forEach(purchase => {
+   *     console.log(`${purchase.productId}: verified=${purchase.isVerified}`);
+   *   });
+   * } else {
+   *   console.error(`Failed to fetch purchases: ${result.error.message}`);
+   * }
+   * ```
    */
   async getActivePurchases(): Promise<
     Result<Purchase[], PurchaseFlowError>
   > {
-    // This will be implemented in task 6.6 with LocalDatabase integration
-    return {
-      success: true,
-      data: [],
-    };
+    try {
+      // Query database for all verified purchases
+      const dbRecords = db
+        .select()
+        .from(purchases)
+        .where(eq(purchases.isVerified, true))
+        .all();
+
+      // Convert database records to Purchase entities
+      const purchaseEntities: Purchase[] = dbRecords.map((record) => ({
+        transactionId: record.transactionId,
+        productId: record.productId,
+        purchasedAt: new Date(record.purchasedAt * 1000), // Convert Unix timestamp to Date
+        price: record.price,
+        currencyCode: record.currencyCode,
+        isVerified: record.isVerified,
+        isSynced: record.isSynced,
+        syncedAt: record.syncedAt ? new Date(record.syncedAt * 1000) : undefined,
+        unlockedFeatures: [], // Will be populated from purchaseFeatures table in future enhancement
+      }));
+
+      return {
+        success: true,
+        data: purchaseEntities,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown database error';
+
+      console.error('[PurchaseService] Error fetching active purchases:', error);
+
+      return {
+        success: false,
+        error: {
+          code: 'DB_ERROR',
+          message: `Failed to fetch active purchases: ${message}`,
+          retryable: true, // Database errors are typically retryable
+        },
+      };
+    }
   },
 
   /**
    * Get a specific purchase by transaction ID
    *
+   * Task 6.6: Query LocalDatabase for a specific purchase
+   *
+   * Process:
+   * 1. Validate transaction ID is non-empty string
+   * 2. Query purchases table where transactionId = provided ID
+   * 3. Convert database record to Purchase entity if found
+   * 4. Return Purchase entity or null if not found
+   *
+   * Notes:
+   * - Returns the purchase regardless of verification status (caller decides if verification required)
+   * - Unique constraint on transactionId ensures at most one result
+   * - Returns null if transaction ID does not exist (not an error)
+   *
+   * Given/When/Then:
+   * - Given: Valid transaction ID exists in database
+   * - When: getPurchase is called with valid ID
+   * - Then: Returns success with Purchase entity
+   *
+   * - Given: Transaction ID does not exist in database
+   * - When: getPurchase is called with non-existent ID
+   * - Then: Returns success with null data
+   *
+   * - Given: Empty string provided as transaction ID
+   * - When: getPurchase is called with empty ID
+   * - Then: Returns success with null data
+   *
+   * - Given: Database query fails
+   * - When: Query error occurs
+   * - Then: Returns error result with DB_ERROR code and retryable=true
+   *
    * @param transactionId - Transaction ID to look up
    * @returns Result containing Purchase entity or null if not found
+   *
+   * @example
+   * ```typescript
+   * const result = await purchaseService.getPurchase('txn-123');
+   *
+   * if (result.success) {
+   *   if (result.data) {
+   *     console.log(`Found purchase: ${result.data.productId}`);
+   *     console.log(`Verified: ${result.data.isVerified}`);
+   *   } else {
+   *     console.log('Purchase not found');
+   *   }
+   * } else {
+   *   console.error(`Database error: ${result.error.message}`);
+   * }
+   * ```
    */
   async getPurchase(
     transactionId: string
   ): Promise<Result<Purchase | null, PurchaseFlowError>> {
-    // This will be implemented in task 6.6 with LocalDatabase integration
-    return {
-      success: true,
-      data: null,
-    };
+    try {
+      // Early return for empty transaction ID
+      if (!transactionId || typeof transactionId !== 'string' || transactionId.trim() === '') {
+        return {
+          success: true,
+          data: null, // Not found (empty ID is treated as no match)
+        };
+      }
+
+      // Query database for specific purchase by transaction ID
+      const dbRecord = db
+        .select()
+        .from(purchases)
+        .where(eq(purchases.transactionId, transactionId))
+        .get(); // .get() returns single record or undefined
+
+      // If not found, return null
+      if (!dbRecord) {
+        return {
+          success: true,
+          data: null,
+        };
+      }
+
+      // Convert database record to Purchase entity
+      const purchaseEntity: Purchase = {
+        transactionId: dbRecord.transactionId,
+        productId: dbRecord.productId,
+        purchasedAt: new Date(dbRecord.purchasedAt * 1000), // Convert Unix timestamp to Date
+        price: dbRecord.price,
+        currencyCode: dbRecord.currencyCode,
+        isVerified: dbRecord.isVerified,
+        isSynced: dbRecord.isSynced,
+        syncedAt: dbRecord.syncedAt ? new Date(dbRecord.syncedAt * 1000) : undefined,
+        unlockedFeatures: [], // Will be populated from purchaseFeatures table in future enhancement
+      };
+
+      return {
+        success: true,
+        data: purchaseEntity,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown database error';
+
+      console.error('[PurchaseService] Error fetching purchase:', error);
+
+      return {
+        success: false,
+        error: {
+          code: 'DB_ERROR',
+          message: `Failed to fetch purchase: ${message}`,
+          retryable: true, // Database errors are typically retryable
+        },
+      };
+    }
   },
 
   /**
