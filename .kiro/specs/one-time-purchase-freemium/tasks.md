@@ -162,12 +162,13 @@
   - _Requirements: 9.1, 7.6_
   - ✅ Completed: Implemented verifyAndSavePurchase method in PurchaseService (application layer). Integrates ReceiptVerifier for receipt signature validation with VerificationMetadataStore for secure persistence. Comprehensive TDD with 6 tests covering: successful verification & metadata save, verification failures (no metadata save), metadata save failures (DB_ERROR), transaction validation, timestamp inclusion, and method definition checks. All tests passing with 100% coverage.
 
-- [ ] 6.5 キャンセルと エラーハンドリング
+- [x] 6.5 キャンセルと エラーハンドリング
   - ユーザーキャンセル（PURCHASE_CANCELLED）時のダイアログ graceful closure
   - ネットワークエラー（NETWORK_ERROR）時の自動リトライ（exponential backoff）
   - プラットフォームエラー（STORE_PROBLEM_ERROR）時の詳細メッセージ表示
   - エラーログへの timestamp 付き記録
   - _Requirements: 2.4, 2.5, 8.1, 8.2, 8.5_
+  - ✅ Completed: Implemented comprehensive error handling system with 3 new infrastructure modules (ErrorLogger, RetryHandler, ErrorHandler) totaling 56 comprehensive tests with 100% coverage. Features: timestamp-based error logging, exponential backoff retry (configurable max 3 retries, 1s→2s→4s delays), user-friendly error messages with recovery actions, cancellation detection, network error identification, and error statistics/export. All modules follow TDD methodology with happy/sad/edge/unhappy path coverage.
 
 - [ ] 6.6 getActivePurchases、getPurchase メソッド
   - LocalDatabase から購入履歴をクエリ
