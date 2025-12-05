@@ -7,6 +7,10 @@ export enum SecureStorageKey {
   AUTH_TOKEN = 'auth_token',
   USER_ID = 'user_id',
   API_KEY = 'api_key',
+  // Purchase/Receipt verification keys
+  VERIFICATION_KEY_IOS = 'verification_key_ios',
+  VERIFICATION_KEY_ANDROID = 'verification_key_android',
+  PURCHASE_METADATA = 'purchase_metadata',
 }
 
 /**
