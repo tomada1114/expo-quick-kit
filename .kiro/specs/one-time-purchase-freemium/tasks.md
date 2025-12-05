@@ -467,10 +467,11 @@
   - _Requirements: 9.5_
   - ✅ Completed: Implemented PrivacyHandler service with comprehensive TDD. 22 tests covering all paths (happy/sad/edge/unhappy). Features: (1) deleteAllPurchaseData() - retrieves and deletes all purchases with error resilience, (2) deleteSecureStoreData() - clears verification metadata, (3) deleteUserAllPurchaseData() - orchestrates complete deletion across stores.
 
-- [ ] 15.4 OfflineValidator：オフライン検証モード
+- [x] 15.4 OfflineValidator：オフライン検証モード
   - オフライン時は キャッシュされた receipt data のみで検証
   - ネットワーク復帰時に再検証（must）
   - _Requirements: 9.3_
+  - ✅ Completed: Implemented OfflineValidator class with receipt caching, verification result management, and network restoration workflow. 29 comprehensive tests passing covering happy/sad/edge/unhappy paths. Features: configurable cache TTL, expiration tracking, pending revalidation management, cache statistics, offline-to-online workflow integration.
 
 ---
 
