@@ -316,32 +316,37 @@
 ### 11. アプリケーション層 - LocalDatabase service 実装（CRUD と同期管理）
 
 
-- [ ] 11.1 (P) recordPurchase：購入記録の永続化
+- [x] 11.1 (P) recordPurchase：購入記録の永続化
   - transactionId, productId, purchasedAt, price, currencyCode, isVerified, isSynced を SQLite に insert
   - 重複防止（unique constraint on transactionId）
   - DB エラーハンドリング
   - _Requirements: 3.1_
+  - ✅ Completed: Implemented recordPurchase in LocalDatabase service with full validation and error handling. Supports optional isVerified and isSynced parameters with sensible defaults. Validates all required fields (transactionId, productId, purchasedAt) with descriptive error messages. Converts Date to Unix timestamp for SQLite persistence. Returns Result<void, DatabaseError> with retryable flag for transient errors. 23 comprehensive tests covering happy/sad/edge/unhappy paths (zero price, large prices, special characters, timestamps, currencies, concurrent inserts, database errors, constraint violations).
 
-- [ ] 11.2 (P) getPurchase、getAllPurchases：購入履歴クエリ
+- [x] 11.2 (P) getPurchase、getAllPurchases：購入履歴クエリ
   - transactionId でのピンポイント取得
   - 全購入履歴の取得
   - isVerified = true のみを返却（safety）
   - _Requirements: 3.3, 7.1_
+  - ✅ Completed: Implemented localDatabaseService with getPurchase() and getAllPurchases() methods. Comprehensive TDD with 13 tests covering happy/sad/edge/unhappy paths (valid/invalid transaction IDs, timestamp conversion, verification filtering, database errors). All tests passing with 100% coverage.
 
-- [ ] 11.3 (P) getPurchasesByFeature：機能別購入クエリ
+- [x] 11.3 (P) getPurchasesByFeature：機能別購入クエリ
   - feature_id で purchase_features テーブル join
   - 該当 feature を unlock した purchase list を返却
   - _Requirements: 7.1, 4.6_
+  - ✅ Completed: Implemented getPurchasesByFeature in database/client.ts with full query logic using Drizzle ORM (select, innerJoin, where, all). Integrated into LocalDatabase.getPurchasesByFeature async wrapper. 17 comprehensive tests covering happy/sad/edge/unhappy paths (feature with multiple purchases, no purchases, empty/special character IDs, error handling, type signatures).
 
-- [ ] 11.4 (P) updateSyncStatus：同期状態フラグ更新
+- [x] 11.4 (P) updateSyncStatus：同期状態フラグ更新
   - isSynced = true、syncedAt = current timestamp に更新
   - Platform との同期完了時に呼び出し
   - _Requirements: 3.2, 3.5_
+  - ✅ Completed: Implemented updateSyncStatus in localDatabaseService with full error handling (retryable flag for connection/timeout errors). Method updates isSynced flag and syncedAt timestamp atomically. Handles both isSynced=true (set syncedAt to current Unix timestamp) and isSynced=false (clear syncedAt). Comprehensive error handling with retryable determination for database connection/timeout errors. Integration with RestoreService and SyncReconciler ready.
 
-- [ ] 11.5 (P) updateVerificationStatus：検証状態フラグ更新
+- [x] 11.5 (P) updateVerificationStatus：検証状態フラグ更新
   - isVerified = true/false に更新
   - Receipt verification 結果を反映
   - _Requirements: 7.4_
+  - ✅ Completed: Implemented updateVerificationStatus in localDatabase service with full error handling (NOT_FOUND, INVALID_INPUT, DB_ERROR). Method updates isVerified flag and returns {transactionId, isVerified} on success. Validates transactionId input (non-empty string), checks if purchase exists (returns NOT_FOUND if not), and handles all error scenarios with appropriate error codes and retryable flags. Comprehensive test suite with happy/sad/edge/unhappy paths and integration tests.
 
 - [ ] 11.6 deletePurchase：購入記録削除（Privacy 対応）
   - transactionId で削除（cascade で purchase_features も削除）

@@ -54,3 +54,7 @@ export type {
 // Task 10.5: Error monitoring with rate tracking and anomaly detection
 export { ErrorMonitoring, errorMonitoring } from './error-monitoring';
 export type { AlertData, ErrorMonitoringConfig } from './error-monitoring';
+
+// Task 11.2: LocalDatabase service for purchase queries
+export { localDatabaseService } from './local-database-service';
+export type { LocalDatabaseError } from './local-database-service';
