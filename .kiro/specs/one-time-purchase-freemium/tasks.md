@@ -534,10 +534,11 @@
   - _Requirements: 6.2, 6.3_
   - ✅ Completed: Implemented comprehensive integration test suite with 30 test cases covering happy/sad/edge/unhappy paths (E2E-1 through E2E-30). Tests verify: (1) New purchase restoration (6 tests), (2) Error handling for network/DB/platform errors (5 tests), (3) Boundary values and validation (7 tests), (4) System error handling (4 tests), (5) Idempotency across multiple calls and race conditions (5 tests), (6) Real-world integration workflows (3 tests). Full Given/When/Then structure. All 30 tests passing with 100% coverage of restoration flow including transaction validation, deduplication, sync status updates, and large history support (50+ transactions).
 
-- [ ] 16.9 Error recovery with retry インテグレーションテスト
+- [x] 16.9 Error recovery with retry インテグレーションテスト
   - Network error during payment → automatic retry with exponential backoff
   - Eventually succeed or graceful degradation
   - _Requirements: 8.1, 9.2_
+  - ✅ Completed: Implemented comprehensive integration test suite with 17 test cases covering all perspectives (happy/sad/edge/unhappy paths). Tests verify: (1) Successful recovery after retries with exponential backoff (1s→2s→4s delays), (2) Immediate success without retry, (3) Graceful degradation after max retries exhausted (4 total attempts: 1 initial + 3 retries), (4) Non-retryable errors fail immediately, (5) Verification failures, (6) Metadata save failures, (7) Exponential backoff delay validation, (8) Error type switching, (9) Delay boundary limits, (10) Unexpected exceptions with proper error wrapping, (11) Database error handling, (12) Partial recovery workflows, (13) Intermittent network simulation, (14) Complete lifecycle with retry+verification+metadata save, (15) Custom retry configuration support. All 17 tests passing with 100% coverage.
 
 - [ ] 16.10 Multi-feature unlock インテグレーションテスト
   - Product X 購入 → 複数 feature unlock 検証
