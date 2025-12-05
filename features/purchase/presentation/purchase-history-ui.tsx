@@ -32,6 +32,7 @@ import {
 } from 'react-native';
 import { useThemedColors } from '@/hooks/use-theme-color';
 import { localDatabaseService } from '@/features/purchase/infrastructure/local-database-service';
+import { PurchaseDetailsModal } from './purchase-details-modal';
 import type { Result } from '@/features/purchase/core/types';
 
 /**
@@ -75,6 +76,8 @@ const PurchaseHistoryUI: React.FC = () => {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [error, setError] = useState<DatabaseError | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   /**
    * Load purchases from LocalDatabase
@@ -154,6 +157,22 @@ const PurchaseHistoryUI: React.FC = () => {
   }, [loadPurchases]);
 
   /**
+   * Handle purchase item press to show details
+   */
+  const handlePurchasePress = useCallback((purchase: Purchase) => {
+    setSelectedPurchase(purchase);
+    setIsModalVisible(true);
+  }, []);
+
+  /**
+   * Handle modal close
+   */
+  const handleModalClose = useCallback(() => {
+    setIsModalVisible(false);
+    setSelectedPurchase(null);
+  }, []);
+
+  /**
    * Format currency value
    */
   const formatCurrency = useCallback(
@@ -203,13 +222,15 @@ const PurchaseHistoryUI: React.FC = () => {
       const formattedDate = formatDate(item.purchasedAt);
 
       return (
-        <View
+        <Pressable
           testID={`purchase-list-item-${item.transactionId}`}
-          style={[
+          onPress={() => handlePurchasePress(item)}
+          style={({ pressed }) => [
             styles.purchaseItem,
             {
               backgroundColor: isDark ? colors.background.secondary : colors.background.base,
               borderColor: colors.interactive.separator,
+              opacity: pressed ? 0.7 : 1,
             },
           ]}>
           {/* Main info row */}
@@ -278,10 +299,10 @@ const PurchaseHistoryUI: React.FC = () => {
               </Text>
             </View>
           </View>
-        </View>
+        </Pressable>
       );
     },
-    [colors, isDark, formatCurrency, formatDate]
+    [colors, isDark, formatCurrency, formatDate, handlePurchasePress]
   );
 
   /**
@@ -387,6 +408,12 @@ const PurchaseHistoryUI: React.FC = () => {
         contentContainerStyle={styles.listContent}
         scrollEnabled={true}
         scrollIndicatorInsets={{ right: 1 }}
+      />
+      <PurchaseDetailsModal
+        testID="purchase-details-modal"
+        visible={isModalVisible}
+        purchase={selectedPurchase}
+        onClose={handleModalClose}
       />
     </View>
   );

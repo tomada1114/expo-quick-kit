@@ -40,6 +40,9 @@ export interface PurchaseDetailsModalProps {
 
   /** Color scheme override for testing */
   colorScheme?: 'light' | 'dark';
+
+  /** Test ID for testing */
+  testID?: string;
 }
 
 /**
@@ -83,6 +86,7 @@ export function PurchaseDetailsModal({
   onClose,
   showReceiptInfo = true,
   colorScheme: overrideColorScheme,
+  testID,
 }: PurchaseDetailsModalProps) {
   const { colors } = useThemedColors();
 
@@ -265,7 +269,7 @@ export function PurchaseDetailsModal({
       transparent={true}
       animationType="fade"
       onRequestClose={onClose}
-      testID="purchase-details-modal"
+      testID={testID || "purchase-details-modal"}
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
