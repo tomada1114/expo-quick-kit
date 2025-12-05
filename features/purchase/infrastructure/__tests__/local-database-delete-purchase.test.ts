@@ -19,28 +19,32 @@
  */
 
 // Mock database client to avoid native module initialization
-jest.mock('react-native', () => ({
-  Platform: {
-    OS: 'ios',
-  },
-}), { virtual: true });
+jest.mock(
+  'react-native',
+  () => ({
+    Platform: {
+      OS: 'ios',
+    },
+  }),
+  { virtual: true }
+);
 
 jest.mock('@/database/client', () => ({
   db: {
-    delete: jest.fn(function() {
+    delete: jest.fn(function () {
       return {
-        where: jest.fn(function() {
+        where: jest.fn(function () {
           return {
             run: jest.fn(() => ({ changes: 1 })),
           };
         }),
       };
     }),
-    select: jest.fn(function() {
+    select: jest.fn(function () {
       return {
-        from: jest.fn(function() {
+        from: jest.fn(function () {
           return {
-            where: jest.fn(function() {
+            where: jest.fn(function () {
               return {
                 get: jest.fn(() => undefined),
               };
@@ -637,7 +641,11 @@ describe('LocalDatabase Service - deletePurchase() (Task 11.6)', () => {
      */
     it('should delete multiple purchases independently', async () => {
       // Given: Multiple purchases
-      const txnIds = ['txn-multi-delete-001', 'txn-multi-delete-002', 'txn-multi-delete-003'];
+      const txnIds = [
+        'txn-multi-delete-001',
+        'txn-multi-delete-002',
+        'txn-multi-delete-003',
+      ];
       const mockDb = require('@/database/client').db;
 
       mockDb.delete = jest.fn(() => ({

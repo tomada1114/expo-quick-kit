@@ -188,7 +188,9 @@ export class OfflineValidator {
 
     const receiptDataHash = this.hashReceiptData(receiptData);
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + this.config.cacheExpirySec * 1000);
+    const expiresAt = new Date(
+      now.getTime() + this.config.cacheExpirySec * 1000
+    );
 
     const cacheEntry: CacheEntry = {
       receiptData,
@@ -351,7 +353,9 @@ export class OfflineValidator {
     const now = new Date();
     cacheEntry.verificationResult = updatedVerificationResult;
     cacheEntry.cachedAt = now;
-    cacheEntry.expiresAt = new Date(now.getTime() + this.config.cacheExpirySec * 1000);
+    cacheEntry.expiresAt = new Date(
+      now.getTime() + this.config.cacheExpirySec * 1000
+    );
     cacheEntry.requiresRevalidation = false;
 
     return ok({
@@ -399,7 +403,9 @@ export class OfflineValidator {
 /**
  * Create an offline validator instance
  */
-export function createOfflineValidator(config?: OfflineValidatorConfig): OfflineValidator {
+export function createOfflineValidator(
+  config?: OfflineValidatorConfig
+): OfflineValidator {
   return new OfflineValidator(config);
 }
 

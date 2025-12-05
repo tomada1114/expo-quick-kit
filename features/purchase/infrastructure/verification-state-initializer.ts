@@ -257,9 +257,8 @@ export class VerificationStateInitializer {
       this.cache.metadata.delete(transactionId);
 
       // Remove from secure store
-      const deleteResult = await this.store.deleteVerificationMetadata(
-        transactionId
-      );
+      const deleteResult =
+        await this.store.deleteVerificationMetadata(transactionId);
 
       if (!deleteResult.success) {
         return {
@@ -415,5 +414,4 @@ export class VerificationStateInitializer {
  * Singleton instance of VerificationStateInitializer
  * Used across the application for consistent verification state management
  */
-export const verificationStateInitializer =
-  new VerificationStateInitializer();
+export const verificationStateInitializer = new VerificationStateInitializer();

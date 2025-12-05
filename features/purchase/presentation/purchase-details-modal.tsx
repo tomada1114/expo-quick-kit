@@ -269,7 +269,7 @@ export function PurchaseDetailsModal({
       transparent={true}
       animationType="fade"
       onRequestClose={onClose}
-      testID={testID || "purchase-details-modal"}
+      testID={testID || 'purchase-details-modal'}
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
@@ -309,7 +309,9 @@ export function PurchaseDetailsModal({
             {/* Purchase Date Section */}
             <View style={styles.section}>
               <Text style={styles.sectionLabel}>Purchase Date</Text>
-              <Text style={styles.sectionValue}>{formattedData.purchaseDate}</Text>
+              <Text style={styles.sectionValue}>
+                {formattedData.purchaseDate}
+              </Text>
             </View>
 
             {/* Transaction ID Section */}
@@ -430,31 +432,31 @@ export function PurchaseDetailsModal({
               <Text style={styles.sectionLabel}>Status</Text>
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>Verified</Text>
-                <Text style={styles.infoValue}>
-                  {isVerified ? '✓' : '✗'}
-                </Text>
+                <Text style={styles.infoValue}>{isVerified ? '✓' : '✗'}</Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>Synced</Text>
-                <Text style={styles.infoValue}>
-                  {isSynced ? '✓' : '✗'}
-                </Text>
+                <Text style={styles.infoValue}>{isSynced ? '✓' : '✗'}</Text>
               </View>
             </View>
 
             {/* Unlocked Features Section */}
-            {purchase.unlockedFeatures && purchase.unlockedFeatures.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionLabel}>Unlocked Features</Text>
-                <View style={styles.featuresList}>
-                  {purchase.unlockedFeatures.map((feature, index) => (
-                    <View key={`${feature}-${index}`} style={styles.featureItem}>
-                      <Text style={styles.featureText}>{feature}</Text>
-                    </View>
-                  ))}
+            {purchase.unlockedFeatures &&
+              purchase.unlockedFeatures.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionLabel}>Unlocked Features</Text>
+                  <View style={styles.featuresList}>
+                    {purchase.unlockedFeatures.map((feature, index) => (
+                      <View
+                        key={`${feature}-${index}`}
+                        style={styles.featureItem}
+                      >
+                        <Text style={styles.featureText}>{feature}</Text>
+                      </View>
+                    ))}
+                  </View>
                 </View>
-              </View>
-            )}
+              )}
 
             {/* Empty features placeholder */}
             {(!purchase.unlockedFeatures ||

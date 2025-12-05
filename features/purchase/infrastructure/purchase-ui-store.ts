@@ -39,8 +39,7 @@ interface PurchaseUIState {
 export const usePurchaseUIStore = create<PurchaseUIState>((set) => ({
   // Product selection
   selectedProductId: undefined,
-  setSelectedProductId: (productId) =>
-    set({ selectedProductId: productId }),
+  setSelectedProductId: (productId) => set({ selectedProductId: productId }),
 
   // Loading state
   isLoading: false,

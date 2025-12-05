@@ -20,7 +20,11 @@ describe('TrialManager', () => {
         startDate.setDate(startDate.getDate() - 2);
 
         // When: Checking remaining days
-        const remaining = trialManager.getRemainingTrialDays('feature_trial', startDate, 7);
+        const remaining = trialManager.getRemainingTrialDays(
+          'feature_trial',
+          startDate,
+          7
+        );
 
         // Then: Should return 5 days (7 - 2)
         expect(remaining).toBe(5);
@@ -32,7 +36,11 @@ describe('TrialManager', () => {
         startDate.setDate(startDate.getDate() - 1);
 
         // When: Checking remaining days
-        const remaining = trialManager.getRemainingTrialDays('premium_trial', startDate, 14);
+        const remaining = trialManager.getRemainingTrialDays(
+          'premium_trial',
+          startDate,
+          14
+        );
 
         // Then: Should return 13 days
         expect(remaining).toBe(13);
@@ -44,7 +52,11 @@ describe('TrialManager', () => {
         startDate.setDate(startDate.getDate() - 7);
 
         // When: Checking remaining days
-        const remaining = trialManager.getRemainingTrialDays('feature_trial', startDate, 7);
+        const remaining = trialManager.getRemainingTrialDays(
+          'feature_trial',
+          startDate,
+          7
+        );
 
         // Then: Should return 0 days
         expect(remaining).toBe(0);
@@ -57,7 +69,11 @@ describe('TrialManager', () => {
         startDate.setHours(12); // Time within day doesn't affect full day count
 
         // When: Checking remaining days (10-day trial)
-        const remaining = trialManager.getRemainingTrialDays('feature', startDate, 10);
+        const remaining = trialManager.getRemainingTrialDays(
+          'feature',
+          startDate,
+          10
+        );
 
         // Then: Should return 7 days (10 - 3 days elapsed, hours ignored)
         expect(remaining).toBe(7);
@@ -71,7 +87,11 @@ describe('TrialManager', () => {
         startDate.setDate(startDate.getDate() - 10);
 
         // When: Checking remaining days
-        const remaining = trialManager.getRemainingTrialDays('expired_trial', startDate, 7);
+        const remaining = trialManager.getRemainingTrialDays(
+          'expired_trial',
+          startDate,
+          7
+        );
 
         // Then: Should return -3 (negative = expired)
         expect(remaining).toBeLessThan(0);
@@ -83,7 +103,11 @@ describe('TrialManager', () => {
         startDate.setDate(startDate.getDate() - 30);
 
         // When: Checking remaining days
-        const remaining = trialManager.getRemainingTrialDays('old_trial', startDate, 5);
+        const remaining = trialManager.getRemainingTrialDays(
+          'old_trial',
+          startDate,
+          5
+        );
 
         // Then: Should return -25
         expect(remaining).toBeLessThan(0);
@@ -94,7 +118,11 @@ describe('TrialManager', () => {
         const startDate = new Date();
 
         // When: Checking remaining days with 0 duration
-        const remaining = trialManager.getRemainingTrialDays('no_trial', startDate, 0);
+        const remaining = trialManager.getRemainingTrialDays(
+          'no_trial',
+          startDate,
+          0
+        );
 
         // Then: Should return 0 or negative
         expect(remaining).toBeLessThanOrEqual(0);
@@ -107,7 +135,11 @@ describe('TrialManager', () => {
         const startDate = new Date();
 
         // When: Checking remaining days
-        const remaining = trialManager.getRemainingTrialDays('one_day_trial', startDate, 1);
+        const remaining = trialManager.getRemainingTrialDays(
+          'one_day_trial',
+          startDate,
+          1
+        );
 
         // Then: Should return 1 (today counts as full day)
         expect(remaining).toBe(1);
@@ -119,7 +151,11 @@ describe('TrialManager', () => {
         startDate.setDate(startDate.getDate() - 1);
 
         // When: Checking remaining days
-        const remaining = trialManager.getRemainingTrialDays('long_trial', startDate, 365);
+        const remaining = trialManager.getRemainingTrialDays(
+          'long_trial',
+          startDate,
+          365
+        );
 
         // Then: Should return 364 days
         expect(remaining).toBe(364);
@@ -131,7 +167,11 @@ describe('TrialManager', () => {
         startDate.setDate(startDate.getDate() - 180);
 
         // When: Checking remaining days
-        const remaining = trialManager.getRemainingTrialDays('six_month_trial', startDate, 365);
+        const remaining = trialManager.getRemainingTrialDays(
+          'six_month_trial',
+          startDate,
+          365
+        );
 
         // Then: Should return 185 days remaining
         expect(remaining).toBe(185);
@@ -143,7 +183,11 @@ describe('TrialManager', () => {
         startDate.setDate(startDate.getDate() - 5);
 
         // When: Checking remaining days
-        const remaining = trialManager.getRemainingTrialDays('mid_trial', startDate, 30);
+        const remaining = trialManager.getRemainingTrialDays(
+          'mid_trial',
+          startDate,
+          30
+        );
 
         // Then: Should return 25 days
         expect(remaining).toBe(25);
@@ -155,7 +199,11 @@ describe('TrialManager', () => {
         startDate.setHours(startDate.getHours() - 1); // 1 hour ago
 
         // When: Checking remaining days (5-day trial)
-        const remaining = trialManager.getRemainingTrialDays('today_trial', startDate, 5);
+        const remaining = trialManager.getRemainingTrialDays(
+          'today_trial',
+          startDate,
+          5
+        );
 
         // Then: Should return 5 (started today = 0 days elapsed, so 5 - 0 = 5)
         expect(remaining).toBe(5);
@@ -453,9 +501,16 @@ describe('TrialManager', () => {
       startDate.setDate(startDate.getDate() - 5); // Started 5 days ago
 
       // When: Getting trial status
-      const remaining = trialManager.getRemainingTrialDays('feature', startDate, trialDuration);
+      const remaining = trialManager.getRemainingTrialDays(
+        'feature',
+        startDate,
+        trialDuration
+      );
       const isExpired = trialManager.isTrialExpired(startDate, trialDuration);
-      const endDate = trialManager.calculateTrialEndDate(startDate, trialDuration);
+      const endDate = trialManager.calculateTrialEndDate(
+        startDate,
+        trialDuration
+      );
 
       // Then: Trial should be active with 2 days remaining
       expect(remaining).toBe(2);
@@ -470,7 +525,11 @@ describe('TrialManager', () => {
       startDate.setDate(startDate.getDate() - 10); // Started 10 days ago
 
       // When: Getting trial status
-      const remaining = trialManager.getRemainingTrialDays('feature', startDate, trialDuration);
+      const remaining = trialManager.getRemainingTrialDays(
+        'feature',
+        startDate,
+        trialDuration
+      );
       const isExpired = trialManager.isTrialExpired(startDate, trialDuration);
 
       // Then: Trial should be expired
@@ -485,7 +544,11 @@ describe('TrialManager', () => {
       startDate.setDate(startDate.getDate() - 6);
 
       // When: Getting current status
-      const remaining = trialManager.getRemainingTrialDays('feature', startDate, trialDuration);
+      const remaining = trialManager.getRemainingTrialDays(
+        'feature',
+        startDate,
+        trialDuration
+      );
 
       // Then: Should have exactly 1 day remaining
       expect(remaining).toBe(1);

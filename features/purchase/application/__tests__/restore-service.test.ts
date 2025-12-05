@@ -85,7 +85,9 @@ jest.mock('@/database/schema', () => ({
 /**
  * Mock data builders for consistent test setup
  */
-const createMockTransaction = (overrides?: Partial<Transaction>): Transaction => ({
+const createMockTransaction = (
+  overrides?: Partial<Transaction>
+): Transaction => ({
   transactionId: 'txn-001',
   productId: 'product-a',
   purchaseDate: new Date('2025-01-01'),
@@ -118,7 +120,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
   describe('Happy Path: Successful Restoration', () => {
     test('should restore purchases when history has new transactions not in DB', async () => {
       // Given: Platform returns new transactions not in LocalDatabase
-      const platformTransaction = createMockTransaction({ transactionId: 'txn-1' });
+      const platformTransaction = createMockTransaction({
+        transactionId: 'txn-1',
+      });
       (purchaseRepository.requestAllPurchaseHistory as any).mockResolvedValue({
         success: true,
         data: [platformTransaction],
@@ -140,7 +144,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
 
     test('should update sync status when transaction exists in DB', async () => {
       // Given: Platform returns transaction that exists in DB with isSynced=false
-      const platformTransaction = createMockTransaction({ transactionId: 'txn-1' });
+      const platformTransaction = createMockTransaction({
+        transactionId: 'txn-1',
+      });
       const existingPurchase = createMockPurchase({
         transactionId: 'txn-1',
         isSynced: false,
@@ -225,7 +231,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
   describe('Sad Path: Expected Errors', () => {
     test('should handle network error from requestAllPurchaseHistory', async () => {
       // Given: Platform API returns network error
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: false,
         error: {
           code: 'NETWORK_ERROR',
@@ -245,7 +253,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
 
     test('should handle store problem error', async () => {
       // Given: Store API returns problem error
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: false,
         error: {
           code: 'STORE_PROBLEM_ERROR',
@@ -264,7 +274,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
 
     test('should handle database error when fetching existing purchases', async () => {
       // Given: requestAllPurchaseHistory succeeds
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: [createMockTransaction({ transactionId: 'txn-1' })],
       });
@@ -289,7 +301,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
 
     test('should handle error when recording new purchase', async () => {
       // Given: Platform returns new transaction
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: [createMockTransaction({ transactionId: 'txn-1' })],
       });
@@ -320,7 +334,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
         transactionId: '', // Empty transaction ID
       });
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: [invalidTransaction],
       });
@@ -344,15 +360,17 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
         createMockTransaction({ transactionId: `txn-${i}` })
       );
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: manyTransactions,
       });
 
       // Mock returns subset of existing purchases
-      const existingPurchases = manyTransactions.slice(0, 50).map(t =>
-        createMockPurchase({ transactionId: t.transactionId })
-      );
+      const existingPurchases = manyTransactions
+        .slice(0, 50)
+        .map((t) => createMockPurchase({ transactionId: t.transactionId }));
 
       (purchaseService.getActivePurchases as jest.Mock).mockResolvedValue({
         success: true,
@@ -378,7 +396,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
         signature: null,
       };
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: [incompleteTransaction as any],
       });
@@ -403,9 +423,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
   describe('Unhappy Path: Unexpected System Errors', () => {
     test('should handle exception thrown by requestAllPurchaseHistory', async () => {
       // Given: API throws an exception
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockRejectedValue(
-        new Error('StoreKit2 native module unavailable')
-      );
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockRejectedValue(new Error('StoreKit2 native module unavailable'));
 
       // When: restorePurchases is called
       const result = await restoreService.restorePurchases();
@@ -417,7 +437,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
 
     test('should handle exception thrown when fetching existing purchases', async () => {
       // Given: requestAllPurchaseHistory succeeds
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: [createMockTransaction({ transactionId: 'txn-1' })],
       });
@@ -437,7 +459,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
 
     test('should handle invalid result structure from repository', async () => {
       // Given: Repository returns malformed result
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         // Missing success property
         data: null,
       });
@@ -459,7 +483,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
       // Scenario: User reinstalls app, then restores purchases
       // All transactions should be treated as "new" on first restore
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: [
           createMockTransaction({ transactionId: 'txn-1' }),
@@ -486,7 +512,9 @@ describe('RestoreService - Task 8.1-8.2: Purchase Restoration & Notification', (
       // Scenario: Two restore requests happen simultaneously
       // Should result in idempotent state (no duplicates)
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: [createMockTransaction({ transactionId: 'txn-1' })],
       });

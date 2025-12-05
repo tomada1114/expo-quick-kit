@@ -133,9 +133,8 @@ export function PaywallComponent({
    */
   const availableProducts = useMemo<ProductOption[]>(() => {
     try {
-      const featureDefinition = featureGatingService.getFeatureDefinition(
-        featureId
-      );
+      const featureDefinition =
+        featureGatingService.getFeatureDefinition(featureId);
 
       if (!featureDefinition.ok) {
         setError({
@@ -264,19 +263,11 @@ export function PaywallComponent({
       >
         {/* Header */}
         <View style={styles.headerContainer}>
-          <Text
-            style={[
-              styles.headerTitle,
-              { color: colors.text.primary },
-            ]}
-          >
+          <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
             Choose Your Plan
           </Text>
           <Text
-            style={[
-              styles.headerSubtitle,
-              { color: colors.text.secondary },
-            ]}
+            style={[styles.headerSubtitle, { color: colors.text.secondary }]}
           >
             Select a plan to unlock premium features
           </Text>
@@ -292,10 +283,7 @@ export function PaywallComponent({
             testID="paywall-error-container"
           >
             <Text
-              style={[
-                styles.errorText,
-                { color: colors.text.inverse },
-              ]}
+              style={[styles.errorText, { color: colors.text.inverse }]}
               testID="paywall-error-text"
             >
               {error.message || 'An error occurred'}
@@ -329,10 +317,7 @@ export function PaywallComponent({
 
         {/* Products List */}
         {availableProducts.length > 0 ? (
-          <View
-            style={styles.productsList}
-            testID="paywall-options-list"
-          >
+          <View style={styles.productsList} testID="paywall-options-list">
             {availableProducts.map((product) => (
               <Pressable
                 key={product.id}
@@ -355,10 +340,7 @@ export function PaywallComponent({
               >
                 <View style={styles.productInfo}>
                   <Text
-                    style={[
-                      styles.productName,
-                      { color: colors.text.primary },
-                    ]}
+                    style={[styles.productName, { color: colors.text.primary }]}
                   >
                     {product.name}
                   </Text>
@@ -393,18 +375,12 @@ export function PaywallComponent({
                 {/* Price */}
                 <View style={styles.priceContainer}>
                   <Text
-                    style={[
-                      styles.price,
-                      { color: colors.semantic.success },
-                    ]}
+                    style={[styles.price, { color: colors.semantic.success }]}
                   >
                     {product.priceString}
                   </Text>
                   <Text
-                    style={[
-                      styles.priceTerm,
-                      { color: colors.text.secondary },
-                    ]}
+                    style={[styles.priceTerm, { color: colors.text.secondary }]}
                   >
                     one-time
                   </Text>
@@ -415,10 +391,7 @@ export function PaywallComponent({
         ) : (
           <View style={styles.emptyState}>
             <Text
-              style={[
-                styles.emptyStateText,
-                { color: colors.text.secondary },
-              ]}
+              style={[styles.emptyStateText, { color: colors.text.secondary }]}
             >
               No products available
             </Text>
@@ -472,10 +445,7 @@ export function PaywallComponent({
             testID="paywall-dismiss-button"
           >
             <Text
-              style={[
-                styles.dismissButtonText,
-                { color: colors.text.primary },
-              ]}
+              style={[styles.dismissButtonText, { color: colors.text.primary }]}
             >
               Maybe Later
             </Text>
@@ -504,10 +474,7 @@ export function PaywallComponent({
               testID="paywall-loading-indicator"
             />
             <Text
-              style={[
-                styles.loadingText,
-                { color: colors.text.primary },
-              ]}
+              style={[styles.loadingText, { color: colors.text.primary }]}
               testID="paywall-loading-message"
             >
               購入を処理中...

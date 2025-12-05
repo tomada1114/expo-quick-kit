@@ -240,7 +240,9 @@ describe('LocalDatabase - recordPurchase (Task 11.1)', () => {
       // Given: Database insert throws an error
       const mockDb = db as any;
       mockDb.insert = jest.fn(() => {
-        throw new Error('Unique constraint violation: transactionId already exists');
+        throw new Error(
+          'Unique constraint violation: transactionId already exists'
+        );
       });
 
       // When: recordPurchase is called

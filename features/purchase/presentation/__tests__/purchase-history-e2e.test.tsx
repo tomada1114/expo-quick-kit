@@ -18,7 +18,12 @@
 /* eslint-disable @typescript-eslint/no-require-imports, import/first */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react-native';
 
 // ===== Mock Setup =====
 
@@ -103,9 +108,12 @@ beforeAll(() => {
     getPurchase: jest.fn(),
   };
 
-  jest.doMock('@/features/purchase/infrastructure/local-database-service', () => ({
-    localDatabaseService: mockLocalDatabaseService,
-  }));
+  jest.doMock(
+    '@/features/purchase/infrastructure/local-database-service',
+    () => ({
+      localDatabaseService: mockLocalDatabaseService,
+    })
+  );
 
   // Import the component after mocks are set up
   PurchaseHistoryUI = require('../purchase-history-ui').default;

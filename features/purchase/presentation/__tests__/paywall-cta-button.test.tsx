@@ -52,7 +52,10 @@ describe('PaywallCTAButton', () => {
       const onComplete = jest.fn();
       mockPurchaseServiceInstance.purchaseProduct.mockResolvedValue({
         success: true,
-        data: { transactionId: 'tx_123', productId: mockProduct.id } as Purchase,
+        data: {
+          transactionId: 'tx_123',
+          productId: mockProduct.id,
+        } as Purchase,
       });
 
       const { getByTestId } = render(
@@ -67,9 +70,9 @@ describe('PaywallCTAButton', () => {
       fireEvent.press(button);
 
       await waitFor(() => {
-        expect(mockPurchaseServiceInstance.purchaseProduct).toHaveBeenCalledWith(
-          mockProduct.id
-        );
+        expect(
+          mockPurchaseServiceInstance.purchaseProduct
+        ).toHaveBeenCalledWith(mockProduct.id);
       });
     });
 
@@ -187,10 +190,12 @@ describe('PaywallCTAButton', () => {
       fireEvent.press(getByTestId('paywall-cta-button'));
 
       await waitFor(() => {
-        expect(onError).toHaveBeenCalledWith(expect.objectContaining({
-          code: 'NETWORK_ERROR',
-          retryable: true,
-        }));
+        expect(onError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            code: 'NETWORK_ERROR',
+            retryable: true,
+          })
+        );
       });
     });
   });
@@ -219,9 +224,11 @@ describe('PaywallCTAButton', () => {
       fireEvent.press(getByTestId('paywall-cta-button'));
 
       await waitFor(() => {
-        expect(onError).toHaveBeenCalledWith(expect.objectContaining({
-          code: 'VERIFICATION_FAILED',
-        }));
+        expect(onError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            code: 'VERIFICATION_FAILED',
+          })
+        );
       });
     });
   });
@@ -263,7 +270,10 @@ describe('PaywallCTAButton', () => {
 
     it('should prevent multiple concurrent purchase attempts', async () => {
       mockPurchaseServiceInstance.purchaseProduct.mockImplementation(
-        () => new Promise(resolve => setTimeout(() => resolve({ success: true }), 100))
+        () =>
+          new Promise((resolve) =>
+            setTimeout(() => resolve({ success: true }), 100)
+          )
       );
 
       const { getByTestId } = render(
@@ -282,7 +292,9 @@ describe('PaywallCTAButton', () => {
 
       await waitFor(() => {
         // Should only call purchaseProduct once due to isProcessing check
-        expect(mockPurchaseServiceInstance.purchaseProduct).toHaveBeenCalledTimes(1);
+        expect(
+          mockPurchaseServiceInstance.purchaseProduct
+        ).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -335,10 +347,12 @@ describe('PaywallCTAButton', () => {
       fireEvent.press(getByTestId('paywall-cta-button'));
 
       await waitFor(() => {
-        expect(onError).toHaveBeenCalledWith(expect.objectContaining({
-          code: 'DB_ERROR',
-          retryable: true,
-        }));
+        expect(onError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            code: 'DB_ERROR',
+            retryable: true,
+          })
+        );
       });
     });
   });

@@ -43,26 +43,25 @@ export interface ExportOptions {
 /**
  * Export error types
  */
-export type ExportError =
-  | {
-      code:
-        | 'NO_LOGS_AVAILABLE'
-        | 'INVALID_DATE_RANGE'
-        | 'INVALID_FILTER'
-        | 'SERIALIZATION_ERROR'
-        | 'COMPRESSION_ERROR'
-        | 'FILE_WRITE_ERROR'
-        | 'SHARE_UNAVAILABLE'
-        | 'INSUFFICIENT_STORAGE'
-        | 'LOG_RETRIEVAL_ERROR'
-        | 'STORAGE_CORRUPTED'
-        | 'COMPRESSION_TIMEOUT'
-        | 'SHARE_INTERRUPTED'
-        | 'INVALID_LOG_DATA'
-        | 'EXPORT_IN_PROGRESS';
-      message: string;
-      retryable: boolean;
-    };
+export type ExportError = {
+  code:
+    | 'NO_LOGS_AVAILABLE'
+    | 'INVALID_DATE_RANGE'
+    | 'INVALID_FILTER'
+    | 'SERIALIZATION_ERROR'
+    | 'COMPRESSION_ERROR'
+    | 'FILE_WRITE_ERROR'
+    | 'SHARE_UNAVAILABLE'
+    | 'INSUFFICIENT_STORAGE'
+    | 'LOG_RETRIEVAL_ERROR'
+    | 'STORAGE_CORRUPTED'
+    | 'COMPRESSION_TIMEOUT'
+    | 'SHARE_INTERRUPTED'
+    | 'INVALID_LOG_DATA'
+    | 'EXPORT_IN_PROGRESS';
+  message: string;
+  retryable: boolean;
+};
 
 /**
  * Export result data
@@ -180,10 +179,7 @@ export const logExporter = {
    * @param includeMetadata - Whether to include summary metadata
    * @returns JSON string representation
    */
-  serializeLogs(
-    logs: ErrorLogEntry[],
-    includeMetadata?: boolean
-  ): string {
+  serializeLogs(logs: ErrorLogEntry[], includeMetadata?: boolean): string {
     try {
       // Map logs to ensure timestamp is properly converted to ISO string
       // and all fields are serializable
@@ -311,7 +307,9 @@ export const logExporter = {
    * }
    * ```
    */
-  async exportLogs(options: ExportOptions = {}): Promise<Result<ExportData, ExportError>> {
+  async exportLogs(
+    options: ExportOptions = {}
+  ): Promise<Result<ExportData, ExportError>> {
     try {
       // Validate options
       const validationError = this.validateOptions(options);
@@ -424,7 +422,9 @@ export const logExporter = {
    * @param options - Export options
    * @returns Result with compressed data and summary
    */
-  async exportWithSummary(options: ExportOptions = {}): Promise<Result<ExportData, ExportError>> {
+  async exportWithSummary(
+    options: ExportOptions = {}
+  ): Promise<Result<ExportData, ExportError>> {
     const result = await this.exportLogs(options);
 
     if (!result.success) {
@@ -476,7 +476,9 @@ export const logExporter = {
    * @param options - Export options
    * @returns Result with file path or error
    */
-  async exportToFile(options: ExportOptions = {}): Promise<Result<ExportData, ExportError>> {
+  async exportToFile(
+    options: ExportOptions = {}
+  ): Promise<Result<ExportData, ExportError>> {
     // First export logs
     const exportResult = await this.exportLogs(options);
     if (!exportResult.success) {
@@ -506,7 +508,10 @@ export const logExporter = {
         if (message.includes('No space')) {
           errorCode = 'INSUFFICIENT_STORAGE';
           retryable = false;
-        } else if (message.includes('Permission') || message.includes('EACCES')) {
+        } else if (
+          message.includes('Permission') ||
+          message.includes('EACCES')
+        ) {
           errorCode = 'STORAGE_CORRUPTED';
           retryable = false;
         } else if (message.includes('Network')) {
@@ -551,7 +556,9 @@ export const logExporter = {
    * @param options - Export options
    * @returns Result with share status or error
    */
-  async shareLogs(options: ExportOptions = {}): Promise<Result<ExportData, ExportError>> {
+  async shareLogs(
+    options: ExportOptions = {}
+  ): Promise<Result<ExportData, ExportError>> {
     try {
       // Check if sharing is available
       const availableAsync = await Sharing.isAvailableAsync();

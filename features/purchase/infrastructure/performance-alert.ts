@@ -22,7 +22,10 @@
 /**
  * Operation type for performance monitoring
  */
-type OperationType = 'PRODUCT_LIST_FETCH' | 'PAYWALL_DISPLAY' | 'RESTORE_PURCHASES';
+type OperationType =
+  | 'PRODUCT_LIST_FETCH'
+  | 'PAYWALL_DISPLAY'
+  | 'RESTORE_PURCHASES';
 
 /**
  * Performance alert record
@@ -91,7 +94,10 @@ class PerformanceAlertService {
    * @returns Alert record if threshold exceeded, null otherwise
    * @throws Error if operation type is invalid or duration is invalid
    */
-  monitor(operationType: OperationType, duration: number): PerformanceAlertRecord | null {
+  monitor(
+    operationType: OperationType,
+    duration: number
+  ): PerformanceAlertRecord | null {
     // Validate inputs
     this.validateOperationType(operationType);
     this.validateDuration(duration);
@@ -203,7 +209,8 @@ class PerformanceAlertService {
     return {
       totalOperations,
       totalViolations,
-      violationRate: totalOperations > 0 ? totalViolations / totalOperations : 0,
+      violationRate:
+        totalOperations > 0 ? totalViolations / totalOperations : 0,
       byOperationType,
     };
   }
@@ -285,9 +292,7 @@ class PerformanceAlertService {
    * @param operationType - Operation type
    * @returns Statistics for the operation type
    */
-  private calculateOpStats(
-    operationType: OperationType
-  ): {
+  private calculateOpStats(operationType: OperationType): {
     total: number;
     violations: number;
     violationRate: number;

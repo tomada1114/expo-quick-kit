@@ -14,45 +14,61 @@
  */
 
 // Mock ALL dependencies BEFORE any imports to avoid native module issues
-jest.mock('react-native', () => ({
-  Platform: {
-    OS: 'ios',
-  },
-}), { virtual: true });
+jest.mock(
+  'react-native',
+  () => ({
+    Platform: {
+      OS: 'ios',
+    },
+  }),
+  { virtual: true }
+);
 
 // Mock database client
-jest.mock('@/database/client', () => ({
-  db: {
-    select: jest.fn(() => ({
-      from: jest.fn(() => Promise.resolve([])),
-    })),
-    insert: jest.fn(() => ({
-      values: jest.fn(() => Promise.resolve([])),
-    })),
-    update: jest.fn(() => ({
-      set: jest.fn(() => ({
-        where: jest.fn(() => Promise.resolve([])),
+jest.mock(
+  '@/database/client',
+  () => ({
+    db: {
+      select: jest.fn(() => ({
+        from: jest.fn(() => Promise.resolve([])),
       })),
-    })),
-    eq: jest.fn(),
-  },
-}), { virtual: true });
+      insert: jest.fn(() => ({
+        values: jest.fn(() => Promise.resolve([])),
+      })),
+      update: jest.fn(() => ({
+        set: jest.fn(() => ({
+          where: jest.fn(() => Promise.resolve([])),
+        })),
+      })),
+      eq: jest.fn(),
+    },
+  }),
+  { virtual: true }
+);
 
 // Mock error logger
-jest.mock('@/features/purchase/infrastructure/error-logger', () => ({
-  errorLogger: {
-    logError: jest.fn(),
-    logPurchaseError: jest.fn(),
-    logFlowError: jest.fn(),
-  },
-}), { virtual: true });
+jest.mock(
+  '@/features/purchase/infrastructure/error-logger',
+  () => ({
+    errorLogger: {
+      logError: jest.fn(),
+      logPurchaseError: jest.fn(),
+      logFlowError: jest.fn(),
+    },
+  }),
+  { virtual: true }
+);
 
 // Mock purchase repository
-jest.mock('@/features/purchase/core/repository', () => ({
-  purchaseRepository: {
-    requestAllPurchaseHistory: jest.fn(),
-  },
-}), { virtual: true });
+jest.mock(
+  '@/features/purchase/core/repository',
+  () => ({
+    purchaseRepository: {
+      requestAllPurchaseHistory: jest.fn(),
+    },
+  }),
+  { virtual: true }
+);
 
 import type { Transaction } from '@/features/purchase/core/types';
 import { recoveryHandler } from '../recovery-handler';
@@ -151,11 +167,12 @@ describe('RecoveryHandler', () => {
      */
     it('should recover purchases from transaction history', async () => {
       // Setup: Mock repository to return transaction history
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: true,
-          data: mockTransactionHistory,
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: true,
+        data: mockTransactionHistory,
+      });
 
       const result = await recoveryHandler.recoverFromTransactionHistory();
 
@@ -174,11 +191,12 @@ describe('RecoveryHandler', () => {
      */
     it('should handle empty transaction history', async () => {
       // Setup: Mock empty history
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: true,
-          data: [],
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: true,
+        data: [],
+      });
 
       const result = await recoveryHandler.recoverFromTransactionHistory();
 
@@ -195,16 +213,17 @@ describe('RecoveryHandler', () => {
      */
     it('should handle network error when fetching history', async () => {
       // Setup: Mock network error
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: false,
-          error: {
-            code: 'NETWORK_ERROR',
-            message: 'Network connection failed',
-            retryable: true,
-            platform: 'ios',
-          },
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: false,
+        error: {
+          code: 'NETWORK_ERROR',
+          message: 'Network connection failed',
+          retryable: true,
+          platform: 'ios',
+        },
+      });
 
       const result = await recoveryHandler.recoverFromTransactionHistory();
 
@@ -226,11 +245,12 @@ describe('RecoveryHandler', () => {
         mockTransactionHistory[1],
       ];
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: true,
-          data: duplicateHistory,
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: true,
+        data: duplicateHistory,
+      });
 
       const result = await recoveryHandler.recoverFromTransactionHistory();
 
@@ -260,11 +280,12 @@ describe('RecoveryHandler', () => {
         mockTransactionHistory[1],
       ] as Transaction[];
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: true,
-          data: mixedHistory,
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: true,
+        data: mixedHistory,
+      });
 
       const result = await recoveryHandler.recoverFromTransactionHistory();
 
@@ -283,11 +304,12 @@ describe('RecoveryHandler', () => {
      * Then: Attempts to add records
      */
     it('should reconstruct records from transaction history', async () => {
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: true,
-          data: mockTransactionHistory,
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: true,
+        data: mockTransactionHistory,
+      });
 
       const result = await recoveryHandler.reconstructMissingRecords();
 
@@ -304,16 +326,17 @@ describe('RecoveryHandler', () => {
      */
     it('should not attempt reconstruction if history fetch fails', async () => {
       // Setup: Mock network error
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: false,
-          error: {
-            code: 'NETWORK_ERROR',
-            message: 'Cannot reach platform',
-            retryable: true,
-            platform: 'android',
-          },
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: false,
+        error: {
+          code: 'NETWORK_ERROR',
+          message: 'Cannot reach platform',
+          retryable: true,
+          platform: 'android',
+        },
+      });
 
       const result = await recoveryHandler.reconstructMissingRecords();
 
@@ -426,11 +449,12 @@ describe('RecoveryHandler', () => {
         throw new Error('DB corrupted');
       });
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: true,
-          data: mockTransactionHistory.slice(0, 2),
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: true,
+        data: mockTransactionHistory.slice(0, 2),
+      });
 
       const status = await recoveryHandler.getRecoveryStatus();
 
@@ -478,11 +502,12 @@ describe('RecoveryHandler', () => {
         throw new Error('DB corrupted');
       });
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: true,
-          data: mockTransactionHistory.slice(0, 2),
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: true,
+        data: mockTransactionHistory.slice(0, 2),
+      });
 
       const result = await recoveryHandler.autoRecoverOnStartup();
 
@@ -503,16 +528,17 @@ describe('RecoveryHandler', () => {
         throw new Error('DB corrupted');
       });
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock)
-        .mockResolvedValueOnce({
-          success: false,
-          error: {
-            code: 'NETWORK_ERROR',
-            message: 'Cannot reach platform',
-            retryable: true,
-            platform: 'ios',
-          },
-        });
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
+        success: false,
+        error: {
+          code: 'NETWORK_ERROR',
+          message: 'Cannot reach platform',
+          retryable: true,
+          platform: 'ios',
+        },
+      });
 
       const result = await recoveryHandler.autoRecoverOnStartup();
 

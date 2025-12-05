@@ -28,17 +28,17 @@ jest.mock('@/database/client', () => ({
       values: jest.fn().mockResolvedValue(void 0),
     })),
     select: jest.fn(() => ({
-      from: jest.fn(function() {
+      from: jest.fn(function () {
         return {
-          where: jest.fn(function() {
+          where: jest.fn(function () {
             return {
               all: jest.fn(() => []),
               get: jest.fn(() => undefined),
             };
           }),
-          innerJoin: jest.fn(function() {
+          innerJoin: jest.fn(function () {
             return {
-              where: jest.fn(function() {
+              where: jest.fn(function () {
                 return {
                   all: jest.fn(() => []),
                 };
@@ -98,17 +98,17 @@ describe('Multi-Feature Unlock Integration - Task 16.10', () => {
   // Helper to mock database to return purchases
   const mockDatabasePurchases = (purchasesToReturn: any[]) => {
     (db.select as jest.Mock).mockReturnValue({
-      from: jest.fn(function() {
+      from: jest.fn(function () {
         return {
-          where: jest.fn(function() {
+          where: jest.fn(function () {
             return {
               all: jest.fn(() => purchasesToReturn),
               get: jest.fn(() => purchasesToReturn[0] || undefined),
             };
           }),
-          innerJoin: jest.fn(function() {
+          innerJoin: jest.fn(function () {
             return {
-              where: jest.fn(function() {
+              where: jest.fn(function () {
                 return {
                   all: jest.fn(() => purchasesToReturn),
                 };
@@ -203,7 +203,11 @@ describe('Multi-Feature Unlock Integration - Task 16.10', () => {
       expect(
         features1.map((f) => f.id).concat(features2.map((f) => f.id))
       ).toEqual(
-        expect.arrayContaining(['advanced_search', 'advanced_analytics', 'export_data'])
+        expect.arrayContaining([
+          'advanced_search',
+          'advanced_analytics',
+          'export_data',
+        ])
       );
     });
   });

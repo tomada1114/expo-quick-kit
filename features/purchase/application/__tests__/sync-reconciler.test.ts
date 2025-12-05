@@ -211,8 +211,14 @@ describe('SyncReconciler', () => {
     test('Given: Mixed new and existing transactions, When: reconcile is called, Then: Correctly categorizes and processes each', async () => {
       // Given
       const localPurchases = [
-        createMockPurchase({ transactionId: 'txn_existing_1', isSynced: false }),
-        createMockPurchase({ transactionId: 'txn_existing_2', isSynced: false }),
+        createMockPurchase({
+          transactionId: 'txn_existing_1',
+          isSynced: false,
+        }),
+        createMockPurchase({
+          transactionId: 'txn_existing_2',
+          isSynced: false,
+        }),
       ];
       const platformTransactions = [
         createMockTransaction({ transactionId: 'txn_existing_1' }),
@@ -368,7 +374,9 @@ describe('SyncReconciler', () => {
 
     test('Given: Transaction with missing required fields, When: reconcile is called, Then: Skips invalid transaction with warning', async () => {
       // Given
-      const validTransaction = createMockTransaction({ transactionId: 'txn_valid' });
+      const validTransaction = createMockTransaction({
+        transactionId: 'txn_valid',
+      });
       const invalidTransaction = { transactionId: '' } as Transaction; // Missing productId
 
       mockPurchaseService.getActivePurchases.mockResolvedValue({
@@ -534,7 +542,9 @@ describe('SyncReconciler', () => {
 
     test('Given: Partial transaction data corruption, When: reconcile is called, Then: Detects and skips corrupted records', async () => {
       // Given
-      const validTransaction = createMockTransaction({ transactionId: 'txn_valid' });
+      const validTransaction = createMockTransaction({
+        transactionId: 'txn_valid',
+      });
       const corruptedTransaction = {
         transactionId: 'txn_corrupt',
         productId: '',
@@ -571,7 +581,9 @@ describe('SyncReconciler', () => {
   describe('Idempotency & Consistency', () => {
     test('Given: Reconcile called twice with same platform state, When: both calls complete, Then: Results are identical and no duplicate records created', async () => {
       // Given
-      const transaction = createMockTransaction({ transactionId: 'txn_idempotent' });
+      const transaction = createMockTransaction({
+        transactionId: 'txn_idempotent',
+      });
 
       mockPurchaseService.getActivePurchases
         .mockResolvedValueOnce({ success: true, data: [] })

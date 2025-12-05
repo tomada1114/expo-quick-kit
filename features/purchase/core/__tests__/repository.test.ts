@@ -53,7 +53,9 @@ describe('Purchase Repository - iOS StoreKit2', () => {
     Platform.OS = 'ios';
 
     // Mock jose for JWS verification
-    mockedJose.importSPKI = jest.fn().mockResolvedValue({ alg: 'ES256' } as any);
+    mockedJose.importSPKI = jest
+      .fn()
+      .mockResolvedValue({ alg: 'ES256' } as any);
     mockedJose.jwtVerify = jest.fn().mockResolvedValue({
       payload: {},
       protected: 'header',
@@ -77,9 +79,9 @@ describe('Purchase Repository - iOS StoreKit2', () => {
       mockedAsyncStorage.getItem = jest.fn().mockResolvedValue(null);
       mockedAsyncStorage.setItem = jest.fn().mockResolvedValue(undefined);
       // Setup default RevenueCat mock
-      mockedPurchases.getOfferings = jest.fn().mockRejectedValue(
-        new Error('RevenueCat unavailable')
-      );
+      mockedPurchases.getOfferings = jest
+        .fn()
+        .mockRejectedValue(new Error('RevenueCat unavailable'));
     });
 
     // ==================== HAPPY PATH TESTS ====================
@@ -115,7 +117,9 @@ describe('Purchase Repository - iOS StoreKit2', () => {
           expect(result.data[0].id).toBe('premium_unlock');
           expect(result.data[0].price).toBe(9.99);
         }
-        expect(mockedStoreKit2.loadProducts).toHaveBeenCalledWith(['premium_unlock']);
+        expect(mockedStoreKit2.loadProducts).toHaveBeenCalledWith([
+          'premium_unlock',
+        ]);
         expect(mockedAsyncStorage.setItem).toHaveBeenCalled();
       });
 
@@ -180,7 +184,9 @@ describe('Purchase Repository - iOS StoreKit2', () => {
             ],
           },
         };
-        mockedPurchases.getOfferings.mockResolvedValueOnce(mockOfferings as any);
+        mockedPurchases.getOfferings.mockResolvedValueOnce(
+          mockOfferings as any
+        );
 
         // When: Loading product metadata
         const result = await purchaseRepository.loadProductMetadata([
@@ -219,7 +225,9 @@ describe('Purchase Repository - iOS StoreKit2', () => {
             ],
           },
         };
-        mockedPurchases.getOfferings.mockResolvedValueOnce(mockOfferings as any);
+        mockedPurchases.getOfferings.mockResolvedValueOnce(
+          mockOfferings as any
+        );
 
         // When: Loading product metadata
         const result = await purchaseRepository.loadProductMetadata([
@@ -528,7 +536,9 @@ describe('Purchase Repository - iOS StoreKit2', () => {
             ],
           },
         };
-        mockedPurchases.getOfferings.mockResolvedValueOnce(mockOfferings as any);
+        mockedPurchases.getOfferings.mockResolvedValueOnce(
+          mockOfferings as any
+        );
 
         // When: Loading product metadata for 'premium_unlock'
         const result = await purchaseRepository.loadProductMetadata([
@@ -689,10 +699,7 @@ describe('Purchase Repository - iOS StoreKit2', () => {
       it('should handle very large product ID list', async () => {
         // Given: 50 product IDs
         Platform.OS = 'ios';
-        const productIds = Array.from(
-          { length: 50 },
-          (_, i) => `product_${i}`
-        );
+        const productIds = Array.from({ length: 50 }, (_, i) => `product_${i}`);
         const mockProducts: Product[] = productIds.map((id, i) => ({
           id,
           title: `Product ${i}`,
@@ -816,9 +823,8 @@ describe('Purchase Repository - iOS StoreKit2', () => {
         transaction: mockTransaction,
       });
 
-      const result = await purchaseRepository.launchPurchaseFlow(
-        'premium_unlock'
-      );
+      const result =
+        await purchaseRepository.launchPurchaseFlow('premium_unlock');
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -833,9 +839,8 @@ describe('Purchase Repository - iOS StoreKit2', () => {
         message: 'User cancelled',
       });
 
-      const result = await purchaseRepository.launchPurchaseFlow(
-        'premium_unlock'
-      );
+      const result =
+        await purchaseRepository.launchPurchaseFlow('premium_unlock');
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -849,9 +854,8 @@ describe('Purchase Repository - iOS StoreKit2', () => {
         new Error('Network error during payment')
       );
 
-      const result = await purchaseRepository.launchPurchaseFlow(
-        'premium_unlock'
-      );
+      const result =
+        await purchaseRepository.launchPurchaseFlow('premium_unlock');
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -867,9 +871,8 @@ describe('Purchase Repository - iOS StoreKit2', () => {
         nativeErrorCode: 600,
       });
 
-      const result = await purchaseRepository.launchPurchaseFlow(
-        'premium_unlock'
-      );
+      const result =
+        await purchaseRepository.launchPurchaseFlow('premium_unlock');
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -939,7 +942,8 @@ describe('Purchase Repository - iOS StoreKit2', () => {
         receiptData: validJWS,
       };
 
-      const result = await purchaseRepository.verifyTransaction(validTransaction);
+      const result =
+        await purchaseRepository.verifyTransaction(validTransaction);
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -955,7 +959,8 @@ describe('Purchase Repository - iOS StoreKit2', () => {
         receiptData: 'eyJhbGciOiJFQzI1NiIsIng1YyI6IkkTVkFMSURSRUNFSVBUIn0',
       };
 
-      const result = await purchaseRepository.verifyTransaction(invalidTransaction);
+      const result =
+        await purchaseRepository.verifyTransaction(invalidTransaction);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -1004,9 +1009,8 @@ describe('Purchase Repository - iOS StoreKit2', () => {
         receiptData: '!!!INVALID_BASE64_STRING!!!NOT_A_RECEIPT!!!',
       };
 
-      const result = await purchaseRepository.verifyTransaction(
-        malformedTransaction
-      );
+      const result =
+        await purchaseRepository.verifyTransaction(malformedTransaction);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -1023,9 +1027,8 @@ describe('Purchase Repository - iOS StoreKit2', () => {
         nativeErrorCode: 600,
       });
 
-      const result = await purchaseRepository.launchPurchaseFlow(
-        'premium_unlock'
-      );
+      const result =
+        await purchaseRepository.launchPurchaseFlow('premium_unlock');
 
       expect(result.success).toBe(false);
       if (!result.success) {

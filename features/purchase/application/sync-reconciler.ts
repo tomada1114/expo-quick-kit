@@ -70,7 +70,9 @@ export type ReconciliationError =
 /**
  * Generic Result type for sync reconciliation
  */
-export type Result<T, E> = { success: true; data: T } | { success: false; error: E };
+export type Result<T, E> =
+  | { success: true; data: T }
+  | { success: false; error: E };
 
 /**
  * Dependencies for sync reconciliation
@@ -86,7 +88,10 @@ export interface SyncReconcilerDependencies {
   };
   database: {
     recordPurchase(transaction: Transaction): Promise<boolean>;
-    updatePurchase(transactionId: string, data: Partial<Purchase>): Promise<boolean>;
+    updatePurchase(
+      transactionId: string,
+      data: Partial<Purchase>
+    ): Promise<boolean>;
     deletePurchase(transactionId: string): Promise<boolean>;
   };
 }
@@ -113,7 +118,9 @@ function isValidTransaction(transaction: Transaction): boolean {
  * @param error - Purchase error from repository
  * @returns Reconciliation error
  */
-function mapPurchaseErrorToReconciliationError(error: PurchaseError): ReconciliationError {
+function mapPurchaseErrorToReconciliationError(
+  error: PurchaseError
+): ReconciliationError {
   if (error.code === 'NETWORK_ERROR') {
     return {
       code: 'NETWORK_ERROR',
@@ -204,10 +211,13 @@ export const syncReconciler = {
       // Step 1: Fetch platform purchase history
       console.log('[SyncReconciler] Fetching purchase history from platform');
 
-      const historyResult = await deps.purchaseRepository.requestAllPurchaseHistory();
+      const historyResult =
+        await deps.purchaseRepository.requestAllPurchaseHistory();
 
       if (!historyResult.success) {
-        const reconciliationError = mapPurchaseErrorToReconciliationError(historyResult.error);
+        const reconciliationError = mapPurchaseErrorToReconciliationError(
+          historyResult.error
+        );
 
         console.error(
           '[SyncReconciler] Failed to fetch platform history:',
@@ -226,7 +236,9 @@ export const syncReconciler = {
       );
 
       // Step 2: Fetch current local purchases
-      console.log('[SyncReconciler] Fetching current purchases from LocalDatabase');
+      console.log(
+        '[SyncReconciler] Fetching current purchases from LocalDatabase'
+      );
 
       const localResult = await deps.purchaseService.getActivePurchases();
 
@@ -247,7 +259,9 @@ export const syncReconciler = {
       }
 
       const localPurchases = localResult.data;
-      const localTransactionIds = new Set(localPurchases.map((p) => p.transactionId));
+      const localTransactionIds = new Set(
+        localPurchases.map((p) => p.transactionId)
+      );
 
       console.log(
         `[SyncReconciler] Found ${localPurchases.length} purchases in LocalDatabase`
@@ -285,11 +299,14 @@ export const syncReconciler = {
               `[SyncReconciler] Updating existing purchase: ${transaction.transactionId}`
             );
 
-            const updated = await deps.database.updatePurchase(transaction.transactionId, {
-              isSynced: true,
-              syncedAt: new Date(),
-              isVerified: true, // Platform verification is authoritative
-            });
+            const updated = await deps.database.updatePurchase(
+              transaction.transactionId,
+              {
+                isSynced: true,
+                syncedAt: new Date(),
+                isVerified: true, // Platform verification is authoritative
+              }
+            );
 
             if (updated) {
               updatedCount++;
@@ -346,7 +363,9 @@ export const syncReconciler = {
           );
 
           try {
-            const deleted = await deps.database.deletePurchase(localPurchase.transactionId);
+            const deleted = await deps.database.deletePurchase(
+              localPurchase.transactionId
+            );
             if (deleted) {
               deletedCount++;
             } else {
@@ -383,13 +402,19 @@ export const syncReconciler = {
         data: result,
       };
     } catch (error) {
-      console.error('[SyncReconciler] Unexpected error during reconciliation:', error);
+      console.error(
+        '[SyncReconciler] Unexpected error during reconciliation:',
+        error
+      );
 
       return {
         success: false,
         error: {
           code: 'UNKNOWN_ERROR',
-          message: error instanceof Error ? error.message : 'Unknown error during reconciliation',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Unknown error during reconciliation',
           retryable: false,
         },
       };

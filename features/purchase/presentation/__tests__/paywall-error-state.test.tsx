@@ -16,7 +16,12 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react-native';
 import { useRouter } from 'expo-router';
 import { PaywallComponent } from '../paywall';
 import type { PaywallComponentProps } from '../paywall';
@@ -72,9 +77,23 @@ jest.mock('@/features/purchase/application/purchase-service', () => ({
 const mockColors = {
   light: {
     background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#F2F2F7' },
-    text: { primary: '#000000', secondary: '#666666', tertiary: '#999999', inverse: '#FFFFFF' },
-    semantic: { success: '#34C759', warning: '#FF9500', error: '#FF3B30', info: '#0A84FF' },
-    interactive: { separator: '#E5E5EA', fill: '#CCCCCC', fillSecondary: '#EEEEEE' },
+    text: {
+      primary: '#000000',
+      secondary: '#666666',
+      tertiary: '#999999',
+      inverse: '#FFFFFF',
+    },
+    semantic: {
+      success: '#34C759',
+      warning: '#FF9500',
+      error: '#FF3B30',
+      info: '#0A84FF',
+    },
+    interactive: {
+      separator: '#E5E5EA',
+      fill: '#CCCCCC',
+      fillSecondary: '#EEEEEE',
+    },
   },
 };
 
@@ -482,7 +501,9 @@ describe('PaywallComponent - Error State Display (Task 12.6)', () => {
       fireEvent.press(retryButton);
 
       await waitFor(() => {
-        expect(mockPurchaseService.purchaseService.purchaseProduct).toHaveBeenCalled();
+        expect(
+          mockPurchaseService.purchaseService.purchaseProduct
+        ).toHaveBeenCalled();
       });
     });
 
@@ -495,14 +516,16 @@ describe('PaywallComponent - Error State Display (Task 12.6)', () => {
       const mockPurchaseService = require('@/features/purchase/application/purchase-service');
 
       // First error
-      mockPurchaseService.purchaseService.purchaseProduct.mockResolvedValueOnce({
-        ok: false,
-        error: {
-          code: 'NETWORK_ERROR',
-          message: 'Network connection failed',
-          retryable: true,
-        },
-      });
+      mockPurchaseService.purchaseService.purchaseProduct.mockResolvedValueOnce(
+        {
+          ok: false,
+          error: {
+            code: 'NETWORK_ERROR',
+            message: 'Network connection failed',
+            retryable: true,
+          },
+        }
+      );
 
       const { getByTestId, rerender } = render(
         <PaywallComponent {...defaultProps} />
@@ -517,21 +540,25 @@ describe('PaywallComponent - Error State Display (Task 12.6)', () => {
       });
 
       // Second error on retry
-      mockPurchaseService.purchaseService.purchaseProduct.mockResolvedValueOnce({
-        ok: false,
-        error: {
-          code: 'STORE_PROBLEM_ERROR',
-          message: 'App Store is temporarily unavailable',
-          retryable: true,
-        },
-      });
+      mockPurchaseService.purchaseService.purchaseProduct.mockResolvedValueOnce(
+        {
+          ok: false,
+          error: {
+            code: 'STORE_PROBLEM_ERROR',
+            message: 'App Store is temporarily unavailable',
+            retryable: true,
+          },
+        }
+      );
 
       const retryButton = getByTestId('paywall-error-retry-button');
       fireEvent.press(retryButton);
 
       await waitFor(() => {
         const errorText = getByTestId('paywall-error-text');
-        expect(errorText.props.children).toBe('App Store is temporarily unavailable');
+        expect(errorText.props.children).toBe(
+          'App Store is temporarily unavailable'
+        );
       });
     });
   });
@@ -763,14 +790,16 @@ describe('PaywallComponent - Error State Display (Task 12.6)', () => {
       const onPurchaseComplete = jest.fn();
 
       // First attempt fails
-      mockPurchaseService.purchaseService.purchaseProduct.mockResolvedValueOnce({
-        ok: false,
-        error: {
-          code: 'NETWORK_ERROR',
-          message: 'Network connection failed',
-          retryable: true,
-        },
-      });
+      mockPurchaseService.purchaseService.purchaseProduct.mockResolvedValueOnce(
+        {
+          ok: false,
+          error: {
+            code: 'NETWORK_ERROR',
+            message: 'Network connection failed',
+            retryable: true,
+          },
+        }
+      );
 
       const { getByTestId, queryByTestId } = render(
         <PaywallComponent
@@ -788,19 +817,21 @@ describe('PaywallComponent - Error State Display (Task 12.6)', () => {
       });
 
       // Retry succeeds
-      mockPurchaseService.purchaseService.purchaseProduct.mockResolvedValueOnce({
-        ok: true,
-        value: {
-          transactionId: 'tx_123',
-          productId: 'product_1',
-          purchasedAt: new Date(),
-          price: 9.99,
-          currencyCode: 'USD',
-          isVerified: true,
-          isSynced: false,
-          unlockedFeatures: ['test_feature'],
-        },
-      });
+      mockPurchaseService.purchaseService.purchaseProduct.mockResolvedValueOnce(
+        {
+          ok: true,
+          value: {
+            transactionId: 'tx_123',
+            productId: 'product_1',
+            purchasedAt: new Date(),
+            price: 9.99,
+            currencyCode: 'USD',
+            isVerified: true,
+            isSynced: false,
+            unlockedFeatures: ['test_feature'],
+          },
+        }
+      );
 
       const retryButton = getByTestId('paywall-error-retry-button');
       fireEvent.press(retryButton);

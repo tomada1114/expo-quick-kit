@@ -19,7 +19,12 @@
  * @module features/purchase/application/recovery-handler
  */
 
-import type { Purchase, PurchaseError, Result, Transaction } from '../core/types';
+import type {
+  Purchase,
+  PurchaseError,
+  Result,
+  Transaction,
+} from '../core/types';
 import { purchaseRepository } from '../core/repository';
 import { db } from '@/database/client';
 import { purchases as purchasesTable } from '@/database/schema';
@@ -197,7 +202,9 @@ export const recoveryHandler = {
    * }
    * ```
    */
-  async recoverFromTransactionHistory(): Promise<Result<RecoveryResult, PurchaseError>> {
+  async recoverFromTransactionHistory(): Promise<
+    Result<RecoveryResult, PurchaseError>
+  > {
     try {
       // Step 1: Fetch transaction history from platform
       const historyResult =
@@ -229,7 +236,7 @@ export const recoveryHandler = {
       }
 
       // Step 3: Return recovery result
-      const recoveredIds = uniqueTransactions.map(t => t.transactionId);
+      const recoveredIds = uniqueTransactions.map((t) => t.transactionId);
 
       return {
         success: true,
@@ -309,7 +316,10 @@ export const recoveryHandler = {
             .from(purchasesTable)
             .where(
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (db as any).eq?.(purchasesTable.transactionId, transaction.transactionId)
+              (db as any).eq?.(
+                purchasesTable.transactionId,
+                transaction.transactionId
+              )
             )
             .limit(1);
 
@@ -321,9 +331,17 @@ export const recoveryHandler = {
               await db
                 .update(purchasesTable)
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                .set({ isSynced: true, syncedAt: Math.floor(Date.now() / 1000) })
+                .set({
+                  isSynced: true,
+                  syncedAt: Math.floor(Date.now() / 1000),
+                })
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                .where((db as any).eq?.(purchasesTable.transactionId, transaction.transactionId));
+                .where(
+                  (db as any).eq?.(
+                    purchasesTable.transactionId,
+                    transaction.transactionId
+                  )
+                );
 
               updatedCount++;
             }
@@ -332,7 +350,9 @@ export const recoveryHandler = {
             await db.insert(purchasesTable).values({
               transactionId: transaction.transactionId,
               productId: transaction.productId,
-              purchasedAt: Math.floor(transaction.purchaseDate.getTime() / 1000),
+              purchasedAt: Math.floor(
+                transaction.purchaseDate.getTime() / 1000
+              ),
               price: 0, // Will be filled from product metadata
               currencyCode: 'USD', // Default, will be corrected later
               isVerified: false, // Not yet verified
@@ -371,7 +391,8 @@ export const recoveryHandler = {
         success: false,
         error: {
           code: 'UNKNOWN_ERROR',
-          message: error instanceof Error ? error.message : 'Reconstruction failed',
+          message:
+            error instanceof Error ? error.message : 'Reconstruction failed',
           retryable: false,
         },
       };
@@ -583,9 +604,7 @@ export const recoveryHandler = {
         error: {
           code: 'UNKNOWN_ERROR',
           message:
-            error instanceof Error
-              ? error.message
-              : 'Startup recovery failed',
+            error instanceof Error ? error.message : 'Startup recovery failed',
           retryable: false,
         },
       };

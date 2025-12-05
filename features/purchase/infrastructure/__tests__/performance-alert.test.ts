@@ -86,7 +86,8 @@ describe('PerformanceAlert - Task 10.4: Performance Monitoring and Threshold Ale
       performanceAlert.monitor('PAYWALL_DISPLAY', 300);
 
       // When: Getting consecutive violation count
-      const count = performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY');
+      const count =
+        performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY');
 
       // Then: Should be 0
       expect(count).toBe(0);
@@ -166,7 +167,8 @@ describe('PerformanceAlert - Task 10.4: Performance Monitoring and Threshold Ale
       performanceAlert.monitor('PRODUCT_LIST_FETCH', 2800);
 
       // When: Getting consecutive violation count
-      const count = performanceAlert.getConsecutiveViolations('PRODUCT_LIST_FETCH');
+      const count =
+        performanceAlert.getConsecutiveViolations('PRODUCT_LIST_FETCH');
 
       // Then: Should be 3
       expect(count).toBe(3);
@@ -179,7 +181,8 @@ describe('PerformanceAlert - Task 10.4: Performance Monitoring and Threshold Ale
       performanceAlert.monitor('PAYWALL_DISPLAY', 300); // Success
 
       // When: Getting consecutive count
-      const count = performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY');
+      const count =
+        performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY');
 
       // Then: Should be 0
       expect(count).toBe(0);
@@ -466,13 +469,17 @@ describe('PerformanceAlert - Task 10.4: Performance Monitoring and Threshold Ale
       // Given: Consecutive violations tracked
       performanceAlert.monitor('PAYWALL_DISPLAY', 600);
       performanceAlert.monitor('PAYWALL_DISPLAY', 700);
-      expect(performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY')).toBe(2);
+      expect(performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY')).toBe(
+        2
+      );
 
       // When: Clearing alerts
       performanceAlert.clearAlerts();
 
       // Then: Consecutive count should reset
-      expect(performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY')).toBe(0);
+      expect(performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY')).toBe(
+        0
+      );
     });
 
     it('should filter alerts by operation type', () => {
@@ -486,9 +493,9 @@ describe('PerformanceAlert - Task 10.4: Performance Monitoring and Threshold Ale
 
       // Then: Should only return matching alerts
       expect(paywallAlerts.length).toBe(2);
-      expect(paywallAlerts.every((a) => a.operationType === 'PAYWALL_DISPLAY')).toBe(
-        true
-      );
+      expect(
+        paywallAlerts.every((a) => a.operationType === 'PAYWALL_DISPLAY')
+      ).toBe(true);
     });
 
     it('should retrieve alerts since timestamp', async () => {
@@ -540,8 +547,10 @@ describe('PerformanceAlert - Task 10.4: Performance Monitoring and Threshold Ale
       performanceAlert.monitor('PAYWALL_DISPLAY', 800); // Violation
 
       // When: Getting consecutive counts
-      const paywallCount = performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY');
-      const productCount = performanceAlert.getConsecutiveViolations('PRODUCT_LIST_FETCH');
+      const paywallCount =
+        performanceAlert.getConsecutiveViolations('PAYWALL_DISPLAY');
+      const productCount =
+        performanceAlert.getConsecutiveViolations('PRODUCT_LIST_FETCH');
 
       // Then: Paywall should have 3, Product should have 0 (reset by success)
       expect(paywallCount).toBe(3);

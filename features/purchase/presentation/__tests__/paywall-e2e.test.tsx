@@ -21,7 +21,13 @@
 /* eslint-disable @typescript-eslint/no-require-imports, import/first */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  within,
+} from '@testing-library/react-native';
 import { View, Text, ScrollView } from 'react-native';
 
 // ============================================================
@@ -126,7 +132,10 @@ import { Product, FeatureDefinition } from '@/features/purchase/core/types';
 // Test Fixtures
 // ============================================================
 
-const createMockProduct = (id: string, overrides?: Partial<Product>): Product => ({
+const createMockProduct = (
+  id: string,
+  overrides?: Partial<Product>
+): Product => ({
   id,
   title: `Premium Feature ${id}`,
   description: `Unlock all features with ${id}`,
@@ -135,7 +144,10 @@ const createMockProduct = (id: string, overrides?: Partial<Product>): Product =>
   ...overrides,
 });
 
-const createMockFeature = (id: string, overrides?: Partial<FeatureDefinition>): FeatureDefinition => ({
+const createMockFeature = (
+  id: string,
+  overrides?: Partial<FeatureDefinition>
+): FeatureDefinition => ({
   id,
   name: `Feature ${id}`,
   description: `Feature ${id} description`,
@@ -280,7 +292,9 @@ describe('PaywallComponent E2E Test (Task 16.11)', () => {
 
       // THEN: Selection badge should appear
       await waitFor(() => {
-        expect(mockPurchaseStore.setSelectedProductId).toHaveBeenCalledWith('selected-plan');
+        expect(mockPurchaseStore.setSelectedProductId).toHaveBeenCalledWith(
+          'selected-plan'
+        );
       });
     });
 
@@ -364,9 +378,11 @@ describe('PaywallComponent E2E Test (Task 16.11)', () => {
     // THEN: Component should gracefully handle error and show product without features
     it('should handle feature loading errors gracefully', () => {
       // GIVEN: Feature loading throws error
-      mockFeatureGatingService.getUnlockedFeaturesByProduct.mockImplementation(() => {
-        throw new Error('Feature loading failed');
-      });
+      mockFeatureGatingService.getUnlockedFeaturesByProduct.mockImplementation(
+        () => {
+          throw new Error('Feature loading failed');
+        }
+      );
 
       const mockProduct = createMockProduct('test-plan');
 

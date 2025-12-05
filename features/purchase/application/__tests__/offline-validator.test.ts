@@ -10,13 +10,22 @@
  * Task 15.4: OfflineValidator - オフライン検証モード
  */
 
-import { createOfflineValidator, type OfflineValidator, type OfflineValidationResult } from '../offline-validator';
-import { type VerificationResult, type VerificationError } from '../../infrastructure/receipt-verifier';
+import {
+  createOfflineValidator,
+  type OfflineValidator,
+  type OfflineValidationResult,
+} from '../offline-validator';
+import {
+  type VerificationResult,
+  type VerificationError,
+} from '../../infrastructure/receipt-verifier';
 
 /**
  * Test helper: Create mock verification result
  */
-function createMockVerificationResult(overrides?: Partial<VerificationResult>): VerificationResult {
+function createMockVerificationResult(
+  overrides?: Partial<VerificationResult>
+): VerificationResult {
   return {
     isValid: true,
     transactionId: 'txn_123',
@@ -29,7 +38,9 @@ function createMockVerificationResult(overrides?: Partial<VerificationResult>): 
 /**
  * Test helper: Create mock verification error
  */
-function createMockVerificationError(overrides?: Partial<VerificationError>): VerificationError {
+function createMockVerificationError(
+  overrides?: Partial<VerificationError>
+): VerificationError {
   return {
     code: 'KEY_NOT_FOUND',
     message: 'Verification key not found',
@@ -209,7 +220,10 @@ describe('OfflineValidator', () => {
       const receiptData = 'receipt_to_cache';
       const result = createMockVerificationResult();
 
-      const cacheResult = validator.cacheVerificationResult(receiptData, result);
+      const cacheResult = validator.cacheVerificationResult(
+        receiptData,
+        result
+      );
 
       expect(cacheResult.isOk()).toBe(true);
       expect(cacheResult.ok()).toEqual({
@@ -224,8 +238,14 @@ describe('OfflineValidator', () => {
     it('should cache multiple results independently', () => {
       const validator = createOfflineValidator();
 
-      const cache1 = validator.cacheVerificationResult('receipt_1', createMockVerificationResult({ transactionId: 'txn_1' }));
-      const cache2 = validator.cacheVerificationResult('receipt_2', createMockVerificationResult({ transactionId: 'txn_2' }));
+      const cache1 = validator.cacheVerificationResult(
+        'receipt_1',
+        createMockVerificationResult({ transactionId: 'txn_1' })
+      );
+      const cache2 = validator.cacheVerificationResult(
+        'receipt_2',
+        createMockVerificationResult({ transactionId: 'txn_2' })
+      );
 
       expect(cache1.isOk()).toBe(true);
       expect(cache2.isOk()).toBe(true);
@@ -238,7 +258,10 @@ describe('OfflineValidator', () => {
     it('should return error for empty receipt data', () => {
       const validator = createOfflineValidator();
 
-      const result = validator.cacheVerificationResult('', createMockVerificationResult());
+      const result = validator.cacheVerificationResult(
+        '',
+        createMockVerificationResult()
+      );
 
       expect(result.isErr()).toBe(true);
       expect(result.err().code).toBe('INVALID_INPUT');
@@ -256,7 +279,10 @@ describe('OfflineValidator', () => {
         purchaseDate: new Date(),
       };
 
-      const cacheResult = validator.cacheVerificationResult('invalid_receipt', invalidResult);
+      const cacheResult = validator.cacheVerificationResult(
+        'invalid_receipt',
+        invalidResult
+      );
 
       expect(cacheResult.isOk()).toBe(true);
       const verifyResult = validator.verifyReceiptOffline('invalid_receipt');
@@ -288,8 +314,14 @@ describe('OfflineValidator', () => {
     it('should mark all cached entries for revalidation', () => {
       const validator = createOfflineValidator();
 
-      validator.cacheVerificationResult('receipt_1', createMockVerificationResult({ transactionId: 'txn_1' }));
-      validator.cacheVerificationResult('receipt_2', createMockVerificationResult({ transactionId: 'txn_2' }));
+      validator.cacheVerificationResult(
+        'receipt_1',
+        createMockVerificationResult({ transactionId: 'txn_1' })
+      );
+      validator.cacheVerificationResult(
+        'receipt_2',
+        createMockVerificationResult({ transactionId: 'txn_2' })
+      );
 
       validator.notifyNetworkRestoration();
 
@@ -317,16 +349,22 @@ describe('OfflineValidator', () => {
     it('should return entries requiring revalidation', () => {
       const validator = createOfflineValidator();
 
-      validator.cacheVerificationResult('receipt_1', createMockVerificationResult({ transactionId: 'txn_1' }));
-      validator.cacheVerificationResult('receipt_2', createMockVerificationResult({ transactionId: 'txn_2' }));
+      validator.cacheVerificationResult(
+        'receipt_1',
+        createMockVerificationResult({ transactionId: 'txn_1' })
+      );
+      validator.cacheVerificationResult(
+        'receipt_2',
+        createMockVerificationResult({ transactionId: 'txn_2' })
+      );
 
       validator.notifyNetworkRestoration();
 
       const pending = validator.getPendingRevalidations();
 
       expect(pending.length).toBe(2);
-      expect(pending.map(p => p.receiptData)).toContain('receipt_1');
-      expect(pending.map(p => p.receiptData)).toContain('receipt_2');
+      expect(pending.map((p) => p.receiptData)).toContain('receipt_1');
+      expect(pending.map((p) => p.receiptData)).toContain('receipt_2');
     });
 
     // Given: No entries requiring revalidation
@@ -335,7 +373,10 @@ describe('OfflineValidator', () => {
     it('should return empty array when no revalidations pending', () => {
       const validator = createOfflineValidator();
 
-      validator.cacheVerificationResult('receipt_1', createMockVerificationResult());
+      validator.cacheVerificationResult(
+        'receipt_1',
+        createMockVerificationResult()
+      );
 
       const pending = validator.getPendingRevalidations();
 
@@ -370,13 +411,20 @@ describe('OfflineValidator', () => {
     it('should update cache with revalidation result', () => {
       const validator = createOfflineValidator();
       const receiptData = 'receipt_to_revalidate';
-      const originalResult = createMockVerificationResult({ transactionId: 'txn_old' });
+      const originalResult = createMockVerificationResult({
+        transactionId: 'txn_old',
+      });
 
       validator.cacheVerificationResult(receiptData, originalResult);
       validator.notifyNetworkRestoration();
 
-      const updatedResult = createMockVerificationResult({ transactionId: 'txn_new' });
-      const markResult = validator.markRevalidationComplete(receiptData, updatedResult);
+      const updatedResult = createMockVerificationResult({
+        transactionId: 'txn_new',
+      });
+      const markResult = validator.markRevalidationComplete(
+        receiptData,
+        updatedResult
+      );
 
       expect(markResult.isOk()).toBe(true);
 
@@ -391,7 +439,10 @@ describe('OfflineValidator', () => {
     it('should return error for non-existent receipt', () => {
       const validator = createOfflineValidator();
 
-      const result = validator.markRevalidationComplete('unknown_receipt', createMockVerificationResult());
+      const result = validator.markRevalidationComplete(
+        'unknown_receipt',
+        createMockVerificationResult()
+      );
 
       expect(result.isErr()).toBe(true);
       expect(result.err().code).toBe('RECEIPT_NOT_FOUND');
@@ -404,9 +455,15 @@ describe('OfflineValidator', () => {
       const validator = createOfflineValidator();
       const receiptData = 'receipt_not_pending';
 
-      validator.cacheVerificationResult(receiptData, createMockVerificationResult());
+      validator.cacheVerificationResult(
+        receiptData,
+        createMockVerificationResult()
+      );
 
-      const result = validator.markRevalidationComplete(receiptData, createMockVerificationResult());
+      const result = validator.markRevalidationComplete(
+        receiptData,
+        createMockVerificationResult()
+      );
 
       expect(result.isErr()).toBe(true);
       expect(result.err().code).toBe('NOT_PENDING_REVALIDATION');
@@ -420,8 +477,14 @@ describe('OfflineValidator', () => {
     it('should clear all cached entries', () => {
       const validator = createOfflineValidator();
 
-      validator.cacheVerificationResult('receipt_1', createMockVerificationResult());
-      validator.cacheVerificationResult('receipt_2', createMockVerificationResult());
+      validator.cacheVerificationResult(
+        'receipt_1',
+        createMockVerificationResult()
+      );
+      validator.cacheVerificationResult(
+        'receipt_2',
+        createMockVerificationResult()
+      );
 
       expect(validator.verifyReceiptOffline('receipt_1').isValid).toBe(true);
 
@@ -448,8 +511,14 @@ describe('OfflineValidator', () => {
     it('should return accurate cache statistics', () => {
       const validator = createOfflineValidator();
 
-      validator.cacheVerificationResult('receipt_1', createMockVerificationResult());
-      validator.cacheVerificationResult('receipt_2', createMockVerificationResult());
+      validator.cacheVerificationResult(
+        'receipt_1',
+        createMockVerificationResult()
+      );
+      validator.cacheVerificationResult(
+        'receipt_2',
+        createMockVerificationResult()
+      );
 
       const stats = validator.getCacheStats();
 
@@ -468,7 +537,10 @@ describe('OfflineValidator', () => {
     it('should include expired entry count in stats', () => {
       const validator = createOfflineValidator({ cacheExpirySec: 60 });
 
-      validator.cacheVerificationResult('receipt_1', createMockVerificationResult());
+      validator.cacheVerificationResult(
+        'receipt_1',
+        createMockVerificationResult()
+      );
 
       const mockNow = Date.now() + 61 * 1000;
       jest.useFakeTimers();
@@ -503,7 +575,9 @@ describe('OfflineValidator', () => {
       const validator = createOfflineValidator();
 
       // Step 1: Cache during offline mode
-      const originalResult = createMockVerificationResult({ transactionId: 'txn_original' });
+      const originalResult = createMockVerificationResult({
+        transactionId: 'txn_original',
+      });
       validator.cacheVerificationResult('receipt_workflow', originalResult);
 
       const offlineResult = validator.verifyReceiptOffline('receipt_workflow');
@@ -513,21 +587,29 @@ describe('OfflineValidator', () => {
       // Step 2: Network restoration
       validator.notifyNetworkRestoration();
 
-      const afterRestoration = validator.verifyReceiptOffline('receipt_workflow');
+      const afterRestoration =
+        validator.verifyReceiptOffline('receipt_workflow');
       expect(afterRestoration.requiresRevalidation).toBe(true);
 
       const pending = validator.getPendingRevalidations();
       expect(pending.length).toBe(1);
 
       // Step 3: Online revalidation
-      const revalidatedResult = createMockVerificationResult({ transactionId: 'txn_revalidated' });
-      const markResult = validator.markRevalidationComplete('receipt_workflow', revalidatedResult);
+      const revalidatedResult = createMockVerificationResult({
+        transactionId: 'txn_revalidated',
+      });
+      const markResult = validator.markRevalidationComplete(
+        'receipt_workflow',
+        revalidatedResult
+      );
       expect(markResult.isOk()).toBe(true);
 
       // Step 4: Verify updated cache
       const finalResult = validator.verifyReceiptOffline('receipt_workflow');
       expect(finalResult.isValid).toBe(true);
-      expect(finalResult.verificationResult?.transactionId).toBe('txn_revalidated');
+      expect(finalResult.verificationResult?.transactionId).toBe(
+        'txn_revalidated'
+      );
       expect(finalResult.requiresRevalidation).toBe(false);
     });
 
@@ -538,9 +620,18 @@ describe('OfflineValidator', () => {
       const validator = createOfflineValidator({ cacheExpirySec: 60 });
 
       // Cache multiple receipts
-      validator.cacheVerificationResult('receipt_1', createMockVerificationResult({ transactionId: 'txn_1' }));
-      validator.cacheVerificationResult('receipt_2', createMockVerificationResult({ transactionId: 'txn_2' }));
-      validator.cacheVerificationResult('receipt_3', createMockVerificationResult({ transactionId: 'txn_3' }));
+      validator.cacheVerificationResult(
+        'receipt_1',
+        createMockVerificationResult({ transactionId: 'txn_1' })
+      );
+      validator.cacheVerificationResult(
+        'receipt_2',
+        createMockVerificationResult({ transactionId: 'txn_2' })
+      );
+      validator.cacheVerificationResult(
+        'receipt_3',
+        createMockVerificationResult({ transactionId: 'txn_3' })
+      );
 
       // Trigger network restoration
       validator.notifyNetworkRestoration();
@@ -554,7 +645,10 @@ describe('OfflineValidator', () => {
         const updatedResult = createMockVerificationResult({
           transactionId: `${entry.originalResult?.transactionId}_revalidated`,
         });
-        const markResult = validator.markRevalidationComplete(entry.receiptData, updatedResult);
+        const markResult = validator.markRevalidationComplete(
+          entry.receiptData,
+          updatedResult
+        );
         expect(markResult.isOk()).toBe(true);
       }
 

@@ -29,17 +29,17 @@ jest.mock('@/database/client', () => ({
       values: jest.fn().mockResolvedValue(void 0),
     })),
     select: jest.fn(() => ({
-      from: jest.fn(function() {
+      from: jest.fn(function () {
         return {
-          where: jest.fn(function() {
+          where: jest.fn(function () {
             return {
               all: jest.fn(() => []),
               get: jest.fn(() => undefined),
             };
           }),
-          innerJoin: jest.fn(function() {
+          innerJoin: jest.fn(function () {
             return {
-              where: jest.fn(function() {
+              where: jest.fn(function () {
                 return {
                   all: jest.fn(() => []),
                 };
@@ -86,17 +86,17 @@ describe('Offline Purchase State Integration - Task 16.7', () => {
       values: jest.fn().mockResolvedValue(void 0),
     });
     (db.select as jest.Mock).mockReturnValue({
-      from: jest.fn(function() {
+      from: jest.fn(function () {
         return {
-          where: jest.fn(function() {
+          where: jest.fn(function () {
             return {
               all: jest.fn(() => []),
               get: jest.fn(() => undefined),
             };
           }),
-          innerJoin: jest.fn(function() {
+          innerJoin: jest.fn(function () {
             return {
-              where: jest.fn(function() {
+              where: jest.fn(function () {
                 return {
                   all: jest.fn(() => []),
                 };
@@ -260,7 +260,10 @@ describe('Offline Purchase State Integration - Task 16.7', () => {
       const offlineTransactionId = 'offline-txn-sync-001';
 
       // When: Sync reconciliation updates status
-      const result = await localDatabase.updateSyncStatus(offlineTransactionId, true);
+      const result = await localDatabase.updateSyncStatus(
+        offlineTransactionId,
+        true
+      );
 
       // Then: Sync status should be updated successfully
       expect(result.success).toBe(true);
@@ -276,7 +279,10 @@ describe('Offline Purchase State Integration - Task 16.7', () => {
       });
 
       // When: Attempting to update sync status
-      const result = await localDatabase.updateSyncStatus('offline-txn-001', true);
+      const result = await localDatabase.updateSyncStatus(
+        'offline-txn-001',
+        true
+      );
 
       // Then: Error should be marked as retryable
       expect(result.success).toBe(false);
@@ -320,11 +326,15 @@ describe('Offline Purchase State Integration - Task 16.7', () => {
       expect(recordResult.success).toBe(true);
 
       // Step 2: Check feature access works offline
-      const offlineAccess = featureGatingService.canAccessSync('advanced_features');
+      const offlineAccess =
+        featureGatingService.canAccessSync('advanced_features');
       expect(typeof offlineAccess).toBe('boolean');
 
       // Step 3: Network restored - update sync status
-      const syncResult = await localDatabase.updateSyncStatus('lifecycle-001', true);
+      const syncResult = await localDatabase.updateSyncStatus(
+        'lifecycle-001',
+        true
+      );
       expect(syncResult.success).toBe(true);
 
       // Step 4: Verify sync status update was called

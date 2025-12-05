@@ -5,7 +5,14 @@
  * columns, constraints, and indexes are properly configured.
  */
 
-import { purchases, purchaseFeatures, type Purchase, type NewPurchase, type PurchaseFeature, type NewPurchaseFeature } from '../schema';
+import {
+  purchases,
+  purchaseFeatures,
+  type Purchase,
+  type NewPurchase,
+  type PurchaseFeature,
+  type NewPurchaseFeature,
+} from '../schema';
 
 describe('Database Schema - Purchases Table', () => {
   describe('Table Definition', () => {
@@ -239,10 +246,22 @@ describe('Database Schema - Purchase Features Table', () => {
       // When: creating feature records for different purchases
       // Then: should allow many-to-one relationship for features
       const features: PurchaseFeature[] = [
-        { id: 1, purchaseId: 1, featureId: 'feature-shared', createdAt: 1234567890 },
-        { id: 2, purchaseId: 2, featureId: 'feature-shared', createdAt: 1234567890 },
+        {
+          id: 1,
+          purchaseId: 1,
+          featureId: 'feature-shared',
+          createdAt: 1234567890,
+        },
+        {
+          id: 2,
+          purchaseId: 2,
+          featureId: 'feature-shared',
+          createdAt: 1234567890,
+        },
       ];
-      expect(features.filter((f) => f.featureId === 'feature-shared')).toHaveLength(2);
+      expect(
+        features.filter((f) => f.featureId === 'feature-shared')
+      ).toHaveLength(2);
     });
   });
 });

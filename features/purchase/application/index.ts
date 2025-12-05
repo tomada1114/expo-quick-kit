@@ -23,14 +23,20 @@
  * @module features/purchase/application
  */
 
-export { featureGatingService, type FeatureGatingService } from './feature-gating-service';
+export {
+  featureGatingService,
+  type FeatureGatingService,
+} from './feature-gating-service';
 export { purchaseService } from './purchase-service';
 export type { PurchaseFlowError } from './purchase-service';
 export { TrialManager } from './trial-manager';
 export { restoreService } from './restore-service';
 export type { RestoreResult, RestoreError } from './restore-service';
 export { syncReconciler } from './sync-reconciler';
-export type { ReconciliationResult, ReconciliationError } from './sync-reconciler';
+export type {
+  ReconciliationResult,
+  ReconciliationError,
+} from './sync-reconciler';
 export { recoveryHandler } from './recovery-handler';
 export type {
   DBCorruptionResult,
@@ -40,8 +46,16 @@ export type {
   RecoveryValidation,
   RecoveryStatus,
 } from './recovery-handler';
-export { createAuthorizationService, authorizationService } from './authorization-service';
-export type { AuthorizationService, AuthorizationError, CurrentUser, CurrentUserProvider } from './authorization-service';
+export {
+  createAuthorizationService,
+  authorizationService,
+} from './authorization-service';
+export type {
+  AuthorizationService,
+  AuthorizationError,
+  CurrentUser,
+  CurrentUserProvider,
+} from './authorization-service';
 export { createOfflineValidator } from './offline-validator';
 export type {
   OfflineValidator,

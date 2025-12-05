@@ -137,10 +137,7 @@ export class ReceiptVerifier {
       const receipt = parseResult.data;
 
       // Verify signature
-      const verifyResult = await this.verifySignature(
-        receiptData,
-        signature
-      );
+      const verifyResult = await this.verifySignature(receiptData, signature);
       if (!verifyResult.success) {
         return { success: false, error: verifyResult.error };
       }
@@ -270,7 +267,9 @@ export class ReceiptVerifier {
    * - When: Attempting to cache
    * - Then: Returns UNKNOWN_ERROR with details
    */
-  async cacheVerificationKey(key: string): Promise<Result<void, VerificationError>> {
+  async cacheVerificationKey(
+    key: string
+  ): Promise<Result<void, VerificationError>> {
     try {
       // Determine platform and cache using VerificationKeyManager
       const platform = Platform.OS as 'ios' | 'android';
@@ -584,4 +583,7 @@ export const receiptVerifier = new ReceiptVerifier();
 /**
  * Export type for Result with VerificationError
  */
-export type VerificationResultType = Result<VerificationResult, VerificationError>;
+export type VerificationResultType = Result<
+  VerificationResult,
+  VerificationError
+>;

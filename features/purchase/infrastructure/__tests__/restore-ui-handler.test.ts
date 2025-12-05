@@ -90,7 +90,9 @@ describe('RestoreUIHandler - Task 8.3: Restore Error UI Handling', () => {
       // Then: Should show "no purchases" message
       expect(uiState.isLoading).toBe(false);
       expect(uiState.emptyStateMessage).toBeDefined();
-      expect(uiState.emptyStateMessage).toMatch(/no purchases|history is empty/i);
+      expect(uiState.emptyStateMessage).toMatch(
+        /no purchases|history is empty/i
+      );
     });
   });
 

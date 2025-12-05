@@ -435,7 +435,9 @@ export class AnalyticsEngine {
    *
    * Requirements: 10.1 - Provider integration, retry logic, offline support
    */
-  private async sendEventToProvidersAsync(event: AnalyticsEvent): Promise<void> {
+  private async sendEventToProvidersAsync(
+    event: AnalyticsEvent
+  ): Promise<void> {
     // Skip if already sent
     if (event.sent) return;
 
@@ -664,9 +666,7 @@ export const legacyAnalyticsEngine = {
     return [...this.private_events];
   },
 
-  getEventsByType<T extends PurchaseEvent['type']>(
-    type: T
-  ): PurchaseEvent[] {
+  getEventsByType<T extends PurchaseEvent['type']>(type: T): PurchaseEvent[] {
     return this.private_events.filter((event) => event.type === type);
   },
 

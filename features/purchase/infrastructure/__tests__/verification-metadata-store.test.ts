@@ -38,7 +38,9 @@ describe('VerificationMetadataStore', () => {
     it('should save verification metadata to secure store', async () => {
       // Given: Valid verification metadata
       // When: Saving verification metadata
-      const result = await store.saveVerificationMetadata(mockVerificationMetadata);
+      const result = await store.saveVerificationMetadata(
+        mockVerificationMetadata
+      );
 
       // Then: Should succeed with no error
       expect(result.success).toBe(true);
@@ -150,7 +152,9 @@ describe('VerificationMetadataStore', () => {
       (SecureStore.setItemAsync as jest.Mock).mockRejectedValueOnce(storeError);
 
       // When: Attempting to save metadata
-      const result = await store.saveVerificationMetadata(mockVerificationMetadata);
+      const result = await store.saveVerificationMetadata(
+        mockVerificationMetadata
+      );
 
       // Then: Should return STORE_ERROR
       expect(result.success).toBe(false);
@@ -161,7 +165,9 @@ describe('VerificationMetadataStore', () => {
     it('should return error when deleting non-existent metadata', async () => {
       // Given: Secure store delete fails
       const storeError = new Error('Item not found');
-      (SecureStore.deleteItemAsync as jest.Mock).mockRejectedValueOnce(storeError);
+      (SecureStore.deleteItemAsync as jest.Mock).mockRejectedValueOnce(
+        storeError
+      );
 
       // When: Attempting to delete metadata
       const result = await store.deleteVerificationMetadata(mockTransactionId);
@@ -307,7 +313,9 @@ describe('VerificationMetadataStore', () => {
       );
 
       // When: Attempting to save
-      const result = await store.saveVerificationMetadata(mockVerificationMetadata);
+      const result = await store.saveVerificationMetadata(
+        mockVerificationMetadata
+      );
 
       // Then: Should return appropriate error
       expect(result.success).toBe(false);
@@ -351,9 +359,8 @@ describe('VerificationMetadataStore', () => {
       expect(getResult.data).toEqual(mockVerificationMetadata);
 
       // When: Deleting metadata
-      const deleteResult = await store.deleteVerificationMetadata(
-        mockTransactionId
-      );
+      const deleteResult =
+        await store.deleteVerificationMetadata(mockTransactionId);
       expect(deleteResult.success).toBe(true);
     });
 

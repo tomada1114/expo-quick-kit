@@ -1,5 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  Pressable,
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
 import { useThemedColors } from '@/hooks/use-theme-color';
 import { Spacing, Typography } from '@/constants/theme';
 import { PurchaseService } from '@/features/purchase/application/purchase-service';
@@ -127,9 +133,10 @@ export function PaywallCTAButton({
         accessibilityHint="Tap to purchase this product"
         style={({ pressed }) => [
           styles.button,
-          pressed && !isButtonDisabled && {
-            opacity: 0.8,
-          },
+          pressed &&
+            !isButtonDisabled && {
+              opacity: 0.8,
+            },
         ]}
       >
         {isProcessing || isLoading ? (

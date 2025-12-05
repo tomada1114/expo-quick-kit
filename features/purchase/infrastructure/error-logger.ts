@@ -97,10 +97,9 @@ export const errorLogger = {
       errorCode: error.code,
       message: error.message,
       retryable: error.retryable,
-      platform: ('platform' in error) ? (error as any).platform : undefined,
-      nativeErrorCode: ('nativeErrorCode' in error)
-        ? (error as any).nativeErrorCode
-        : undefined,
+      platform: 'platform' in error ? (error as any).platform : undefined,
+      nativeErrorCode:
+        'nativeErrorCode' in error ? (error as any).nativeErrorCode : undefined,
       metadata,
     };
 
@@ -178,10 +177,7 @@ export const errorLogger = {
    * @param context - Additional metadata
    * @returns Logged error entry
    */
-  logError(
-    error: unknown,
-    context?: Record<string, unknown>
-  ): ErrorLogEntry {
+  logError(error: unknown, context?: Record<string, unknown>): ErrorLogEntry {
     // If error is already an ErrorLogEntry (e.g., from tests), use it directly
     if (
       error &&
@@ -202,8 +198,7 @@ export const errorLogger = {
 
     // Otherwise, create a new entry from the error
     const timestamp = new Date();
-    const message =
-      error instanceof Error ? error.message : String(error);
+    const message = error instanceof Error ? error.message : String(error);
     const stack = error instanceof Error ? error.stack : undefined;
 
     const entry: ErrorLogEntry = {
@@ -325,8 +320,7 @@ export const errorLogger = {
 
       // Count by platform
       if (entry.platform) {
-        byPlatform[entry.platform] =
-          (byPlatform[entry.platform] ?? 0) + 1;
+        byPlatform[entry.platform] = (byPlatform[entry.platform] ?? 0) + 1;
       }
 
       // Count retryable

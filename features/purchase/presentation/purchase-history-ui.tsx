@@ -76,7 +76,9 @@ const PurchaseHistoryUI: React.FC = () => {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [error, setError] = useState<DatabaseError | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(null);
+  const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(
+    null
+  );
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   /**
@@ -106,7 +108,7 @@ const PurchaseHistoryUI: React.FC = () => {
       }
 
       // Convert timestamp to Date if necessary
-      const processedPurchases = result.data.map(purchase => {
+      const processedPurchases = result.data.map((purchase) => {
         const purchasedAt =
           purchase.purchasedAt instanceof Date
             ? purchase.purchasedAt
@@ -228,23 +230,28 @@ const PurchaseHistoryUI: React.FC = () => {
           style={({ pressed }) => [
             styles.purchaseItem,
             {
-              backgroundColor: isDark ? colors.background.secondary : colors.background.base,
+              backgroundColor: isDark
+                ? colors.background.secondary
+                : colors.background.base,
               borderColor: colors.interactive.separator,
               opacity: pressed ? 0.7 : 1,
             },
-          ]}>
+          ]}
+        >
           {/* Main info row */}
           <View style={styles.mainContent}>
             {/* Transaction ID and Product ID */}
             <View style={styles.headerRow}>
               <Text
                 style={[styles.transactionId, { color: colors.text.primary }]}
-                numberOfLines={1}>
+                numberOfLines={1}
+              >
                 {safeTransactionId}
               </Text>
               <Text
                 style={[styles.productId, { color: colors.text.secondary }]}
-                numberOfLines={1}>
+                numberOfLines={1}
+              >
                 {safeProductId}
               </Text>
             </View>
@@ -277,7 +284,8 @@ const PurchaseHistoryUI: React.FC = () => {
                     ? colors.semantic.success
                     : colors.semantic.warning,
                 },
-              ]}>
+              ]}
+            >
               <Text style={[styles.statusText, { color: colors.text.inverse }]}>
                 {item.isVerified ? '✓' : '!'}
               </Text>
@@ -293,7 +301,8 @@ const PurchaseHistoryUI: React.FC = () => {
                     ? colors.semantic.info
                     : colors.interactive.fillSecondary,
                 },
-              ]}>
+              ]}
+            >
               <Text style={[styles.statusText, { color: colors.text.inverse }]}>
                 {item.isSynced ? '↓' : '↑'}
               </Text>
@@ -312,10 +321,8 @@ const PurchaseHistoryUI: React.FC = () => {
     return (
       <View
         testID="empty-state"
-        style={[
-          styles.container,
-          { backgroundColor: colors.background.base },
-        ]}>
+        style={[styles.container, { backgroundColor: colors.background.base }]}
+      >
         <View style={styles.emptyContent}>
           <Text style={[styles.emptyTitle, { color: colors.text.primary }]}>
             No purchases
@@ -335,10 +342,8 @@ const PurchaseHistoryUI: React.FC = () => {
     return (
       <View
         testID="error-state"
-        style={[
-          styles.container,
-          { backgroundColor: colors.background.base },
-        ]}>
+        style={[styles.container, { backgroundColor: colors.background.base }]}
+      >
         <View style={styles.errorContent}>
           <Text style={[styles.errorTitle, { color: colors.semantic.error }]}>
             Error loading purchases
@@ -349,12 +354,12 @@ const PurchaseHistoryUI: React.FC = () => {
           {error.retryable && (
             <Pressable
               testID="retry-button"
-              style={[
-                styles.retryButton,
-                { backgroundColor: colors.primary },
-              ]}
-              onPress={handleRetry}>
-              <Text style={[styles.retryButtonText, { color: colors.text.inverse }]}>
+              style={[styles.retryButton, { backgroundColor: colors.primary }]}
+              onPress={handleRetry}
+            >
+              <Text
+                style={[styles.retryButtonText, { color: colors.text.inverse }]}
+              >
                 Try Again
               </Text>
             </Pressable>
@@ -371,10 +376,8 @@ const PurchaseHistoryUI: React.FC = () => {
     return (
       <View
         testID="loading-state"
-        style={[
-          styles.container,
-          { backgroundColor: colors.background.base },
-        ]}>
+        style={[styles.container, { backgroundColor: colors.background.base }]}
+      >
         <ActivityIndicator
           testID="loading-indicator"
           size="large"
@@ -392,11 +395,13 @@ const PurchaseHistoryUI: React.FC = () => {
    * Render purchase list
    */
   return (
-    <View style={[styles.container, { backgroundColor: colors.background.base }]}>
+    <View
+      style={[styles.container, { backgroundColor: colors.background.base }]}
+    >
       <FlatList
         testID="purchase-list"
         data={purchases}
-        keyExtractor={item => item.transactionId}
+        keyExtractor={(item) => item.transactionId}
         renderItem={renderPurchaseItem}
         refreshControl={
           <RefreshControl

@@ -19,7 +19,10 @@
  * @module features/purchase/infrastructure/restore-ui-handler
  */
 
-import type { RestoreError, RestoreResult } from '../application/restore-service';
+import type {
+  RestoreError,
+  RestoreResult,
+} from '../application/restore-service';
 
 /**
  * UI state for restoration flow
@@ -71,7 +74,9 @@ export class RestoreUIHandler {
 
     const { code, retryable } = error as any;
 
-    const isRetryable = retryable !== false && ['NETWORK_ERROR', 'STORE_PROBLEM_ERROR', 'DB_ERROR'].includes(code);
+    const isRetryable =
+      retryable !== false &&
+      ['NETWORK_ERROR', 'STORE_PROBLEM_ERROR', 'DB_ERROR'].includes(code);
 
     return {
       isLoading: false,
@@ -177,7 +182,8 @@ export class RestoreUIHandler {
     if (type === 'success') {
       const result = data as RestoreResult;
       return {
-        title: result.restoredCount === 0 ? 'No Purchases' : 'Restoration Complete',
+        title:
+          result.restoredCount === 0 ? 'No Purchases' : 'Restoration Complete',
         message:
           result.restoredCount === 0
             ? 'No purchase history found.'

@@ -20,28 +20,32 @@
  */
 
 // Mock database client to avoid native module initialization
-jest.mock('react-native', () => ({
-  Platform: {
-    OS: 'ios',
-  },
-}), { virtual: true });
+jest.mock(
+  'react-native',
+  () => ({
+    Platform: {
+      OS: 'ios',
+    },
+  }),
+  { virtual: true }
+);
 
 jest.mock('@/database/client', () => ({
   db: {
-    insert: jest.fn(function() {
+    insert: jest.fn(function () {
       return {
-        values: jest.fn(function() {
+        values: jest.fn(function () {
           return {
             run: jest.fn(() => ({ changes: 1, lastId: 1 })),
           };
         }),
       };
     }),
-    select: jest.fn(function() {
+    select: jest.fn(function () {
       return {
-        from: jest.fn(function() {
+        from: jest.fn(function () {
           return {
-            where: jest.fn(function() {
+            where: jest.fn(function () {
               return {
                 all: jest.fn(() => []),
                 get: jest.fn(() => undefined),
@@ -51,9 +55,9 @@ jest.mock('@/database/client', () => ({
         }),
       };
     }),
-    delete: jest.fn(function() {
+    delete: jest.fn(function () {
       return {
-        where: jest.fn(function() {
+        where: jest.fn(function () {
           return {
             run: jest.fn(() => ({ changes: 1 })),
           };

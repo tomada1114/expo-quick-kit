@@ -79,24 +79,17 @@
       "indexes": {
         "purchase_features_purchase_id_feature_id_unique": {
           "name": "purchase_features_purchase_id_feature_id_unique",
-          "columns": [
-            "purchase_id",
-            "feature_id"
-          ],
+          "columns": ["purchase_id", "feature_id"],
           "isUnique": true
         },
         "idx_purchase_id": {
           "name": "idx_purchase_id",
-          "columns": [
-            "purchase_id"
-          ],
+          "columns": ["purchase_id"],
           "isUnique": false
         },
         "idx_feature_id": {
           "name": "idx_feature_id",
-          "columns": [
-            "feature_id"
-          ],
+          "columns": ["feature_id"],
           "isUnique": false
         }
       },
@@ -193,23 +186,17 @@
       "indexes": {
         "purchases_transaction_id_unique": {
           "name": "purchases_transaction_id_unique",
-          "columns": [
-            "transaction_id"
-          ],
+          "columns": ["transaction_id"],
           "isUnique": true
         },
         "idx_product_id": {
           "name": "idx_product_id",
-          "columns": [
-            "product_id"
-          ],
+          "columns": ["product_id"],
           "isUnique": false
         },
         "idx_is_synced": {
           "name": "idx_is_synced",
-          "columns": [
-            "is_synced"
-          ],
+          "columns": ["is_synced"],
           "isUnique": false
         }
       },

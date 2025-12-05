@@ -30,9 +30,9 @@ jest.mock('@/database/client', () => ({
       }),
     })),
     select: jest.fn(() => ({
-      from: jest.fn(function() {
+      from: jest.fn(function () {
         return {
-          where: jest.fn(function() {
+          where: jest.fn(function () {
             return {
               all: jest.fn(() => []),
               get: jest.fn(() => undefined),
@@ -77,7 +77,10 @@ import { purchaseRepository } from '../../core/repository';
 import { purchaseService } from '../../application/purchase-service';
 import { receiptVerifier } from '../../infrastructure/receipt-verifier';
 import { verificationMetadataStore } from '../../infrastructure/verification-metadata-store';
-import { retryHandler, DEFAULT_RETRY_CONFIG } from '../../infrastructure/retry-handler';
+import {
+  retryHandler,
+  DEFAULT_RETRY_CONFIG,
+} from '../../infrastructure/retry-handler';
 import type { Transaction, PurchaseError } from '../../core/types';
 
 describe('Error Recovery with Retry Integration - Task 16.9', () => {
@@ -117,7 +120,9 @@ describe('Error Recovery with Retry Integration - Task 16.9', () => {
     });
 
     // Mock successful metadata save by default
-    (verificationMetadataStore.saveVerificationMetadata as jest.Mock).mockResolvedValue({
+    (
+      verificationMetadataStore.saveVerificationMetadata as jest.Mock
+    ).mockResolvedValue({
       success: true,
     });
   });
@@ -194,26 +199,22 @@ describe('Error Recovery with Retry Integration - Task 16.9', () => {
 
   describe('Sad Path - Expected error conditions with retry exhaustion', () => {
     // E2E-4: Network error persists through all retries
-    it(
-      'should fail gracefully after max retries exhausted (exponential backoff)',
-      async () => {
-        // Given: Purchase flow that consistently fails with network error
-        (purchaseRepository.launchPurchaseFlow as jest.Mock).mockResolvedValue({
-          success: false,
-          error: createMockNetworkError(),
-        });
+    it('should fail gracefully after max retries exhausted (exponential backoff)', async () => {
+      // Given: Purchase flow that consistently fails with network error
+      (purchaseRepository.launchPurchaseFlow as jest.Mock).mockResolvedValue({
+        success: false,
+        error: createMockNetworkError(),
+      });
 
-        // When: Purchase is initiated with exhausted retries
-        const result = await purchaseService.purchaseProduct('premium_unlock');
+      // When: Purchase is initiated with exhausted retries
+      const result = await purchaseService.purchaseProduct('premium_unlock');
 
-        // Then: Fails after 4 total attempts (1 initial + 3 retries)
-        expect(result.success).toBe(false);
-        expect(result.error?.code).toBe('NETWORK_ERROR');
-        expect(result.error?.retryable).toBe(true);
-        expect(purchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(4); // 1 + 3 retries
-      },
-      10000 // Increase timeout to 10s to allow for exponential backoff delays
-    );
+      // Then: Fails after 4 total attempts (1 initial + 3 retries)
+      expect(result.success).toBe(false);
+      expect(result.error?.code).toBe('NETWORK_ERROR');
+      expect(result.error?.retryable).toBe(true);
+      expect(purchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(4); // 1 + 3 retries
+    }, 10000); // Increase timeout to 10s to allow for exponential backoff delays
 
     // E2E-5: Non-retryable error fails immediately without retry
     it('should fail immediately for non-retryable errors (no retry)', async () => {
@@ -267,7 +268,9 @@ describe('Error Recovery with Retry Integration - Task 16.9', () => {
         data: createMockTransaction(),
       });
 
-      (verificationMetadataStore.saveVerificationMetadata as jest.Mock).mockResolvedValue({
+      (
+        verificationMetadataStore.saveVerificationMetadata as jest.Mock
+      ).mockResolvedValue({
         success: false,
         error: {
           code: 'DB_ERROR',
@@ -426,9 +429,9 @@ describe('Error Recovery with Retry Integration - Task 16.9', () => {
         data: createMockTransaction(),
       });
 
-      (verificationMetadataStore.saveVerificationMetadata as jest.Mock).mockRejectedValue(
-        new Error('Database connection lost')
-      );
+      (
+        verificationMetadataStore.saveVerificationMetadata as jest.Mock
+      ).mockRejectedValue(new Error('Database connection lost'));
 
       // When: Purchase is initiated
       const result = await purchaseService.purchaseProduct('premium_unlock');
@@ -454,19 +457,19 @@ describe('Error Recovery with Retry Integration - Task 16.9', () => {
       );
 
       let metadataAttempts = 0;
-      (verificationMetadataStore.saveVerificationMetadata as jest.Mock).mockImplementation(
-        async () => {
-          metadataAttempts++;
-          // Fail first time, succeed on potential retry
-          if (metadataAttempts === 1) {
-            return {
-              success: false,
-              error: { code: 'TRANSIENT_DB_ERROR' },
-            };
-          }
-          return { success: true };
+      (
+        verificationMetadataStore.saveVerificationMetadata as jest.Mock
+      ).mockImplementation(async () => {
+        metadataAttempts++;
+        // Fail first time, succeed on potential retry
+        if (metadataAttempts === 1) {
+          return {
+            success: false,
+            error: { code: 'TRANSIENT_DB_ERROR' },
+          };
         }
-      );
+        return { success: true };
+      });
 
       // When: Purchase is initiated
       const result = await purchaseService.purchaseProduct('premium_unlock');
@@ -531,7 +534,9 @@ describe('Error Recovery with Retry Integration - Task 16.9', () => {
         },
       });
 
-      (verificationMetadataStore.saveVerificationMetadata as jest.Mock).mockResolvedValue({
+      (
+        verificationMetadataStore.saveVerificationMetadata as jest.Mock
+      ).mockResolvedValue({
         success: true,
       });
 
@@ -544,7 +549,9 @@ describe('Error Recovery with Retry Integration - Task 16.9', () => {
       expect(result.data?.isSynced).toBe(false);
       expect(purchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(2); // 1 fail + 1 success
       expect(receiptVerifier.verifyReceiptSignature).toHaveBeenCalledTimes(1);
-      expect(verificationMetadataStore.saveVerificationMetadata).toHaveBeenCalledTimes(1);
+      expect(
+        verificationMetadataStore.saveVerificationMetadata
+      ).toHaveBeenCalledTimes(1);
     });
 
     // E2E-17: Custom retry configuration

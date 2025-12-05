@@ -110,7 +110,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
       await recordTestPurchase(purchase.transactionId, purchase.isVerified);
 
       // When: updateVerificationStatus is called to verify
-      const result = await localDatabase.updateVerificationStatus('txn-verify-001', true);
+      const result = await localDatabase.updateVerificationStatus(
+        'txn-verify-001',
+        true
+      );
 
       // Then: Should successfully update the verification status
       expect(result.success).toBe(true);
@@ -134,7 +137,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
       await recordTestPurchase(purchase.transactionId, purchase.isVerified);
 
       // When: updateVerificationStatus is called to unverify
-      const result = await localDatabase.updateVerificationStatus('txn-unverify-001', false);
+      const result = await localDatabase.updateVerificationStatus(
+        'txn-unverify-001',
+        false
+      );
 
       // Then: Should successfully update to false
       expect(result.success).toBe(true);
@@ -257,7 +263,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
     it('should return INVALID_INPUT error for null transactionId', async () => {
       // Given: Null transaction ID
       // When: updateVerificationStatus is called
-      const result = await localDatabase.updateVerificationStatus(null as any, true);
+      const result = await localDatabase.updateVerificationStatus(
+        null as any,
+        true
+      );
 
       // Then: Should return INVALID_INPUT error
       expect(result.success).toBe(false);
@@ -269,7 +278,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
     it('should return INVALID_INPUT error for undefined transactionId', async () => {
       // Given: Undefined transaction ID
       // When: updateVerificationStatus is called
-      const result = await localDatabase.updateVerificationStatus(undefined as any, true);
+      const result = await localDatabase.updateVerificationStatus(
+        undefined as any,
+        true
+      );
 
       // Then: Should return INVALID_INPUT error
       expect(result.success).toBe(false);
@@ -301,7 +313,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
       await recordTestPurchase(purchase.transactionId, purchase.isVerified);
 
       // When: updateVerificationStatus is called
-      const result = await localDatabase.updateVerificationStatus(longTxnId, true);
+      const result = await localDatabase.updateVerificationStatus(
+        longTxnId,
+        true
+      );
 
       // Then: Should succeed
       expect(result.success).toBe(true);
@@ -317,7 +332,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
       await recordTestPurchase(purchase.transactionId, purchase.isVerified);
 
       // When: updateVerificationStatus is called
-      const result = await localDatabase.updateVerificationStatus(specialTxnId, true);
+      const result = await localDatabase.updateVerificationStatus(
+        specialTxnId,
+        true
+      );
 
       // Then: Should succeed
       expect(result.success).toBe(true);
@@ -402,7 +420,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
       await recordTestPurchase(purchase.transactionId, purchase.isVerified);
 
       // When: updateVerificationStatus succeeds
-      const result = await localDatabase.updateVerificationStatus('txn-consistency-001', true);
+      const result = await localDatabase.updateVerificationStatus(
+        'txn-consistency-001',
+        true
+      );
 
       // Then: Database is in consistent state
       expect(result.success).toBe(true);
@@ -442,7 +463,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
     it('should integrate with recordPurchase and synchronously reflect changes', async () => {
       // Given: A purchase is recorded as unverified
       const purchase = createTestPurchase('txn-integration-verify-001', false);
-      const recordResult = await recordTestPurchase(purchase.transactionId, purchase.isVerified);
+      const recordResult = await recordTestPurchase(
+        purchase.transactionId,
+        purchase.isVerified
+      );
       expect(recordResult.success).toBe(true);
 
       // When: Verification status is updated
@@ -476,7 +500,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
       );
       expect(verifyResult.success).toBe(true);
 
-      const syncResult = await localDatabase.updateSyncStatus('txn-sync-verify-001', true);
+      const syncResult = await localDatabase.updateSyncStatus(
+        'txn-sync-verify-001',
+        true
+      );
       expect(syncResult.success).toBe(true);
 
       // Then: Both flags are updated correctly
@@ -513,7 +540,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
 
     it('should return correct error structure on NOT_FOUND', async () => {
       // When: updateVerificationStatus called with non-existent ID
-      const result = await localDatabase.updateVerificationStatus('txn-not-found', true);
+      const result = await localDatabase.updateVerificationStatus(
+        'txn-not-found',
+        true
+      );
 
       // Then: Error structure is correct
       expect(result.success).toBe(false);
@@ -534,7 +564,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
       await recordTestPurchase(purchase.transactionId, purchase.isVerified);
 
       // When: Called with correct types
-      const result = await localDatabase.updateVerificationStatus('txn-sig-001', true);
+      const result = await localDatabase.updateVerificationStatus(
+        'txn-sig-001',
+        true
+      );
 
       // Then: Should work without type errors
       expect(result.success).toBe(true);
@@ -546,7 +579,10 @@ describe('LocalDatabase - updateVerificationStatus (Task 11.5)', () => {
       await recordTestPurchase(purchase.transactionId, purchase.isVerified);
 
       // When: Called
-      const result = localDatabase.updateVerificationStatus('txn-return-001', true);
+      const result = localDatabase.updateVerificationStatus(
+        'txn-return-001',
+        true
+      );
 
       // Then: Should return Promise
       expect(result).toBeInstanceOf(Promise);

@@ -18,7 +18,13 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  within,
+} from '@testing-library/react-native';
 import { PaywallComponent, type PaywallComponentProps } from '../paywall';
 import { usePurchaseStore } from '@/features/purchase/infrastructure/purchase-ui-store';
 import type { PurchaseFlowError } from '@/features/purchase/core/types';
@@ -114,9 +120,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: Loading state becomes true
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Loading overlay should appear
       await waitFor(() => {
@@ -136,9 +140,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: Loading overlay is displayed
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: ActivityIndicator should be visible
       await waitFor(() => {
@@ -158,9 +160,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: Loading overlay is shown
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Loading message should be displayed
       await waitFor(() => {
@@ -180,9 +180,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: Loading state is active
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Purchase button should be disabled
       await waitFor(() => {
@@ -202,14 +200,12 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: User attempts to tap product cards
-      const { getAllByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getAllByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Product cards should not respond to press
       await waitFor(() => {
         const cards = getAllByTestId('paywall-product-card');
-        cards.forEach(card => {
+        cards.forEach((card) => {
           expect(card).toBeDisabled();
         });
       });
@@ -248,9 +244,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: User attempts to scroll
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: ScrollView should be disabled
       await waitFor(() => {
@@ -314,7 +308,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
         expect(button).not.toBeDisabled();
 
         const cards = getAllByTestId('paywall-product-card');
-        cards.forEach(card => {
+        cards.forEach((card) => {
           expect(card).not.toBeDisabled();
         });
       });
@@ -450,9 +444,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: Error is displayed
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Retry option should be visible
       await waitFor(() => {
@@ -478,9 +470,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: Purchase fails and loading ends
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Product selection should be preserved
       await waitFor(() => {
@@ -540,9 +530,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       };
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // When: User taps purchase button twice rapidly
       const button = getByTestId('paywall-cta-button');
@@ -566,9 +554,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       };
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
-      const { getAllByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getAllByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // When: User attempts to select another product while loading
       const cards = getAllByTestId('paywall-product-card');
@@ -592,7 +578,11 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} onDismiss={onDismiss} allowDismiss={true} />
+        <PaywallComponent
+          {...defaultProps}
+          onDismiss={onDismiss}
+          allowDismiss={true}
+        />
       );
 
       // When: User taps dismiss button while loading
@@ -614,9 +604,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: isLoading becomes true without product
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Loading should still display
       await waitFor(() => {
@@ -636,9 +624,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: isLoading becomes true with empty products
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Loading overlay should still display correctly
       await waitFor(() => {
@@ -685,9 +671,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: Loading overlay is shown
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Overlay should cover full screen
       await waitFor(() => {
@@ -749,9 +733,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       }
 
       // Then: isLoading should be set to false in finally block
-      const { rerender } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { rerender } = render(<PaywallComponent {...defaultProps} />);
 
       mockStore.isLoading = false;
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
@@ -772,9 +754,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       };
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // When: Button is pressed when isLoading is false
       const button = getByTestId('paywall-cta-button');
@@ -811,9 +791,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: ActivityIndicator component is disabled/fails
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Loading text should still be visible as fallback
       await waitFor(() => {
@@ -833,9 +811,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       // When: Overlay is shown
-      const { getByTestId } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { getByTestId } = render(<PaywallComponent {...defaultProps} />);
 
       // Then: Overlay should have high z-index
       await waitFor(() => {
@@ -858,9 +834,7 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
 
       // When: 30 seconds elapse
       jest.useFakeTimers();
-      const { rerender } = render(
-        <PaywallComponent {...defaultProps} />
-      );
+      const { rerender } = render(<PaywallComponent {...defaultProps} />);
 
       // Simulate timeout
       jest.advanceTimersByTime(30000);
@@ -923,7 +897,10 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
 
       const { getByTestId, rerender } = render(
-        <PaywallComponent {...defaultProps} onPurchaseComplete={onPurchaseComplete} />
+        <PaywallComponent
+          {...defaultProps}
+          onPurchaseComplete={onPurchaseComplete}
+        />
       );
 
       // When: User taps purchase button
@@ -936,7 +913,12 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
         isLoading: true,
       };
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
-      rerender(<PaywallComponent {...defaultProps} onPurchaseComplete={onPurchaseComplete} />);
+      rerender(
+        <PaywallComponent
+          {...defaultProps}
+          onPurchaseComplete={onPurchaseComplete}
+        />
+      );
 
       await waitFor(() => {
         const overlay = getByTestId('paywall-loading-overlay');
@@ -950,7 +932,12 @@ describe('PaywallComponent - Loading State (Task 12.4)', () => {
         selectedProductId: undefined,
       };
       (usePurchaseStore as jest.Mock).mockReturnValue(mockStore);
-      rerender(<PaywallComponent {...defaultProps} onPurchaseComplete={onPurchaseComplete} />);
+      rerender(
+        <PaywallComponent
+          {...defaultProps}
+          onPurchaseComplete={onPurchaseComplete}
+        />
+      );
 
       // Then: Loading overlay should disappear and callback should be called
       await waitFor(() => {

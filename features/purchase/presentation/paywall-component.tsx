@@ -62,7 +62,12 @@ export interface Purchase {
  * Error structure from PurchaseService.
  */
 export interface PurchaseFlowError {
-  code: 'CANCELLED' | 'NETWORK_ERROR' | 'VERIFICATION_FAILED' | 'DB_ERROR' | 'UNKNOWN_ERROR';
+  code:
+    | 'CANCELLED'
+    | 'NETWORK_ERROR'
+    | 'VERIFICATION_FAILED'
+    | 'DB_ERROR'
+    | 'UNKNOWN_ERROR';
   retryable: boolean;
 }
 
@@ -112,15 +117,16 @@ export function PaywallComponent({
   allowDismiss = true,
 }: PaywallComponentProps): React.JSX.Element {
   const { colors } = useThemedColors();
-  const { selectedProductId, setSelectedProductId, resetSelection } = usePaywallStore();
+  const { selectedProductId, setSelectedProductId, resetSelection } =
+    usePaywallStore();
 
   // State management
   const [isLoading, setIsLoading] = useState(true);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const [unlockedFeatures, setUnlockedFeatures] = useState<Map<string, FeatureDefinition[]>>(
-    new Map()
-  );
+  const [unlockedFeatures, setUnlockedFeatures] = useState<
+    Map<string, FeatureDefinition[]>
+  >(new Map());
   const [error, setError] = useState<PurchaseFlowError | null>(null);
 
   // Load products and features on mount
@@ -197,7 +203,8 @@ export function PaywallComponent({
     try {
       // TODO: Call PurchaseService.purchaseProduct(selectedProductId)
       // For now, simulate the call
-      const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+      const delay = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms));
       await delay(2000);
 
       // Simulate successful purchase
@@ -209,7 +216,8 @@ export function PaywallComponent({
         currencyCode: 'USD',
         isVerified: true,
         isSynced: true,
-        unlockedFeatures: unlockedFeatures.get(selectedProductId)?.map((f) => f.id) ?? [],
+        unlockedFeatures:
+          unlockedFeatures.get(selectedProductId)?.map((f) => f.id) ?? [],
       };
 
       onPurchaseComplete?.(mockPurchase);
@@ -225,7 +233,13 @@ export function PaywallComponent({
     } finally {
       setIsPurchasing(false);
     }
-  }, [selectedProductId, products, unlockedFeatures, onPurchaseComplete, resetSelection]);
+  }, [
+    selectedProductId,
+    products,
+    unlockedFeatures,
+    onPurchaseComplete,
+    resetSelection,
+  ]);
 
   /**
    * Handle paywall dismissal.
@@ -250,7 +264,11 @@ export function PaywallComponent({
         testID="paywall-loading"
         style={[styles.container, { backgroundColor: colors.background.base }]}
       >
-        <ActivityIndicator testID="loading-indicator" size="large" color={colors.primary} />
+        <ActivityIndicator
+          testID="loading-indicator"
+          size="large"
+          color={colors.primary}
+        />
       </View>
     );
   }
@@ -262,7 +280,10 @@ export function PaywallComponent({
         testID="paywall-empty"
         style={[styles.container, { backgroundColor: colors.background.base }]}
       >
-        <Text testID="empty-message" style={[styles.emptyText, { color: colors.text.primary }]}>
+        <Text
+          testID="empty-message"
+          style={[styles.emptyText, { color: colors.text.primary }]}
+        >
           No purchase options available
         </Text>
       </View>
@@ -276,12 +297,17 @@ export function PaywallComponent({
         testID="paywall-error"
         style={[styles.container, { backgroundColor: colors.background.base }]}
       >
-        <Text testID="error-message" style={[styles.errorText, { color: colors.semantic.error }]}>
+        <Text
+          testID="error-message"
+          style={[styles.errorText, { color: colors.semantic.error }]}
+        >
           Error: {error.code}
         </Text>
         {error.retryable && (
           <Pressable testID="retry-button" onPress={handleRetry}>
-            <Text style={[styles.buttonText, { color: colors.primary }]}>Retry</Text>
+            <Text style={[styles.buttonText, { color: colors.primary }]}>
+              Retry
+            </Text>
           </Pressable>
         )}
       </View>
@@ -289,8 +315,14 @@ export function PaywallComponent({
   }
 
   return (
-    <View testID="paywall-component" style={[styles.container, { backgroundColor: colors.background.base }]}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+    <View
+      testID="paywall-component"
+      style={[styles.container, { backgroundColor: colors.background.base }]}
+    >
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
         {/* Product cards */}
         {products.map((product) => (
           <Pressable
@@ -302,7 +334,9 @@ export function PaywallComponent({
               {
                 backgroundColor: colors.background.secondary,
                 borderColor:
-                  selectedProductId === product.id ? colors.primary : colors.interactive.separator,
+                  selectedProductId === product.id
+                    ? colors.primary
+                    : colors.interactive.separator,
               },
             ]}
           >
@@ -310,43 +344,67 @@ export function PaywallComponent({
             {selectedProductId === product.id && (
               <View
                 testID={`selection-indicator-${product.id}`}
-                style={[styles.selectionIndicator, { backgroundColor: colors.primary }]}
+                style={[
+                  styles.selectionIndicator,
+                  { backgroundColor: colors.primary },
+                ]}
               />
             )}
 
             {/* Product info */}
-            <Text testID={`product-title-${product.id}`} style={[styles.productTitle, { color: colors.text.primary }]}>
+            <Text
+              testID={`product-title-${product.id}`}
+              style={[styles.productTitle, { color: colors.text.primary }]}
+            >
               {product.title}
             </Text>
 
-            <Text testID={`product-price-${product.id}`} style={[styles.productPrice, { color: colors.semantic.success }]}>
+            <Text
+              testID={`product-price-${product.id}`}
+              style={[styles.productPrice, { color: colors.semantic.success }]}
+            >
               {product.priceString}
             </Text>
 
             <Text
               testID={`product-description-${product.id}`}
-              style={[styles.productDescription, { color: colors.text.secondary }]}
+              style={[
+                styles.productDescription,
+                { color: colors.text.secondary },
+              ]}
             >
               {product.description}
             </Text>
 
             {/* Unlocked features */}
-            {unlockedFeatures.has(product.id) && unlockedFeatures.get(product.id)!.length > 0 && (
-              <View testID={`features-list-${product.id}`} style={styles.featuresList}>
-                <Text style={[styles.featuresLabel, { color: colors.text.tertiary }]}>
-                  Includes:
-                </Text>
-                {unlockedFeatures.get(product.id)!.map((feature) => (
+            {unlockedFeatures.has(product.id) &&
+              unlockedFeatures.get(product.id)!.length > 0 && (
+                <View
+                  testID={`features-list-${product.id}`}
+                  style={styles.featuresList}
+                >
                   <Text
-                    key={feature.id}
-                    testID={`feature-${feature.id}`}
-                    style={[styles.featureItem, { color: colors.text.secondary }]}
+                    style={[
+                      styles.featuresLabel,
+                      { color: colors.text.tertiary },
+                    ]}
                   >
-                    • {feature.name}
+                    Includes:
                   </Text>
-                ))}
-              </View>
-            )}
+                  {unlockedFeatures.get(product.id)!.map((feature) => (
+                    <Text
+                      key={feature.id}
+                      testID={`feature-${feature.id}`}
+                      style={[
+                        styles.featureItem,
+                        { color: colors.text.secondary },
+                      ]}
+                    >
+                      • {feature.name}
+                    </Text>
+                  ))}
+                </View>
+              )}
           </Pressable>
         ))}
       </ScrollView>
@@ -366,9 +424,17 @@ export function PaywallComponent({
           ]}
         >
           {isPurchasing ? (
-            <ActivityIndicator testID="purchase-loading" color={colors.text.inverse} />
+            <ActivityIndicator
+              testID="purchase-loading"
+              color={colors.text.inverse}
+            />
           ) : (
-            <Text style={[styles.purchaseButtonText, { color: colors.text.inverse }]}>
+            <Text
+              style={[
+                styles.purchaseButtonText,
+                { color: colors.text.inverse },
+              ]}
+            >
               Purchase
             </Text>
           )}
@@ -377,15 +443,29 @@ export function PaywallComponent({
 
       {/* Dismiss button */}
       {allowDismiss && (
-        <Pressable testID="dismiss-button" onPress={handleDismiss} style={styles.dismissButton}>
-          <Text style={[styles.dismissButtonText, { color: colors.primary }]}>Dismiss</Text>
+        <Pressable
+          testID="dismiss-button"
+          onPress={handleDismiss}
+          style={styles.dismissButton}
+        >
+          <Text style={[styles.dismissButtonText, { color: colors.primary }]}>
+            Dismiss
+          </Text>
         </Pressable>
       )}
 
       {/* Loading overlay during purchase */}
       {isPurchasing && (
-        <View testID="purchase-overlay" style={[styles.overlay, { backgroundColor: 'rgba(0,0,0,0.3)' }]}>
-          <View style={[styles.loadingBox, { backgroundColor: colors.background.base }]}>
+        <View
+          testID="purchase-overlay"
+          style={[styles.overlay, { backgroundColor: 'rgba(0,0,0,0.3)' }]}
+        >
+          <View
+            style={[
+              styles.loadingBox,
+              { backgroundColor: colors.background.base },
+            ]}
+          >
             <ActivityIndicator size="large" color={colors.primary} />
             <Text style={[styles.loadingText, { color: colors.text.primary }]}>
               Processing purchase...

@@ -304,7 +304,9 @@ describe('Error Mapper - Task 3.5', () => {
 
       expect(result.code).toBe('STORE_PROBLEM_ERROR');
       expect(result.retryable).toBe(true);
-      expect(result.nativeErrorCode).toBe(BILLING_RESPONSE_CODES.DEVELOPER_ERROR);
+      expect(result.nativeErrorCode).toBe(
+        BILLING_RESPONSE_CODES.DEVELOPER_ERROR
+      );
     });
 
     // Happy path: Network error response code
@@ -397,7 +399,9 @@ describe('Error Mapper - Task 3.5', () => {
 
       expect(result.code).toBe('STORE_PROBLEM_ERROR');
       expect(result.retryable).toBe(true);
-      expect(result.nativeErrorCode).toBe(PURCHASES_ERROR_CODE.STORE_PROBLEM_ERROR);
+      expect(result.nativeErrorCode).toBe(
+        PURCHASES_ERROR_CODE.STORE_PROBLEM_ERROR
+      );
     });
 
     // Happy path: Purchase cancelled error

@@ -19,8 +19,19 @@
 /* eslint-disable @typescript-eslint/no-require-imports, import/first */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
-import { View, Text, FlatList, ActivityIndicator, ScrollView } from 'react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 
 // ===== Mock Setup =====
 
@@ -105,9 +116,12 @@ beforeAll(() => {
     getPurchase: jest.fn(),
   };
 
-  jest.doMock('@/features/purchase/infrastructure/local-database-service', () => ({
-    localDatabaseService: mockLocalDatabaseService,
-  }));
+  jest.doMock(
+    '@/features/purchase/infrastructure/local-database-service',
+    () => ({
+      localDatabaseService: mockLocalDatabaseService,
+    })
+  );
 
   // Import the component after mocks are set up
   PurchaseHistoryUI = require('../purchase-history-ui').default;
@@ -285,7 +299,11 @@ describe('PurchaseHistoryUI', () => {
       mockLocalDatabaseService.getAllPurchases
         .mockResolvedValueOnce({
           success: false,
-          error: { code: 'DB_ERROR', message: 'Connection timeout', retryable: true },
+          error: {
+            code: 'DB_ERROR',
+            message: 'Connection timeout',
+            retryable: true,
+          },
         })
         .mockResolvedValueOnce({
           success: true,
@@ -305,7 +323,9 @@ describe('PurchaseHistoryUI', () => {
 
       // Then: Data should be fetched again and displayed
       await waitFor(() => {
-        expect(mockLocalDatabaseService.getAllPurchases).toHaveBeenCalledTimes(2);
+        expect(mockLocalDatabaseService.getAllPurchases).toHaveBeenCalledTimes(
+          2
+        );
         expect(screen.getByText('txn-001')).toBeTruthy();
       });
     });

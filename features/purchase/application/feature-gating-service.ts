@@ -32,7 +32,8 @@ import { purchases } from '@/database/schema';
 
 // Import subscription service for Task 7.2 integration
 // Using dynamic import to avoid circular dependencies
-let subscriptionServiceGetter: (() => Promise<'free' | 'premium'>) | null = null;
+let subscriptionServiceGetter: (() => Promise<'free' | 'premium'>) | null =
+  null;
 
 async function loadSubscriptionTier(): Promise<'free' | 'premium'> {
   try {
@@ -44,13 +45,17 @@ async function loadSubscriptionTier(): Promise<'free' | 'premium'> {
     return await subscriptionServiceGetter();
   } catch (error) {
     // Subscription service not available - default to free tier
-    console.warn('[FeatureGatingService] Subscription service not available, defaulting to free tier');
+    console.warn(
+      '[FeatureGatingService] Subscription service not available, defaulting to free tier'
+    );
     return 'free';
   }
 }
 
 // For testing: allow injection of subscription tier getter
-export function setSubscriptionServiceGetter(getter: (() => Promise<'free' | 'premium'>) | null) {
+export function setSubscriptionServiceGetter(
+  getter: (() => Promise<'free' | 'premium'>) | null
+) {
   subscriptionServiceGetter = getter;
 }
 
@@ -229,8 +234,7 @@ export const featureGatingService = {
           // Validate purchases have correct product ID (defensive programming)
           const validPurchase = userPurchases.some(
             (purchase) =>
-              purchase &&
-              purchase.productId === feature.requiredProductId
+              purchase && purchase.productId === feature.requiredProductId
           );
 
           return validPurchase;

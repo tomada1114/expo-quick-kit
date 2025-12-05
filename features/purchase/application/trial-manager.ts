@@ -97,7 +97,11 @@ export class TrialManager {
    * // If today is Jan 9 or later, returns true
    */
   isTrialExpired(startDate: Date, trialDurationDays: number): boolean {
-    const remaining = this.getRemainingTrialDays('_tmp', startDate, trialDurationDays);
+    const remaining = this.getRemainingTrialDays(
+      '_tmp',
+      startDate,
+      trialDurationDays
+    );
     return remaining <= 0;
   }
 

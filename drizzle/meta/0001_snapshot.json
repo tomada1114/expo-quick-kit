@@ -170,9 +170,7 @@
       "indexes": {
         "purchases_transaction_id_unique": {
           "name": "purchases_transaction_id_unique",
-          "columns": [
-            "transaction_id"
-          ],
+          "columns": ["transaction_id"],
           "isUnique": true
         }
       },

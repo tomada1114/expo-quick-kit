@@ -45,7 +45,9 @@ describe('ReceiptVerifier - Android Google Play Billing - Task 4.2', () => {
         purchaseState: 0,
         acknowledged: true,
       });
-      const validSignature = Buffer.from('valid_signature_data').toString('base64');
+      const validSignature = Buffer.from('valid_signature_data').toString(
+        'base64'
+      );
 
       // Mock successful key loading
       jest.mocked(SecureStore.getItemAsync).mockResolvedValue(TEST_PUBLIC_KEY);
@@ -187,7 +189,9 @@ describe('ReceiptVerifier - Android Google Play Billing - Task 4.2', () => {
         TEST_PRODUCT_ID,
         'different_product'
       );
-      const originalSignature = Buffer.from('signature_for_original').toString('base64');
+      const originalSignature = Buffer.from('signature_for_original').toString(
+        'base64'
+      );
 
       jest.mocked(SecureStore.getItemAsync).mockResolvedValue(TEST_PUBLIC_KEY);
 
@@ -488,9 +492,9 @@ describe('ReceiptVerifier - Android Google Play Billing - Task 4.2', () => {
       });
       const signature = Buffer.from('signature').toString('base64');
 
-      jest.mocked(SecureStore.getItemAsync).mockRejectedValue(
-        new Error('Secure storage error')
-      );
+      jest
+        .mocked(SecureStore.getItemAsync)
+        .mockRejectedValue(new Error('Secure storage error'));
 
       // When: Attempting to verify
       const result = await receiptVerifier.verifyReceiptSignature(
@@ -560,7 +564,8 @@ describe('ReceiptVerifier - Android Google Play Billing - Task 4.2', () => {
       jest.mocked(SecureStore.setItemAsync).mockResolvedValue(undefined as any);
 
       // When: Caching key
-      const result = await receiptVerifier.cacheVerificationKey(TEST_PUBLIC_KEY);
+      const result =
+        await receiptVerifier.cacheVerificationKey(TEST_PUBLIC_KEY);
 
       // Then: Should succeed
       expect(result.success).toBe(true);
@@ -572,12 +577,13 @@ describe('ReceiptVerifier - Android Google Play Billing - Task 4.2', () => {
 
     it('should handle SecureStore cache failures gracefully', async () => {
       // Given: SecureStore fails to cache
-      jest.mocked(SecureStore.setItemAsync).mockRejectedValue(
-        new Error('Storage full')
-      );
+      jest
+        .mocked(SecureStore.setItemAsync)
+        .mockRejectedValue(new Error('Storage full'));
 
       // When: Attempting to cache key
-      const result = await receiptVerifier.cacheVerificationKey(TEST_PUBLIC_KEY);
+      const result =
+        await receiptVerifier.cacheVerificationKey(TEST_PUBLIC_KEY);
 
       // Then: Should return error
       expect(result.success).toBe(false);

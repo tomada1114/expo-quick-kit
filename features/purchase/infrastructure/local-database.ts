@@ -112,13 +112,18 @@ export const localDatabase = {
           success: false,
           error: {
             code: 'INVALID_INPUT',
-            message: 'Transaction ID is required and must be a non-empty string',
+            message:
+              'Transaction ID is required and must be a non-empty string',
             retryable: false,
           },
         };
       }
 
-      if (!productId || typeof productId !== 'string' || productId.trim() === '') {
+      if (
+        !productId ||
+        typeof productId !== 'string' ||
+        productId.trim() === ''
+      ) {
         return {
           success: false,
           error: {
@@ -240,7 +245,8 @@ export const localDatabase = {
           success: false,
           error: {
             code: 'INVALID_INPUT',
-            message: 'Transaction ID is required and must be a non-empty string',
+            message:
+              'Transaction ID is required and must be a non-empty string',
             retryable: false,
           },
         };
@@ -289,7 +295,9 @@ export const localDatabase = {
    * @param transactionId - Transaction ID to look up
    * @returns Result with purchase record or null if not found
    */
-  async getPurchase(transactionId: string): Promise<Result<any | null, DatabaseError>> {
+  async getPurchase(
+    transactionId: string
+  ): Promise<Result<any | null, DatabaseError>> {
     try {
       if (!transactionId) {
         return { success: true, data: null };
@@ -362,14 +370,15 @@ export const localDatabase = {
     transactionId: string,
     isVerified: boolean
   ): Promise<
-    Result<
-      { transactionId: string; isVerified: boolean },
-      DatabaseError
-    >
+    Result<{ transactionId: string; isVerified: boolean }, DatabaseError>
   > {
     try {
       // Validate input
-      if (!transactionId || typeof transactionId !== 'string' || transactionId.trim() === '') {
+      if (
+        !transactionId ||
+        typeof transactionId !== 'string' ||
+        transactionId.trim() === ''
+      ) {
         return {
           success: false,
           error: {

@@ -140,11 +140,11 @@ function setupMocks(selectedProductId?: string) {
     reset: jest.fn(),
   });
 
-  (featureGatingService.getUnlockedFeaturesByProduct as jest.Mock).mockImplementation(
-    (productId) => {
-      return mockFeatures.filter((f) => f.requiredProductId === productId);
-    }
-  );
+  (
+    featureGatingService.getUnlockedFeaturesByProduct as jest.Mock
+  ).mockImplementation((productId) => {
+    return mockFeatures.filter((f) => f.requiredProductId === productId);
+  });
 }
 
 // ============================================================
@@ -159,7 +159,9 @@ describe('PaywallComponent - Happy Path: Product Details Display (Task 12.2)', (
   it('should display product name correctly', () => {
     // Given: Product with title "Premium Unlock"
     // When: PaywallComponent renders with products
-    render(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     // Then: Product title should be displayed
     expect(screen.getByText('Premium Unlock')).toBeTruthy();
@@ -169,7 +171,9 @@ describe('PaywallComponent - Happy Path: Product Details Display (Task 12.2)', (
   it('should display formatted price with USD currency', () => {
     // Given: Product with price 9.99 and currencyCode "USD"
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     // Then: Should display "$9.99" formatted price
     expect(screen.getByText('$9.99')).toBeTruthy();
@@ -187,7 +191,9 @@ describe('PaywallComponent - Happy Path: Product Details Display (Task 12.2)', (
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[jpyProduct]} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={[jpyProduct]} />
+    );
 
     // Then: Should display "¥1,200" formatted price
     expect(screen.getByText('¥1,200')).toBeTruthy();
@@ -205,7 +211,9 @@ describe('PaywallComponent - Happy Path: Product Details Display (Task 12.2)', (
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[eurProduct]} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={[eurProduct]} />
+    );
 
     // Then: Should display "€8.50" formatted price
     expect(screen.getByText('€8.50')).toBeTruthy();
@@ -214,17 +222,23 @@ describe('PaywallComponent - Happy Path: Product Details Display (Task 12.2)', (
   it('should display product description', () => {
     // Given: Product with description "Unlock all premium features"
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     // Then: Description text should be visible
     expect(screen.getByText('Unlock all premium features')).toBeTruthy();
-    expect(screen.getByText('Export your data in multiple formats')).toBeTruthy();
+    expect(
+      screen.getByText('Export your data in multiple formats')
+    ).toBeTruthy();
   });
 
   it('should display unlocked features list for selected product', () => {
     // Given: Product "premium_unlock" unlocks ["advanced_search", "advanced_analytics"]
     // When: PaywallComponent renders with product
-    render(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     // Then: Should display list of feature names
     expect(screen.getByText('Advanced Search')).toBeTruthy();
@@ -234,7 +248,9 @@ describe('PaywallComponent - Happy Path: Product Details Display (Task 12.2)', (
   it('should display multiple products as separate cards', () => {
     // Given: Multiple products available
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     // Then: All products should be displayed
     expect(screen.getByText('Premium Unlock')).toBeTruthy();
@@ -246,7 +262,9 @@ describe('PaywallComponent - Happy Path: Product Details Display (Task 12.2)', (
   it('should display correct features for each product', () => {
     // Given: Different products unlock different features
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     // Then: "data_export" product should show "CSV Export" feature
     // and "premium_unlock" should show "Advanced Search", "Advanced Analytics"
@@ -295,7 +313,9 @@ describe('PaywallComponent - Happy Path: Selection Highlighting (Task 12.2)', ()
     setupMocks('data_export');
 
     // Then: Highlight should move from "premium_unlock" to "data_export"
-    rerender(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    rerender(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     const updatedSelectedCard = getByTestId('product-card-data_export');
     expect(updatedSelectedCard.props.style).toEqual(
@@ -343,11 +363,16 @@ describe('PaywallComponent - Sad Path: Empty/Missing Data (Task 12.2)', () => {
       currencyCode: 'USD',
     };
 
-    (featureGatingService.getUnlockedFeaturesByProduct as jest.Mock).mockReturnValue([]);
+    (
+      featureGatingService.getUnlockedFeaturesByProduct as jest.Mock
+    ).mockReturnValue([]);
 
     // When: PaywallComponent renders
     const { getByTestId } = render(
-      <PaywallComponent featureId="advanced_search" products={[productNoFeatures]} />
+      <PaywallComponent
+        featureId="advanced_search"
+        products={[productNoFeatures]}
+      />
     );
 
     // Then: Should not crash, features section should be hidden or empty
@@ -366,7 +391,12 @@ describe('PaywallComponent - Sad Path: Empty/Missing Data (Task 12.2)', () => {
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[productNoDesc]} />);
+    render(
+      <PaywallComponent
+        featureId="advanced_search"
+        products={[productNoDesc]}
+      />
+    );
 
     // Then: Should display product without crashing
     expect(screen.getByText('Minimal Pack')).toBeTruthy();
@@ -384,7 +414,12 @@ describe('PaywallComponent - Sad Path: Empty/Missing Data (Task 12.2)', () => {
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[productNoTitle]} />);
+    render(
+      <PaywallComponent
+        featureId="advanced_search"
+        products={[productNoTitle]}
+      />
+    );
 
     // Then: Should display fallback (product ID or placeholder)
     expect(screen.getByText('no_title_product')).toBeTruthy();
@@ -409,7 +444,12 @@ describe('PaywallComponent - Sad Path: Empty/Missing Data (Task 12.2)', () => {
     ];
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={productsWithNull} />);
+    render(
+      <PaywallComponent
+        featureId="advanced_search"
+        products={productsWithNull}
+      />
+    );
 
     // Then: Should display only valid products
     expect(screen.getByText('Premium Unlock')).toBeTruthy();
@@ -441,7 +481,10 @@ describe('PaywallComponent - Edge Cases: Boundary Values (Task 12.2)', () => {
 
     // When: PaywallComponent renders
     const { getByTestId } = render(
-      <PaywallComponent featureId="advanced_search" products={[productLongName]} />
+      <PaywallComponent
+        featureId="advanced_search"
+        products={[productLongName]}
+      />
     );
 
     // Then: Should display/truncate without overflow
@@ -462,7 +505,10 @@ describe('PaywallComponent - Edge Cases: Boundary Values (Task 12.2)', () => {
 
     // When: PaywallComponent renders
     const { getByTestId } = render(
-      <PaywallComponent featureId="advanced_search" products={[productLongDesc]} />
+      <PaywallComponent
+        featureId="advanced_search"
+        products={[productLongDesc]}
+      />
     );
 
     // Then: Should display without overflow
@@ -481,7 +527,9 @@ describe('PaywallComponent - Edge Cases: Boundary Values (Task 12.2)', () => {
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[freeProduct]} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={[freeProduct]} />
+    );
 
     // Then: Should display "Free" instead of "$0.00"
     expect(screen.getByText('Free')).toBeTruthy();
@@ -499,7 +547,12 @@ describe('PaywallComponent - Edge Cases: Boundary Values (Task 12.2)', () => {
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[expensiveProduct]} />);
+    render(
+      <PaywallComponent
+        featureId="advanced_search"
+        products={[expensiveProduct]}
+      />
+    );
 
     // Then: Should format correctly with thousands separators
     expect(screen.getByText('$999,999.99')).toBeTruthy();
@@ -517,7 +570,9 @@ describe('PaywallComponent - Edge Cases: Boundary Values (Task 12.2)', () => {
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[tinyPrice]} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={[tinyPrice]} />
+    );
 
     // Then: Should display "$0.01" without rounding
     expect(screen.getByText('$0.01')).toBeTruthy();
@@ -534,17 +589,22 @@ describe('PaywallComponent - Edge Cases: Boundary Values (Task 12.2)', () => {
       currencyCode: 'USD',
     };
 
-    (featureGatingService.getUnlockedFeaturesByProduct as jest.Mock).mockImplementation(
-      (productId) => {
-        if (productId === 'single_feature') {
-          return [mockFeatures[0]];
-        }
-        return [];
+    (
+      featureGatingService.getUnlockedFeaturesByProduct as jest.Mock
+    ).mockImplementation((productId) => {
+      if (productId === 'single_feature') {
+        return [mockFeatures[0]];
       }
-    );
+      return [];
+    });
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[singleFeatureProduct]} />);
+    render(
+      <PaywallComponent
+        featureId="advanced_search"
+        products={[singleFeatureProduct]}
+      />
+    );
 
     // Then: Should display single feature name
     expect(screen.getByText('Advanced Search')).toBeTruthy();
@@ -552,17 +612,20 @@ describe('PaywallComponent - Edge Cases: Boundary Values (Task 12.2)', () => {
 
   it('should handle many features (10+)', () => {
     // Given: Product unlocks 15 features
-    const manyFeatures: FeatureDefinition[] = Array.from({ length: 15 }, (_, i) => ({
-      id: `feature_${i}`,
-      level: 'premium',
-      name: `Feature ${i}`,
-      description: `Feature description ${i}`,
-      requiredProductId: 'premium_unlock',
-    }));
-
-    (featureGatingService.getUnlockedFeaturesByProduct as jest.Mock).mockReturnValue(
-      manyFeatures
+    const manyFeatures: FeatureDefinition[] = Array.from(
+      { length: 15 },
+      (_, i) => ({
+        id: `feature_${i}`,
+        level: 'premium',
+        name: `Feature ${i}`,
+        description: `Feature description ${i}`,
+        requiredProductId: 'premium_unlock',
+      })
     );
+
+    (
+      featureGatingService.getUnlockedFeaturesByProduct as jest.Mock
+    ).mockReturnValue(manyFeatures);
 
     // When: PaywallComponent renders
     const { getByTestId } = render(
@@ -595,7 +658,12 @@ describe('PaywallComponent - Edge Cases: Currency Formatting (Task 12.2)', () =>
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[unknownCurrency]} />);
+    render(
+      <PaywallComponent
+        featureId="advanced_search"
+        products={[unknownCurrency]}
+      />
+    );
 
     // Then: Should display fallback format (XYZ + price)
     expect(screen.getByText('XYZ9.99')).toBeTruthy();
@@ -613,7 +681,9 @@ describe('PaywallComponent - Edge Cases: Currency Formatting (Task 12.2)', () =>
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[noCurrency]} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={[noCurrency]} />
+    );
 
     // Then: Should display price with fallback
     expect(screen.getByText('5.99 ')).toBeTruthy();
@@ -631,7 +701,12 @@ describe('PaywallComponent - Edge Cases: Currency Formatting (Task 12.2)', () =>
     };
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={[negativePrice]} />);
+    render(
+      <PaywallComponent
+        featureId="advanced_search"
+        products={[negativePrice]}
+      />
+    );
 
     // Then: Should display invalid message
     expect(screen.getByText('Invalid Price')).toBeTruthy();
@@ -646,16 +721,18 @@ describe('PaywallComponent - Unhappy Path: Service Failures (Task 12.2)', () => 
   it('should handle FeatureGatingService error gracefully', () => {
     // Given: FeatureGatingService throws exception
     setupMocks();
-    (featureGatingService.getUnlockedFeaturesByProduct as jest.Mock).mockImplementation(
-      () => {
-        throw new Error('Service error');
-      }
-    );
+    (
+      featureGatingService.getUnlockedFeaturesByProduct as jest.Mock
+    ).mockImplementation(() => {
+      throw new Error('Service error');
+    });
 
     // When: PaywallComponent renders
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
-    render(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     // Then: Should display products without features and log error
     expect(screen.getByText('Premium Unlock')).toBeTruthy();
@@ -667,12 +744,14 @@ describe('PaywallComponent - Unhappy Path: Service Failures (Task 12.2)', () => 
   it('should handle FeatureGatingService returning undefined', () => {
     // Given: FeatureGatingService returns undefined
     setupMocks();
-    (featureGatingService.getUnlockedFeaturesByProduct as jest.Mock).mockReturnValue(
-      undefined
-    );
+    (
+      featureGatingService.getUnlockedFeaturesByProduct as jest.Mock
+    ).mockReturnValue(undefined);
 
     // When: PaywallComponent renders
-    render(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    render(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     // Then: Should treat as empty features array
     expect(screen.getByText('Premium Unlock')).toBeTruthy();
@@ -699,7 +778,9 @@ describe('PaywallComponent - Integration: Product Selection (Task 12.2)', () => 
     // Then: Selection should be updated (mock changes to selectedProductId)
     // Simulate the store update
     setupMocks('premium_unlock');
-    rerender(<PaywallComponent featureId="advanced_search" products={mockProducts} />);
+    rerender(
+      <PaywallComponent featureId="advanced_search" products={mockProducts} />
+    );
 
     // Verify selection badge appears
     const selectionBadge = getByTestId('selection-badge-premium_unlock');

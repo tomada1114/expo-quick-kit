@@ -162,7 +162,9 @@ export function resetDatabaseState(): void {
  * });
  * ```
  */
-export function getPurchasesByFeature(featureId: string): typeof schema.purchases.$inferSelect[] {
+export function getPurchasesByFeature(
+  featureId: string
+): (typeof schema.purchases.$inferSelect)[] {
   if (!drizzleDb) {
     throw new DatabaseInitError(
       'Database not initialized. Call initializeDatabase() first.'

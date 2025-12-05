@@ -789,9 +789,7 @@ describe('ErrorMonitoring', () => {
       // Given: Mix of error codes
       monitoring.logError(createMockError({ errorCode: 'NETWORK_ERROR' }));
       monitoring.logError(createMockError({ errorCode: 'NETWORK_ERROR' }));
-      monitoring.logError(
-        createMockError({ errorCode: 'PURCHASE_CANCELLED' })
-      );
+      monitoring.logError(createMockError({ errorCode: 'PURCHASE_CANCELLED' }));
 
       // When: Filtering by specific code
       const networkErrors = monitoring.getErrorsByCode('NETWORK_ERROR');

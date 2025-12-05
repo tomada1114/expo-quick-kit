@@ -256,27 +256,29 @@ describe('PrivacyHandler', () => {
     // HAPPY PATH: Successfully deletes all secure store data
     it('successfully deletes all verification metadata and keys', async () => {
       // Given: Secure store with verification data
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteSecureStoreData is called
       const result = await privacyHandler.deleteSecureStoreData();
 
       // Then: Returns success
       expect(result.success).toBe(true);
-      expect(verificationMetadataStore.clearAllVerificationMetadata).toHaveBeenCalledTimes(1);
+      expect(
+        verificationMetadataStore.clearAllVerificationMetadata
+      ).toHaveBeenCalledTimes(1);
     });
 
     // SAD PATH: Metadata deletion fails
     it('returns error when metadata deletion fails', async () => {
       // Given: Metadata store error
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        {
-          success: false,
-          error: { code: 'DB_ERROR', message: 'Store error', retryable: true },
-        }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({
+        success: false,
+        error: { code: 'DB_ERROR', message: 'Store error', retryable: true },
+      });
 
       // When: deleteSecureStoreData is called
       const result = await privacyHandler.deleteSecureStoreData();
@@ -289,9 +291,9 @@ describe('PrivacyHandler', () => {
     // UNHAPPY PATH: Exception thrown
     it('catches exception and returns error result', async () => {
       // Given: Metadata store throws exception
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockRejectedValueOnce(
-        new Error('Secure store unavailable')
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockRejectedValueOnce(new Error('Secure store unavailable'));
 
       // When: deleteSecureStoreData is called
       const result = await privacyHandler.deleteSecureStoreData();
@@ -304,9 +306,9 @@ describe('PrivacyHandler', () => {
     // EDGE CASE: Already empty
     it('succeeds even if secure store already empty', async () => {
       // Given: Secure store already cleared
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteSecureStoreData is called
       const result = await privacyHandler.deleteSecureStoreData();
@@ -344,9 +346,9 @@ describe('PrivacyHandler', () => {
         data: undefined,
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteUserAllPurchaseData is called
       const result = await privacyHandler.deleteUserAllPurchaseData();
@@ -365,9 +367,9 @@ describe('PrivacyHandler', () => {
         data: [],
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteUserAllPurchaseData is called
       const result = await privacyHandler.deleteUserAllPurchaseData();
@@ -375,7 +377,9 @@ describe('PrivacyHandler', () => {
       // Then: Still clears secure store
       expect(result.success).toBe(true);
       expect(result.data?.purchases.deletedCount).toBe(0);
-      expect(verificationMetadataStore.clearAllVerificationMetadata).toHaveBeenCalledTimes(1);
+      expect(
+        verificationMetadataStore.clearAllVerificationMetadata
+      ).toHaveBeenCalledTimes(1);
     });
 
     // SAD PATH: Purchase deletion fails but continues
@@ -401,9 +405,9 @@ describe('PrivacyHandler', () => {
         error: { code: 'NOT_FOUND', message: 'Not found', retryable: false },
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteUserAllPurchaseData is called
       const result = await privacyHandler.deleteUserAllPurchaseData();
@@ -411,7 +415,9 @@ describe('PrivacyHandler', () => {
       // Then: Still returns success but notes partial failure
       expect(result.success).toBe(true);
       expect(result.data?.purchases.failedCount).toBe(1);
-      expect(verificationMetadataStore.clearAllVerificationMetadata).toHaveBeenCalledTimes(1);
+      expect(
+        verificationMetadataStore.clearAllVerificationMetadata
+      ).toHaveBeenCalledTimes(1);
     });
 
     // SAD PATH: Database error prevents reading
@@ -419,12 +425,16 @@ describe('PrivacyHandler', () => {
       // Given: Database read fails
       (localDatabase.getAllPurchases as jest.Mock).mockResolvedValueOnce({
         success: false,
-        error: { code: 'DB_ERROR', message: 'Connection failed', retryable: true },
+        error: {
+          code: 'DB_ERROR',
+          message: 'Connection failed',
+          retryable: true,
+        },
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteUserAllPurchaseData is called
       const result = await privacyHandler.deleteUserAllPurchaseData();
@@ -432,7 +442,9 @@ describe('PrivacyHandler', () => {
       // Then: Returns error but still attempts secure store cleanup
       expect(result.success).toBe(false);
       expect(result.error?.code).toBe('DB_ERROR');
-      expect(verificationMetadataStore.clearAllVerificationMetadata).toHaveBeenCalledTimes(1);
+      expect(
+        verificationMetadataStore.clearAllVerificationMetadata
+      ).toHaveBeenCalledTimes(1);
     });
 
     // UNHAPPY PATH: Both deletions fail
@@ -458,12 +470,12 @@ describe('PrivacyHandler', () => {
         error: { code: 'DB_ERROR', message: 'Delete failed', retryable: true },
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        {
-          success: false,
-          error: { code: 'DB_ERROR', message: 'Clear failed', retryable: true },
-        }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({
+        success: false,
+        error: { code: 'DB_ERROR', message: 'Clear failed', retryable: true },
+      });
 
       // When: deleteUserAllPurchaseData is called
       const result = await privacyHandler.deleteUserAllPurchaseData();
@@ -510,9 +522,9 @@ describe('PrivacyHandler', () => {
         data: undefined,
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteUserAllPurchaseData is called
       const result = await privacyHandler.deleteUserAllPurchaseData();
@@ -540,9 +552,9 @@ describe('PrivacyHandler', () => {
         },
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteUserAllPurchaseData is called
       const result = await privacyHandler.deleteUserAllPurchaseData();
@@ -563,9 +575,9 @@ describe('PrivacyHandler', () => {
         },
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteUserAllPurchaseData is called
       const result = await privacyHandler.deleteUserAllPurchaseData();
@@ -604,9 +616,9 @@ describe('PrivacyHandler', () => {
         data: undefined,
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteUserAllPurchaseData is called
       await privacyHandler.deleteUserAllPurchaseData();
@@ -637,9 +649,9 @@ describe('PrivacyHandler', () => {
         data: undefined,
       });
 
-      (verificationMetadataStore.clearAllVerificationMetadata as jest.Mock).mockResolvedValueOnce(
-        { success: true, data: undefined }
-      );
+      (
+        verificationMetadataStore.clearAllVerificationMetadata as jest.Mock
+      ).mockResolvedValueOnce({ success: true, data: undefined });
 
       // When: deleteUserAllPurchaseData is called
       const result = await privacyHandler.deleteUserAllPurchaseData();

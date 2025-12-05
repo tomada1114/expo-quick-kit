@@ -153,7 +153,8 @@ export function createAuthorizationService(
           ok: false,
           error: {
             code: 'NOT_AUTHENTICATED',
-            message: 'User is not authenticated. Please log in to access purchase history.',
+            message:
+              'User is not authenticated. Please log in to access purchase history.',
             retryable: false,
           },
         };
@@ -189,7 +190,8 @@ export function createAuthorizationService(
           ok: false,
           error: {
             code: 'NOT_AUTHENTICATED',
-            message: 'User is not authenticated. Please log in to delete purchase records.',
+            message:
+              'User is not authenticated. Please log in to delete purchase records.',
             retryable: false,
           },
         };

@@ -83,7 +83,10 @@ export class PerformanceMonitor {
    * Record end of payment processing stage.
    */
   endPaymentProcessing(): Result<void, PerformanceError> {
-    return this.recordEndTime('paymentProcessing_start', 'paymentProcessing_end');
+    return this.recordEndTime(
+      'paymentProcessing_start',
+      'paymentProcessing_end'
+    );
   }
 
   /**
@@ -113,10 +116,26 @@ export class PerformanceMonitor {
 
       // Process each stage
       const stages = [
-        { key: 'productFetch', startKey: 'productFetch_start', endKey: 'productFetch_end' },
-        { key: 'dialogDisplay', startKey: 'dialogDisplay_start', endKey: 'dialogDisplay_end' },
-        { key: 'paymentProcessing', startKey: 'paymentProcessing_start', endKey: 'paymentProcessing_end' },
-        { key: 'verification', startKey: 'verification_start', endKey: 'verification_end' },
+        {
+          key: 'productFetch',
+          startKey: 'productFetch_start',
+          endKey: 'productFetch_end',
+        },
+        {
+          key: 'dialogDisplay',
+          startKey: 'dialogDisplay_start',
+          endKey: 'dialogDisplay_end',
+        },
+        {
+          key: 'paymentProcessing',
+          startKey: 'paymentProcessing_start',
+          endKey: 'paymentProcessing_end',
+        },
+        {
+          key: 'verification',
+          startKey: 'verification_start',
+          endKey: 'verification_end',
+        },
       ];
 
       let totalTime = 0;
@@ -128,10 +147,13 @@ export class PerformanceMonitor {
         if (startTime !== undefined && endTime !== undefined) {
           // Validate timestamps
           if (!Number.isFinite(startTime) || !Number.isFinite(endTime)) {
-            return { success: false, error: {
-              code: 'INVALID_TIMESTAMP',
-              message: `Invalid timestamp for stage ${stage.key}`,
-            }};
+            return {
+              success: false,
+              error: {
+                code: 'INVALID_TIMESTAMP',
+                message: `Invalid timestamp for stage ${stage.key}`,
+              },
+            };
           }
 
           const delta = endTime - startTime;
@@ -155,10 +177,13 @@ export class PerformanceMonitor {
 
       return { success: true, data: metrics };
     } catch (error) {
-      return { success: false, error: {
-        code: 'STATE_CORRUPTED',
-        message: 'Performance monitor state is corrupted',
-      }};
+      return {
+        success: false,
+        error: {
+          code: 'STATE_CORRUPTED',
+          message: 'Performance monitor state is corrupted',
+        },
+      };
     }
   }
 
@@ -170,10 +195,13 @@ export class PerformanceMonitor {
       this.timestamps.clear();
       return { success: true, data: undefined };
     } catch (error) {
-      return { success: false, error: {
-        code: 'RESET_FAILED',
-        message: 'Failed to reset performance monitor',
-      }};
+      return {
+        success: false,
+        error: {
+          code: 'RESET_FAILED',
+          message: 'Failed to reset performance monitor',
+        },
+      };
     }
   }
 
@@ -185,51 +213,69 @@ export class PerformanceMonitor {
       const timestamp = performance.now();
 
       if (!Number.isFinite(timestamp)) {
-        return { success: false, error: {
-          code: 'INVALID_TIMESTAMP',
-          message: `Invalid start timestamp for stage ${key}`,
-        }};
+        return {
+          success: false,
+          error: {
+            code: 'INVALID_TIMESTAMP',
+            message: `Invalid start timestamp for stage ${key}`,
+          },
+        };
       }
 
       this.timestamps.set(key, timestamp);
       return { success: true, data: undefined };
     } catch (error) {
-      return { success: false, error: {
-        code: 'START_RECORDING_FAILED',
-        message: `Failed to record start time for stage ${key}`,
-      }};
+      return {
+        success: false,
+        error: {
+          code: 'START_RECORDING_FAILED',
+          message: `Failed to record start time for stage ${key}`,
+        },
+      };
     }
   }
 
   /**
    * Record an end time for a stage.
    */
-  private recordEndTime(startKey: string, endKey: string): Result<void, PerformanceError> {
+  private recordEndTime(
+    startKey: string,
+    endKey: string
+  ): Result<void, PerformanceError> {
     try {
       // Check if start timestamp exists
       if (!this.timestamps.has(startKey)) {
-        return { success: false, error: {
-          code: 'MISSING_START_TIMESTAMP',
-          message: `Cannot record end: start timestamp not found for ${startKey}`,
-        }};
+        return {
+          success: false,
+          error: {
+            code: 'MISSING_START_TIMESTAMP',
+            message: `Cannot record end: start timestamp not found for ${startKey}`,
+          },
+        };
       }
 
       const timestamp = performance.now();
 
       if (!Number.isFinite(timestamp)) {
-        return { success: false, error: {
-          code: 'INVALID_TIMESTAMP',
-          message: `Invalid end timestamp for stage ${endKey}`,
-        }};
+        return {
+          success: false,
+          error: {
+            code: 'INVALID_TIMESTAMP',
+            message: `Invalid end timestamp for stage ${endKey}`,
+          },
+        };
       }
 
       this.timestamps.set(endKey, timestamp);
       return { success: true, data: undefined };
     } catch (error) {
-      return { success: false, error: {
-        code: 'END_RECORDING_FAILED',
-        message: `Failed to record end time for stage ${endKey}`,
-      }};
+      return {
+        success: false,
+        error: {
+          code: 'END_RECORDING_FAILED',
+          message: `Failed to record end time for stage ${endKey}`,
+        },
+      };
     }
   }
 }

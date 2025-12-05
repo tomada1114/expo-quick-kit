@@ -7,7 +7,12 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react-native';
 import { useRouter } from 'expo-router';
 import { PaywallComponent } from '../paywall';
 import type { PaywallComponentProps } from '../paywall';
@@ -56,7 +61,11 @@ jest.mock('@/features/purchase/application', () => ({
 jest.mock('@/components/themed-text', () => ({
   Text: ({ children, style }: any) => {
     const { View } = require('react-native');
-    return <View style={style} testID="text">{children}</View>;
+    return (
+      <View style={style} testID="text">
+        {children}
+      </View>
+    );
   },
 }));
 
@@ -65,9 +74,23 @@ jest.mock('@/hooks/use-theme-color', () => ({
   useThemedColors: jest.fn(() => ({
     colors: {
       background: { base: '#fff', secondary: '#f5f5f5', tertiary: '#eee' },
-      text: { primary: '#000', secondary: '#666', tertiary: '#999', inverse: '#fff' },
-      semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#00C7FC' },
-      interactive: { separator: '#ddd', fill: '#007AFF', fillSecondary: '#ccc' },
+      text: {
+        primary: '#000',
+        secondary: '#666',
+        tertiary: '#999',
+        inverse: '#fff',
+      },
+      semantic: {
+        success: '#34C759',
+        error: '#FF3B30',
+        warning: '#FF9500',
+        info: '#00C7FC',
+      },
+      interactive: {
+        separator: '#ddd',
+        fill: '#007AFF',
+        fillSecondary: '#ccc',
+      },
     },
   })),
   useThemeColor: jest.fn(),
@@ -98,18 +121,14 @@ describe('PaywallComponent', () => {
 
   describe('Dismiss button visibility', () => {
     it('should display dismiss button when allowDismiss is true', () => {
-      render(
-        <PaywallComponent {...defaultProps} allowDismiss={true} />
-      );
+      render(<PaywallComponent {...defaultProps} allowDismiss={true} />);
 
       const dismissButton = screen.getByTestId('paywall-dismiss-button');
       expect(dismissButton).toBeTruthy();
     });
 
     it('should not display dismiss button when allowDismiss is false', () => {
-      render(
-        <PaywallComponent {...defaultProps} allowDismiss={false} />
-      );
+      render(<PaywallComponent {...defaultProps} allowDismiss={false} />);
 
       const dismissButton = screen.queryByTestId('paywall-dismiss-button');
       expect(dismissButton).toBeNull();
@@ -117,9 +136,7 @@ describe('PaywallComponent', () => {
 
     it('should display dismiss button by default when allowDismiss is not specified', () => {
       const { allowDismiss, ...propsWithoutAllowDismiss } = defaultProps;
-      render(
-        <PaywallComponent {...propsWithoutAllowDismiss} />
-      );
+      render(<PaywallComponent {...propsWithoutAllowDismiss} />);
 
       const dismissButton = screen.getByTestId('paywall-dismiss-button');
       expect(dismissButton).toBeTruthy();
@@ -146,12 +163,7 @@ describe('PaywallComponent', () => {
     it('should navigate back when dismiss button is tapped and router.canGoBack() is true', async () => {
       mockRouter.canGoBack.mockReturnValue(true);
 
-      render(
-        <PaywallComponent
-          {...defaultProps}
-          allowDismiss={true}
-        />
-      );
+      render(<PaywallComponent {...defaultProps} allowDismiss={true} />);
 
       const dismissButton = screen.getByTestId('paywall-dismiss-button');
       fireEvent.press(dismissButton);
@@ -164,12 +176,7 @@ describe('PaywallComponent', () => {
     it('should not navigate back when router.canGoBack() is false', async () => {
       mockRouter.canGoBack.mockReturnValue(false);
 
-      render(
-        <PaywallComponent
-          {...defaultProps}
-          allowDismiss={true}
-        />
-      );
+      render(<PaywallComponent {...defaultProps} allowDismiss={true} />);
 
       const dismissButton = screen.getByTestId('paywall-dismiss-button');
       fireEvent.press(dismissButton);
@@ -241,9 +248,7 @@ describe('PaywallComponent', () => {
     });
 
     it('should render loading overlay when isLoading is true', () => {
-      render(
-        <PaywallComponent {...defaultProps} />
-      );
+      render(<PaywallComponent {...defaultProps} />);
 
       // Note: This test assumes the component uses usePurchaseStore with isLoading flag
       // The actual implementation will depend on how loading state is managed
@@ -313,23 +318,17 @@ describe('PaywallComponent', () => {
 
     it('should accept onDismiss callback', () => {
       const onDismiss = jest.fn();
-      render(
-        <PaywallComponent
-          {...defaultProps}
-          onDismiss={onDismiss}
-        />
-      );
+      render(<PaywallComponent {...defaultProps} onDismiss={onDismiss} />);
 
       expect(onDismiss).toBeDefined();
     });
 
     it('should handle missing optional callbacks gracefully', () => {
-      const { onPurchaseComplete, onDismiss, ...propsWithoutCallbacks } = defaultProps;
+      const { onPurchaseComplete, onDismiss, ...propsWithoutCallbacks } =
+        defaultProps;
 
       expect(() => {
-        render(
-          <PaywallComponent {...propsWithoutCallbacks} />
-        );
+        render(<PaywallComponent {...propsWithoutCallbacks} />);
       }).not.toThrow();
     });
   });
@@ -354,10 +353,28 @@ describe('PaywallComponent', () => {
      */
     it('should render with light mode background color', () => {
       const lightModeColors = {
-        background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-        text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-        semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#007AFF' },
-        interactive: { separator: '#C6C6C8', fill: '#787880', fillSecondary: '#BCBCC0' },
+        background: {
+          base: '#FFFFFF',
+          secondary: '#F2F2F7',
+          tertiary: '#FFFFFF',
+        },
+        text: {
+          primary: '#000000',
+          secondary: '#3C3C43',
+          tertiary: '#8E8E93',
+          inverse: '#FFFFFF',
+        },
+        semantic: {
+          success: '#34C759',
+          error: '#FF3B30',
+          warning: '#FF9500',
+          info: '#007AFF',
+        },
+        interactive: {
+          separator: '#C6C6C8',
+          fill: '#787880',
+          fillSecondary: '#BCBCC0',
+        },
         primary: '#007AFF',
       };
 
@@ -381,10 +398,28 @@ describe('PaywallComponent', () => {
      */
     it('should render with dark mode background color', () => {
       const darkModeColors = {
-        background: { base: '#000000', secondary: '#1C1C1E', tertiary: '#2C2C2E' },
-        text: { primary: '#FFFFFF', secondary: '#EBEBF5', tertiary: '#8E8E93', inverse: '#000000' },
-        semantic: { success: '#30D158', error: '#FF453A', warning: '#FF9F0A', info: '#0A84FF' },
-        interactive: { separator: '#38383A', fill: '#787880', fillSecondary: '#48484A' },
+        background: {
+          base: '#000000',
+          secondary: '#1C1C1E',
+          tertiary: '#2C2C2E',
+        },
+        text: {
+          primary: '#FFFFFF',
+          secondary: '#EBEBF5',
+          tertiary: '#8E8E93',
+          inverse: '#000000',
+        },
+        semantic: {
+          success: '#30D158',
+          error: '#FF453A',
+          warning: '#FF9F0A',
+          info: '#0A84FF',
+        },
+        interactive: {
+          separator: '#38383A',
+          fill: '#787880',
+          fillSecondary: '#48484A',
+        },
         primary: '#0A84FF',
       };
 
@@ -408,10 +443,28 @@ describe('PaywallComponent', () => {
      */
     it('should call useThemedColors hook to get theme colors', () => {
       const mockColors = {
-        background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-        text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-        semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#007AFF' },
-        interactive: { separator: '#C6C6C8', fill: '#787880', fillSecondary: '#BCBCC0' },
+        background: {
+          base: '#FFFFFF',
+          secondary: '#F2F2F7',
+          tertiary: '#FFFFFF',
+        },
+        text: {
+          primary: '#000000',
+          secondary: '#3C3C43',
+          tertiary: '#8E8E93',
+          inverse: '#FFFFFF',
+        },
+        semantic: {
+          success: '#34C759',
+          error: '#FF3B30',
+          warning: '#FF9500',
+          info: '#007AFF',
+        },
+        interactive: {
+          separator: '#C6C6C8',
+          fill: '#787880',
+          fillSecondary: '#BCBCC0',
+        },
         primary: '#007AFF',
       };
 
@@ -432,10 +485,28 @@ describe('PaywallComponent', () => {
      */
     it('should apply +10% brightness rule to primary color in dark mode', () => {
       const darkModeColors = {
-        background: { base: '#000000', secondary: '#1C1C1E', tertiary: '#2C2C2E' },
-        text: { primary: '#FFFFFF', secondary: '#EBEBF5', tertiary: '#8E8E93', inverse: '#000000' },
-        semantic: { success: '#30D158', error: '#FF453A', warning: '#FF9F0A', info: '#0A84FF' },
-        interactive: { separator: '#38383A', fill: '#787880', fillSecondary: '#48484A' },
+        background: {
+          base: '#000000',
+          secondary: '#1C1C1E',
+          tertiary: '#2C2C2E',
+        },
+        text: {
+          primary: '#FFFFFF',
+          secondary: '#EBEBF5',
+          tertiary: '#8E8E93',
+          inverse: '#000000',
+        },
+        semantic: {
+          success: '#30D158',
+          error: '#FF453A',
+          warning: '#FF9F0A',
+          info: '#0A84FF',
+        },
+        interactive: {
+          separator: '#38383A',
+          fill: '#787880',
+          fillSecondary: '#48484A',
+        },
         primary: '#0A84FF', // +10% from #007AFF
       };
 
@@ -456,35 +527,67 @@ describe('PaywallComponent', () => {
      */
     it('should apply +10% brightness to semantic colors in dark mode', () => {
       const darkModeColors = {
-        background: { base: '#000000', secondary: '#1C1C1E', tertiary: '#2C2C2E' },
-        text: { primary: '#FFFFFF', secondary: '#EBEBF5', tertiary: '#8E8E93', inverse: '#000000' },
-        semantic: {
-          success: '#30D158',  // +10% from #34C759
-          error: '#FF453A',    // +10% from #FF3B30
-          warning: '#FF9F0A',  // +10% from #FF9500
-          info: '#0A84FF',     // +10% from #007AFF
+        background: {
+          base: '#000000',
+          secondary: '#1C1C1E',
+          tertiary: '#2C2C2E',
         },
-        interactive: { separator: '#38383A', fill: '#787880', fillSecondary: '#48484A' },
+        text: {
+          primary: '#FFFFFF',
+          secondary: '#EBEBF5',
+          tertiary: '#8E8E93',
+          inverse: '#000000',
+        },
+        semantic: {
+          success: '#30D158', // +10% from #34C759
+          error: '#FF453A', // +10% from #FF3B30
+          warning: '#FF9F0A', // +10% from #FF9500
+          info: '#0A84FF', // +10% from #007AFF
+        },
+        interactive: {
+          separator: '#38383A',
+          fill: '#787880',
+          fillSecondary: '#48484A',
+        },
         primary: '#0A84FF',
       };
 
       const lightModeColors = {
-        background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-        text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-        semantic: {
-          success: '#34C759',  // iOS Green
-          error: '#FF3B30',    // iOS Red
-          warning: '#FF9500',  // iOS Orange
-          info: '#007AFF',     // iOS Blue
+        background: {
+          base: '#FFFFFF',
+          secondary: '#F2F2F7',
+          tertiary: '#FFFFFF',
         },
-        interactive: { separator: '#C6C6C8', fill: '#787880', fillSecondary: '#BCBCC0' },
+        text: {
+          primary: '#000000',
+          secondary: '#3C3C43',
+          tertiary: '#8E8E93',
+          inverse: '#FFFFFF',
+        },
+        semantic: {
+          success: '#34C759', // iOS Green
+          error: '#FF3B30', // iOS Red
+          warning: '#FF9500', // iOS Orange
+          info: '#007AFF', // iOS Blue
+        },
+        interactive: {
+          separator: '#C6C6C8',
+          fill: '#787880',
+          fillSecondary: '#BCBCC0',
+        },
         primary: '#007AFF',
       };
 
       // Verify semantic colors are different (brighter) in dark mode
-      expect(darkModeColors.semantic.success).not.toBe(lightModeColors.semantic.success);
-      expect(darkModeColors.semantic.error).not.toBe(lightModeColors.semantic.error);
-      expect(darkModeColors.semantic.warning).not.toBe(lightModeColors.semantic.warning);
+      expect(darkModeColors.semantic.success).not.toBe(
+        lightModeColors.semantic.success
+      );
+      expect(darkModeColors.semantic.error).not.toBe(
+        lightModeColors.semantic.error
+      );
+      expect(darkModeColors.semantic.warning).not.toBe(
+        lightModeColors.semantic.warning
+      );
     });
 
     /**
@@ -494,10 +597,28 @@ describe('PaywallComponent', () => {
      */
     it('should use text.primary for main text in light mode', () => {
       const lightModeColors = {
-        background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-        text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-        semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#007AFF' },
-        interactive: { separator: '#C6C6C8', fill: '#787880', fillSecondary: '#BCBCC0' },
+        background: {
+          base: '#FFFFFF',
+          secondary: '#F2F2F7',
+          tertiary: '#FFFFFF',
+        },
+        text: {
+          primary: '#000000',
+          secondary: '#3C3C43',
+          tertiary: '#8E8E93',
+          inverse: '#FFFFFF',
+        },
+        semantic: {
+          success: '#34C759',
+          error: '#FF3B30',
+          warning: '#FF9500',
+          info: '#007AFF',
+        },
+        interactive: {
+          separator: '#C6C6C8',
+          fill: '#787880',
+          fillSecondary: '#BCBCC0',
+        },
         primary: '#007AFF',
       };
 
@@ -512,10 +633,28 @@ describe('PaywallComponent', () => {
      */
     it('should use text.primary for main text in dark mode', () => {
       const darkModeColors = {
-        background: { base: '#000000', secondary: '#1C1C1E', tertiary: '#2C2C2E' },
-        text: { primary: '#FFFFFF', secondary: '#EBEBF5', tertiary: '#8E8E93', inverse: '#000000' },
-        semantic: { success: '#30D158', error: '#FF453A', warning: '#FF9F0A', info: '#0A84FF' },
-        interactive: { separator: '#38383A', fill: '#787880', fillSecondary: '#48484A' },
+        background: {
+          base: '#000000',
+          secondary: '#1C1C1E',
+          tertiary: '#2C2C2E',
+        },
+        text: {
+          primary: '#FFFFFF',
+          secondary: '#EBEBF5',
+          tertiary: '#8E8E93',
+          inverse: '#000000',
+        },
+        semantic: {
+          success: '#30D158',
+          error: '#FF453A',
+          warning: '#FF9F0A',
+          info: '#0A84FF',
+        },
+        interactive: {
+          separator: '#38383A',
+          fill: '#787880',
+          fillSecondary: '#48484A',
+        },
         primary: '#0A84FF',
       };
 
@@ -530,10 +669,28 @@ describe('PaywallComponent', () => {
      */
     it('should use interactive.separator for borders in light mode', () => {
       const lightModeColors = {
-        background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-        text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-        semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#007AFF' },
-        interactive: { separator: '#C6C6C8', fill: '#787880', fillSecondary: '#BCBCC0' },
+        background: {
+          base: '#FFFFFF',
+          secondary: '#F2F2F7',
+          tertiary: '#FFFFFF',
+        },
+        text: {
+          primary: '#000000',
+          secondary: '#3C3C43',
+          tertiary: '#8E8E93',
+          inverse: '#FFFFFF',
+        },
+        semantic: {
+          success: '#34C759',
+          error: '#FF3B30',
+          warning: '#FF9500',
+          info: '#007AFF',
+        },
+        interactive: {
+          separator: '#C6C6C8',
+          fill: '#787880',
+          fillSecondary: '#BCBCC0',
+        },
         primary: '#007AFF',
       };
 
@@ -547,10 +704,28 @@ describe('PaywallComponent', () => {
      */
     it('should use interactive.separator for borders in dark mode', () => {
       const darkModeColors = {
-        background: { base: '#000000', secondary: '#1C1C1E', tertiary: '#2C2C2E' },
-        text: { primary: '#FFFFFF', secondary: '#EBEBF5', tertiary: '#8E8E93', inverse: '#000000' },
-        semantic: { success: '#30D158', error: '#FF453A', warning: '#FF9F0A', info: '#0A84FF' },
-        interactive: { separator: '#38383A', fill: '#787880', fillSecondary: '#48484A' },
+        background: {
+          base: '#000000',
+          secondary: '#1C1C1E',
+          tertiary: '#2C2C2E',
+        },
+        text: {
+          primary: '#FFFFFF',
+          secondary: '#EBEBF5',
+          tertiary: '#8E8E93',
+          inverse: '#000000',
+        },
+        semantic: {
+          success: '#30D158',
+          error: '#FF453A',
+          warning: '#FF9F0A',
+          info: '#0A84FF',
+        },
+        interactive: {
+          separator: '#38383A',
+          fill: '#787880',
+          fillSecondary: '#48484A',
+        },
         primary: '#0A84FF',
       };
 
@@ -564,10 +739,28 @@ describe('PaywallComponent', () => {
      */
     it('should use colors.background.base for main container', () => {
       const lightModeColors = {
-        background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-        text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-        semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#007AFF' },
-        interactive: { separator: '#C6C6C8', fill: '#787880', fillSecondary: '#BCBCC0' },
+        background: {
+          base: '#FFFFFF',
+          secondary: '#F2F2F7',
+          tertiary: '#FFFFFF',
+        },
+        text: {
+          primary: '#000000',
+          secondary: '#3C3C43',
+          tertiary: '#8E8E93',
+          inverse: '#FFFFFF',
+        },
+        semantic: {
+          success: '#34C759',
+          error: '#FF3B30',
+          warning: '#FF9500',
+          info: '#007AFF',
+        },
+        interactive: {
+          separator: '#C6C6C8',
+          fill: '#787880',
+          fillSecondary: '#BCBCC0',
+        },
         primary: '#007AFF',
       };
 
@@ -588,10 +781,28 @@ describe('PaywallComponent', () => {
      */
     it('should use colors.background.secondary for product cards', () => {
       const lightModeColors = {
-        background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-        text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-        semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#007AFF' },
-        interactive: { separator: '#C6C6C8', fill: '#787880', fillSecondary: '#BCBCC0' },
+        background: {
+          base: '#FFFFFF',
+          secondary: '#F2F2F7',
+          tertiary: '#FFFFFF',
+        },
+        text: {
+          primary: '#000000',
+          secondary: '#3C3C43',
+          tertiary: '#8E8E93',
+          inverse: '#FFFFFF',
+        },
+        semantic: {
+          success: '#34C759',
+          error: '#FF3B30',
+          warning: '#FF9500',
+          info: '#007AFF',
+        },
+        interactive: {
+          separator: '#C6C6C8',
+          fill: '#787880',
+          fillSecondary: '#BCBCC0',
+        },
         primary: '#007AFF',
       };
 
@@ -605,10 +816,28 @@ describe('PaywallComponent', () => {
      */
     it('should use semantic.error for error messages', () => {
       const lightModeColors = {
-        background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-        text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-        semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#007AFF' },
-        interactive: { separator: '#C6C6C8', fill: '#787880', fillSecondary: '#BCBCC0' },
+        background: {
+          base: '#FFFFFF',
+          secondary: '#F2F2F7',
+          tertiary: '#FFFFFF',
+        },
+        text: {
+          primary: '#000000',
+          secondary: '#3C3C43',
+          tertiary: '#8E8E93',
+          inverse: '#FFFFFF',
+        },
+        semantic: {
+          success: '#34C759',
+          error: '#FF3B30',
+          warning: '#FF9500',
+          info: '#007AFF',
+        },
+        interactive: {
+          separator: '#C6C6C8',
+          fill: '#787880',
+          fillSecondary: '#BCBCC0',
+        },
         primary: '#007AFF',
       };
 
@@ -622,10 +851,28 @@ describe('PaywallComponent', () => {
      */
     it('should use semantic.success for success messages', () => {
       const lightModeColors = {
-        background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-        text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-        semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#007AFF' },
-        interactive: { separator: '#C6C6C8', fill: '#787880', fillSecondary: '#BCBCC0' },
+        background: {
+          base: '#FFFFFF',
+          secondary: '#F2F2F7',
+          tertiary: '#FFFFFF',
+        },
+        text: {
+          primary: '#000000',
+          secondary: '#3C3C43',
+          tertiary: '#8E8E93',
+          inverse: '#FFFFFF',
+        },
+        semantic: {
+          success: '#34C759',
+          error: '#FF3B30',
+          warning: '#FF9500',
+          info: '#007AFF',
+        },
+        interactive: {
+          separator: '#C6C6C8',
+          fill: '#787880',
+          fillSecondary: '#BCBCC0',
+        },
         primary: '#007AFF',
       };
 

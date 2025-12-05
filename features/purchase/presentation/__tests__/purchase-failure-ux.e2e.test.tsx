@@ -19,7 +19,12 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react-native';
 import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { PaywallComponent } from '../paywall';
@@ -87,9 +92,23 @@ jest.mock('@/hooks/use-theme-color', () => ({
   useThemedColors: jest.fn(() => ({
     colors: {
       background: { base: '#fff', secondary: '#f5f5f5', tertiary: '#eee' },
-      text: { primary: '#000', secondary: '#666', tertiary: '#999', inverse: '#fff' },
-      semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#00C7FC' },
-      interactive: { separator: '#ddd', fill: '#007AFF', fillSecondary: '#ccc' },
+      text: {
+        primary: '#000',
+        secondary: '#666',
+        tertiary: '#999',
+        inverse: '#fff',
+      },
+      semantic: {
+        success: '#34C759',
+        error: '#FF3B30',
+        warning: '#FF9500',
+        info: '#00C7FC',
+      },
+      interactive: {
+        separator: '#ddd',
+        fill: '#007AFF',
+        fillSecondary: '#ccc',
+      },
     },
     colorScheme: 'light',
   })),
@@ -111,7 +130,9 @@ function TestFailureComponent({
   errorToShow?: PurchaseFlowError | null;
 }): React.JSX.Element {
   const [showPaywall, setShowPaywall] = React.useState(true);
-  const [error, setError] = React.useState<PurchaseFlowError | null>(errorToShow ?? null);
+  const [error, setError] = React.useState<PurchaseFlowError | null>(
+    errorToShow ?? null
+  );
   const [retryCount, setRetryCount] = React.useState(0);
 
   React.useEffect(() => {
@@ -172,7 +193,10 @@ function TestFailureComponent({
 
           {/* Error state display */}
           {error && (
-            <View testID="error-state-container" style={{ backgroundColor: '#FF3B30' }}>
+            <View
+              testID="error-state-container"
+              style={{ backgroundColor: '#FF3B30' }}
+            >
               <Text testID="error-message">{getErrorMessage(error)}</Text>
 
               {/* Retry button - shown for retryable errors */}

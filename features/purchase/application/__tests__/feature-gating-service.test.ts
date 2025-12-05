@@ -27,7 +27,10 @@ jest.mock('@/database/schema', () => ({
   purchases: {},
 }));
 
-import { featureGatingService, setSubscriptionServiceGetter } from '../feature-gating-service';
+import {
+  featureGatingService,
+  setSubscriptionServiceGetter,
+} from '../feature-gating-service';
 import { db } from '@/database/client';
 
 // Create mock subscription getter
@@ -199,7 +202,9 @@ describe('FeatureGatingService.canAccessSync', () => {
     it('should handle non-existent feature ID', () => {
       // Given: Feature ID that doesn't match any definition
       // When: Checking access
-      const result = featureGatingService.canAccessSync('non_existent_feature_xyz');
+      const result = featureGatingService.canAccessSync(
+        'non_existent_feature_xyz'
+      );
 
       // Then: Should return false
       expect(result).toBe(false);
@@ -329,7 +334,8 @@ describe('FeatureGatingService.canAccessSync', () => {
     it('should filter features by level - premium', () => {
       // Given: Multiple features with different levels
       // When: Getting premium features
-      const premiumFeatures = featureGatingService.getFeaturesByLevel('premium');
+      const premiumFeatures =
+        featureGatingService.getFeaturesByLevel('premium');
 
       // Then: Should return only premium features
       expect(premiumFeatures.length).toBeGreaterThan(0);
@@ -361,7 +367,8 @@ describe('FeatureGatingService.canAccessSync', () => {
     it('should get required product for premium feature', () => {
       // Given: A premium feature with product requirement
       // When: Getting required product
-      const productId = featureGatingService.getRequiredProduct('advanced_search');
+      const productId =
+        featureGatingService.getRequiredProduct('advanced_search');
 
       // Then: Should return required product ID
       expect(productId).toBe('premium_unlock');
@@ -414,8 +421,10 @@ describe('FeatureGatingService.canAccessSync', () => {
       });
 
       // When: Checking access for multiple features
-      const canAccessAdvanced = featureGatingService.canAccessSync('advanced_search');
-      const canAccessAnalytics = featureGatingService.canAccessSync('advanced_analytics');
+      const canAccessAdvanced =
+        featureGatingService.canAccessSync('advanced_search');
+      const canAccessAnalytics =
+        featureGatingService.canAccessSync('advanced_analytics');
 
       // Then: Both features should be accessible
       expect(canAccessAdvanced).toBe(true);
@@ -477,7 +486,8 @@ describe('FeatureGatingService.getUnlockedFeaturesByProduct', () => {
       // Feature definitions show premium_unlock unlocks: advanced_search and advanced_analytics
 
       // When: Getting features unlocked by premium_unlock product
-      const features = featureGatingService.getUnlockedFeaturesByProduct('premium_unlock');
+      const features =
+        featureGatingService.getUnlockedFeaturesByProduct('premium_unlock');
 
       // Then: Should return all features associated with that product
       expect(Array.isArray(features)).toBe(true);
@@ -492,7 +502,8 @@ describe('FeatureGatingService.getUnlockedFeaturesByProduct', () => {
       // Given: data_export product that unlocks specific features
 
       // When: Getting features unlocked by data_export
-      const features = featureGatingService.getUnlockedFeaturesByProduct('data_export');
+      const features =
+        featureGatingService.getUnlockedFeaturesByProduct('data_export');
 
       // Then: Should return features associated with data_export
       expect(Array.isArray(features)).toBe(true);
@@ -505,7 +516,9 @@ describe('FeatureGatingService.getUnlockedFeaturesByProduct', () => {
       // Given: A product ID that has no associated features
 
       // When: Getting features for non-existent product
-      const features = featureGatingService.getUnlockedFeaturesByProduct('non_existent_product');
+      const features = featureGatingService.getUnlockedFeaturesByProduct(
+        'non_existent_product'
+      );
 
       // Then: Should return empty array
       expect(Array.isArray(features)).toBe(true);
@@ -529,7 +542,9 @@ describe('FeatureGatingService.getUnlockedFeaturesByProduct', () => {
       // Given: Null product ID
 
       // When: Calling with null
-      const features = featureGatingService.getUnlockedFeaturesByProduct(null as any);
+      const features = featureGatingService.getUnlockedFeaturesByProduct(
+        null as any
+      );
 
       // Then: Should return empty array (safe default)
       expect(Array.isArray(features)).toBe(true);
@@ -540,7 +555,9 @@ describe('FeatureGatingService.getUnlockedFeaturesByProduct', () => {
       // Given: Undefined product ID
 
       // When: Calling with undefined
-      const features = featureGatingService.getUnlockedFeaturesByProduct(undefined as any);
+      const features = featureGatingService.getUnlockedFeaturesByProduct(
+        undefined as any
+      );
 
       // Then: Should return empty array (safe default)
       expect(Array.isArray(features)).toBe(true);
@@ -551,7 +568,9 @@ describe('FeatureGatingService.getUnlockedFeaturesByProduct', () => {
       // Given: Non-string product ID
 
       // When: Calling with number
-      const features = featureGatingService.getUnlockedFeaturesByProduct(123 as any);
+      const features = featureGatingService.getUnlockedFeaturesByProduct(
+        123 as any
+      );
 
       // Then: Should return empty array (safe default)
       expect(Array.isArray(features)).toBe(true);
@@ -565,7 +584,8 @@ describe('FeatureGatingService.getUnlockedFeaturesByProduct', () => {
       // All features requiring premium_unlock should be accessible with that product
 
       // When: Getting features for premium_unlock bundle
-      const bundledFeatures = featureGatingService.getUnlockedFeaturesByProduct('premium_unlock');
+      const bundledFeatures =
+        featureGatingService.getUnlockedFeaturesByProduct('premium_unlock');
 
       // Then: Should return all premium features requiring that product
       expect(bundledFeatures.length).toBeGreaterThanOrEqual(2);
@@ -574,7 +594,9 @@ describe('FeatureGatingService.getUnlockedFeaturesByProduct', () => {
       expect(bundledFeatures.every((f) => f.level === 'premium')).toBe(true);
 
       // All returned features should require premium_unlock
-      expect(bundledFeatures.every((f) => f.requiredProductId === 'premium_unlock')).toBe(true);
+      expect(
+        bundledFeatures.every((f) => f.requiredProductId === 'premium_unlock')
+      ).toBe(true);
     });
   });
 });
@@ -594,7 +616,7 @@ describe('FeatureGatingService.canAccess', () => {
   describe('Task 7.2 - Happy Path: Free Features', () => {
     it('should return true for free features regardless of subscription or purchase', async () => {
       // Given: Free feature and free subscription tier
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
 
       // When: Checking access to free feature
       const result = await featureGatingService.canAccess('basic_search');
@@ -605,7 +627,7 @@ describe('FeatureGatingService.canAccess', () => {
 
     it('should return true for free feature even with premium subscription', async () => {
       // Given: Free feature and premium subscription
-      (mockGetSubscriptionTier).mockResolvedValue('premium');
+      mockGetSubscriptionTier.mockResolvedValue('premium');
 
       // When: Checking access
       const result = await featureGatingService.canAccess('basic_search');
@@ -618,7 +640,7 @@ describe('FeatureGatingService.canAccess', () => {
   describe('Task 7.2 - Happy Path: Premium Subscriber', () => {
     it('should return true for premium feature with premium subscription (no purchase needed)', async () => {
       // Given: Premium feature and premium subscription tier
-      (mockGetSubscriptionTier).mockResolvedValue('premium');
+      mockGetSubscriptionTier.mockResolvedValue('premium');
       // Note: No purchase needed when subscription tier is premium
 
       // When: Checking access to premium feature
@@ -632,12 +654,13 @@ describe('FeatureGatingService.canAccess', () => {
 
     it('should return true for all premium features with premium subscription', async () => {
       // Given: Premium subscription tier
-      (mockGetSubscriptionTier).mockResolvedValue('premium');
+      mockGetSubscriptionTier.mockResolvedValue('premium');
 
       // When: Checking access for multiple premium features
       const result1 = await featureGatingService.canAccess('advanced_search');
       const result2 = await featureGatingService.canAccess('export_data');
-      const result3 = await featureGatingService.canAccess('advanced_analytics');
+      const result3 =
+        await featureGatingService.canAccess('advanced_analytics');
 
       // Then: All premium features should be accessible
       expect(result1).toBe(true);
@@ -649,7 +672,7 @@ describe('FeatureGatingService.canAccess', () => {
   describe('Task 7.2 - Happy Path: Free User with Purchase', () => {
     it('should return true for premium feature with free subscription but with purchase', async () => {
       // Given: Premium feature, free subscription tier, but user has purchase for that feature
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
       const mockPurchases = [
         {
           id: 1,
@@ -683,7 +706,7 @@ describe('FeatureGatingService.canAccess', () => {
 
     it('should integrate purchase state when subscription is free', async () => {
       // Given: Free subscription with purchase for data_export feature
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
       const mockPurchases = [
         {
           id: 2,
@@ -719,7 +742,7 @@ describe('FeatureGatingService.canAccess', () => {
   describe('Task 7.2 - Sad Path: Free User Without Purchase', () => {
     it('should return false for premium feature with free subscription and no purchase', async () => {
       // Given: Free subscription tier, no purchase
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
       (db.select as jest.Mock).mockReturnValue({
         from: jest.fn().mockReturnValue({
           where: jest.fn().mockReturnValue({
@@ -738,7 +761,7 @@ describe('FeatureGatingService.canAccess', () => {
     it('should return false when purchase does not match required product', async () => {
       // Given: Free subscription with purchase for wrong product
       // User has 'data_export' purchase but 'advanced_search' requires 'premium_unlock'
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
 
       (db.select as jest.Mock).mockReturnValue({
         from: jest.fn().mockReturnValue({
@@ -759,7 +782,7 @@ describe('FeatureGatingService.canAccess', () => {
   describe('Task 7.2 - Subscription/Purchase Integration Logic', () => {
     it('should prioritize subscription tier over purchase check', async () => {
       // Given: Premium subscription (should not check purchase)
-      (mockGetSubscriptionTier).mockResolvedValue('premium');
+      mockGetSubscriptionTier.mockResolvedValue('premium');
 
       // When: Checking access with premium subscription
       const result = await featureGatingService.canAccess('advanced_search');
@@ -772,7 +795,7 @@ describe('FeatureGatingService.canAccess', () => {
 
     it('should check purchase state only when subscription is free', async () => {
       // Given: Free subscription tier
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
       const mockPurchases = [
         {
           id: 4,
@@ -809,10 +832,12 @@ describe('FeatureGatingService.canAccess', () => {
   describe('Task 7.2 - Edge Cases: Invalid Feature ID', () => {
     it('should return false for non-existent feature', async () => {
       // Given: Non-existent feature ID
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
 
       // When: Checking access
-      const result = await featureGatingService.canAccess('non_existent_feature');
+      const result = await featureGatingService.canAccess(
+        'non_existent_feature'
+      );
 
       // Then: Access should be denied
       expect(result).toBe(false);
@@ -820,7 +845,7 @@ describe('FeatureGatingService.canAccess', () => {
 
     it('should handle empty string feature ID', async () => {
       // Given: Empty feature ID
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
 
       // When: Checking access
       const result = await featureGatingService.canAccess('');
@@ -833,7 +858,9 @@ describe('FeatureGatingService.canAccess', () => {
   describe('Task 7.2 - Unhappy Path: Service Failures', () => {
     it('should handle subscription service error gracefully', async () => {
       // Given: Subscription service throws error
-      (mockGetSubscriptionTier).mockRejectedValue(new Error('Service unavailable'));
+      mockGetSubscriptionTier.mockRejectedValue(
+        new Error('Service unavailable')
+      );
 
       // When: Checking access
       // Then: Should throw or return safe default (depends on implementation choice)
@@ -848,7 +875,7 @@ describe('FeatureGatingService.canAccess', () => {
 
     it('should handle database error during purchase check', async () => {
       // Given: Free subscription but database throws error during purchase check
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
       (db.select as jest.Mock).mockImplementation(() => {
         throw new Error('Database connection failed');
       });
@@ -864,7 +891,7 @@ describe('FeatureGatingService.canAccess', () => {
   describe('Task 7.2 - Offline Support', () => {
     it('should use cached purchase state (isSynced=false)', async () => {
       // Given: Free subscription with offline purchase (not synced)
-      (mockGetSubscriptionTier).mockResolvedValue('free');
+      mockGetSubscriptionTier.mockResolvedValue('free');
       const mockPurchases = [
         {
           id: 5,

@@ -763,8 +763,12 @@ describe('PerformanceMonitor', () => {
       if (result.success) {
         const metrics = result.data;
         expect(metrics.recordedAt).toBeInstanceOf(Date);
-        expect(metrics.recordedAt.getTime()).toBeGreaterThanOrEqual(beforeGetMetrics.getTime());
-        expect(metrics.recordedAt.getTime()).toBeLessThanOrEqual(afterGetMetrics.getTime());
+        expect(metrics.recordedAt.getTime()).toBeGreaterThanOrEqual(
+          beforeGetMetrics.getTime()
+        );
+        expect(metrics.recordedAt.getTime()).toBeLessThanOrEqual(
+          afterGetMetrics.getTime()
+        );
       }
 
       mockNow.mockRestore();

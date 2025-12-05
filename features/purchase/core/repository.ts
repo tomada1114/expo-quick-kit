@@ -33,7 +33,6 @@ import {
 const CACHE_KEY = 'purchase_products_cache';
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-
 /**
  * Convert RevenueCat Package to domain Product
  */
@@ -59,7 +58,6 @@ function toProduct(pkg: {
     currencyCode: product.currencyCode,
   };
 }
-
 
 /**
  * Save products to local cache
@@ -175,9 +173,7 @@ export const purchaseRepository = {
 
     // For Android and other platforms, start with RevenueCat
     if (Platform.OS === 'android') {
-      return purchaseRepository._loadProductMetadataFromRevenueCat(
-        productIds
-      );
+      return purchaseRepository._loadProductMetadataFromRevenueCat(productIds);
     }
 
     // Platform not supported
@@ -421,7 +417,10 @@ export const purchaseRepository = {
     }
 
     // Validate receipt data
-    if (!transaction.receiptData || typeof transaction.receiptData !== 'string') {
+    if (
+      !transaction.receiptData ||
+      typeof transaction.receiptData !== 'string'
+    ) {
       return {
         success: false,
         error: {

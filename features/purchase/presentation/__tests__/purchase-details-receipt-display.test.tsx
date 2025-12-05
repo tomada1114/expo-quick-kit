@@ -525,10 +525,14 @@ describe('PurchaseDetailsModal - Receipt Information Visualization (Task 13.3)',
         />
       );
 
-      const verificationStatus = screen.getByTestId('receipt-verification-status');
+      const verificationStatus = screen.getByTestId(
+        'receipt-verification-status'
+      );
       const syncStatus = screen.getByTestId('receipt-sync-status');
 
-      expect(verificationStatus.props.accessibilityLabel).toContain('verification');
+      expect(verificationStatus.props.accessibilityLabel).toContain(
+        'verification'
+      );
       expect(syncStatus.props.accessibilityLabel).toContain('sync');
     });
   });

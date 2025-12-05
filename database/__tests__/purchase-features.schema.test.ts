@@ -121,7 +121,9 @@ describe('purchase_features junction table schema (Task 2.2)', () => {
         createdAt: 1234567890,
       };
 
-      const byPurchase = [feature1, feature2].filter((f) => f.purchaseId === 100);
+      const byPurchase = [feature1, feature2].filter(
+        (f) => f.purchaseId === 100
+      );
       expect(byPurchase).toHaveLength(2);
     });
 
@@ -146,7 +148,9 @@ describe('purchase_features junction table schema (Task 2.2)', () => {
         createdAt: 1234567890,
       };
 
-      const byFeature = [feature1, feature2].filter((f) => f.featureId === 'premium');
+      const byFeature = [feature1, feature2].filter(
+        (f) => f.featureId === 'premium'
+      );
       expect(byFeature).toHaveLength(2);
       expect(byFeature.map((f) => f.purchaseId)).toEqual([100, 101]);
     });

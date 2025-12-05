@@ -31,17 +31,17 @@ jest.mock('@/database/client', () => ({
       }),
     })),
     select: jest.fn(() => ({
-      from: jest.fn(function() {
+      from: jest.fn(function () {
         return {
-          where: jest.fn(function() {
+          where: jest.fn(function () {
             return {
               all: jest.fn(() => []),
               get: jest.fn(() => undefined),
             };
           }),
-          innerJoin: jest.fn(function() {
+          innerJoin: jest.fn(function () {
             return {
-              where: jest.fn(function() {
+              where: jest.fn(function () {
                 return {
                   all: jest.fn(() => []),
                 };
@@ -84,7 +84,10 @@ import { purchases } from '@/database/schema';
 import { eq } from 'drizzle-orm';
 import { purchaseRepository } from '../../core/repository';
 import { purchaseService } from '../../application/purchase-service';
-import { restoreService, RestoreError } from '../../application/restore-service';
+import {
+  restoreService,
+  RestoreError,
+} from '../../application/restore-service';
 import type { Transaction, PurchaseError } from '../../core/types';
 
 describe('Purchase Restoration Integration - Task 16.8', () => {
@@ -113,22 +116,22 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
 
   // Helper to mock platform response
   const mockPlatformHistory = (transactions: Transaction[]) => {
-    (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue(
-      {
-        success: true,
-        data: transactions,
-      }
-    );
+    (
+      purchaseRepository.requestAllPurchaseHistory as jest.Mock
+    ).mockResolvedValue({
+      success: true,
+      data: transactions,
+    });
   };
 
   // Helper to mock platform error
   const mockPlatformError = (error: PurchaseError) => {
-    (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue(
-      {
-        success: false,
-        error,
-      }
-    );
+    (
+      purchaseRepository.requestAllPurchaseHistory as jest.Mock
+    ).mockResolvedValue({
+      success: false,
+      error,
+    });
   };
 
   // Helper to mock current purchases from DB
@@ -383,7 +386,9 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
 
     it('E2E-10: Database error when recording new purchase', async () => {
       // Given: Platform returns 1 new transaction, DB insert fails
-      mockPlatformHistory([createMockTransaction({ transactionId: 'txn-fail-1' })]);
+      mockPlatformHistory([
+        createMockTransaction({ transactionId: 'txn-fail-1' }),
+      ]);
       mockCurrentPurchases([]);
       (db.insert as jest.Mock).mockImplementationOnce(() => {
         throw new Error('Database insert failed');
@@ -401,7 +406,9 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
 
     it('E2E-11: Database error when updating sync status', async () => {
       // Given: Platform returns 1 existing transaction, DB update fails
-      mockPlatformHistory([createMockTransaction({ transactionId: 'txn-update-fail' })]);
+      mockPlatformHistory([
+        createMockTransaction({ transactionId: 'txn-update-fail' }),
+      ]);
       mockCurrentPurchases([createMockPurchase('txn-update-fail')]);
       (db.update as jest.Mock).mockImplementationOnce(() => {
         throw new Error('Database update failed');
@@ -428,8 +435,9 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
       const newTransactions = Array.from({ length: 50 }, (_, i) =>
         createMockTransaction({ transactionId: `txn-new-${i}` })
       );
-      const existingTransactionIds = Array.from({ length: 50 }, (_, i) =>
-        `txn-existing-${i}`
+      const existingTransactionIds = Array.from(
+        { length: 50 },
+        (_, i) => `txn-existing-${i}`
       );
       const existingTransactions = existingTransactionIds.map((id) =>
         createMockTransaction({ transactionId: id })
@@ -457,7 +465,9 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
 
     it('E2E-13: Restore single purchase transaction', async () => {
       // Given: Platform returns exactly 1 transaction (boundary: minimum non-zero)
-      mockPlatformHistory([createMockTransaction({ transactionId: 'txn-single' })]);
+      mockPlatformHistory([
+        createMockTransaction({ transactionId: 'txn-single' }),
+      ]);
       mockCurrentPurchases([]);
 
       // When: restorePurchases() is called
@@ -475,7 +485,9 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
     it('E2E-14: Transaction with empty transactionId (validation failure)', async () => {
       // Given: Platform returns transaction with empty transactionId
       const invalidTransaction = createMockTransaction({ transactionId: '' });
-      const validTransaction = createMockTransaction({ transactionId: 'txn-valid' });
+      const validTransaction = createMockTransaction({
+        transactionId: 'txn-valid',
+      });
       mockPlatformHistory([invalidTransaction, validTransaction]);
       mockCurrentPurchases([]);
 
@@ -493,7 +505,9 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
     it('E2E-15: Transaction with empty productId (validation failure)', async () => {
       // Given: Platform returns transaction with empty productId
       const invalidTransaction = createMockTransaction({ productId: '' });
-      const validTransaction = createMockTransaction({ productId: 'premium_unlock' });
+      const validTransaction = createMockTransaction({
+        productId: 'premium_unlock',
+      });
       mockPlatformHistory([invalidTransaction, validTransaction]);
       mockCurrentPurchases([]);
 
@@ -578,9 +592,9 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
   describe('Unhappy Path - Unexpected System Errors', () => {
     it('E2E-19: Exception thrown by requestAllPurchaseHistory', async () => {
       // Given: requestAllPurchaseHistory throws native module error
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockRejectedValueOnce(
-        new Error('Native module crashed')
-      );
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockRejectedValueOnce(new Error('Native module crashed'));
 
       // When: restorePurchases() is called
       const result = await restoreService.restorePurchases();
@@ -613,7 +627,9 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
 
     it('E2E-21: Platform returns malformed response (missing data)', async () => {
       // Given: Platform returns response without data property
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValueOnce({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
         success: true,
         // Missing data property - will cause error when trying to iterate
       });
@@ -630,7 +646,9 @@ describe('Purchase Restoration Integration - Task 16.8', () => {
 
     it('E2E-22: Platform returns non-array transactions', async () => {
       // Given: Platform returns null instead of array
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValueOnce({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValueOnce({
         success: true,
         data: null,
       });

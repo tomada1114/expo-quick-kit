@@ -51,9 +51,23 @@ const mockFeatureGatingService = {
 const mockColors = {
   primary: '#007AFF',
   background: { base: '#FFFFFF', secondary: '#F2F2F7', tertiary: '#FFFFFF' },
-  text: { primary: '#000000', secondary: '#3C3C43', tertiary: '#8E8E93', inverse: '#FFFFFF' },
-  semantic: { error: '#FF3B30', success: '#34C759', warning: '#FF9500', info: '#00C7FF' },
-  interactive: { separator: '#C6C6D0', fill: '#E5E5EA', fillSecondary: '#E5E5EA' },
+  text: {
+    primary: '#000000',
+    secondary: '#3C3C43',
+    tertiary: '#8E8E93',
+    inverse: '#FFFFFF',
+  },
+  semantic: {
+    error: '#FF3B30',
+    success: '#34C759',
+    warning: '#FF9500',
+    info: '#00C7FF',
+  },
+  interactive: {
+    separator: '#C6C6D0',
+    fill: '#E5E5EA',
+    fillSecondary: '#E5E5EA',
+  },
 };
 
 describe('FeatureGate Component', () => {
@@ -66,7 +80,9 @@ describe('FeatureGate Component', () => {
 
     // Reset useFeatureGatingService hook
     (useFeatureGatingService as jest.Mock).mockClear();
-    (useFeatureGatingService as jest.Mock).mockReturnValue(mockFeatureGatingService);
+    (useFeatureGatingService as jest.Mock).mockReturnValue(
+      mockFeatureGatingService
+    );
 
     // Reset useThemedColors hook
     (useThemedColors as jest.Mock).mockClear();
@@ -100,32 +116,34 @@ describe('FeatureGate Component', () => {
 
       // When: FeatureGate component renders with free feature
       render(
-        <FeatureGate featureId="basic_search">
-          {mockChildren}
-        </FeatureGate>
+        <FeatureGate featureId="basic_search">{mockChildren}</FeatureGate>
       );
 
       // Then: Children should be visible immediately
       expect(screen.getByTestId('content')).toBeTruthy();
-      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith('basic_search');
+      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith(
+        'basic_search'
+      );
       expect(screen.queryByTestId('paywall-component')).toBeNull();
     });
 
     it('should render children when premium feature is purchased', () => {
       // Given: Premium feature with verified purchase
       mockFeatureGatingService.canAccessSync.mockReturnValue(true);
-      const mockChildren = <Text testID="premium-content">Advanced Analytics</Text>;
+      const mockChildren = (
+        <Text testID="premium-content">Advanced Analytics</Text>
+      );
 
       // When: Component renders with purchased premium feature
       render(
-        <FeatureGate featureId="advanced_analytics">
-          {mockChildren}
-        </FeatureGate>
+        <FeatureGate featureId="advanced_analytics">{mockChildren}</FeatureGate>
       );
 
       // Then: Premium content should be visible
       expect(screen.getByTestId('premium-content')).toBeTruthy();
-      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith('advanced_analytics');
+      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith(
+        'advanced_analytics'
+      );
       expect(screen.queryByTestId('paywall-component')).toBeNull();
     });
 
@@ -230,7 +248,9 @@ describe('FeatureGate Component', () => {
       // Then: Content should not be visible, paywall should show
       expect(screen.queryByTestId('content')).toBeNull();
       expect(screen.getByTestId('paywall-component')).toBeTruthy();
-      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith('non_existent_feature');
+      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith(
+        'non_existent_feature'
+      );
     });
 
     it('should deny access and show paywall when featureId is empty', () => {
@@ -369,11 +389,7 @@ describe('FeatureGate Component', () => {
       mockFeatureGatingService.canAccessSync.mockReturnValue(true);
 
       // When: Component renders with null children
-      render(
-        <FeatureGate featureId="basic_search">
-          {null}
-        </FeatureGate>
-      );
+      render(<FeatureGate featureId="basic_search">{null}</FeatureGate>);
 
       // Then: No crash, canAccessSync called
       expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalled();
@@ -384,11 +400,7 @@ describe('FeatureGate Component', () => {
       mockFeatureGatingService.canAccessSync.mockReturnValue(true);
 
       // When: Component renders with undefined children
-      render(
-        <FeatureGate featureId="basic_search">
-          {undefined}
-        </FeatureGate>
-      );
+      render(<FeatureGate featureId="basic_search">{undefined}</FeatureGate>);
 
       // Then: No crash, canAccessSync called
       expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalled();
@@ -406,7 +418,9 @@ describe('FeatureGate Component', () => {
       );
 
       // Then: No crash, canAccessSync called
-      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith('basic_search');
+      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith(
+        'basic_search'
+      );
     });
 
     it('should render multiple children when access granted', () => {
@@ -441,7 +455,9 @@ describe('FeatureGate Component', () => {
       );
 
       // Then: Should handle gracefully
-      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith(longFeatureId);
+      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith(
+        longFeatureId
+      );
     });
 
     it('should handle special characters in feature ID', () => {
@@ -457,7 +473,9 @@ describe('FeatureGate Component', () => {
       );
 
       // Then: Should pass to service
-      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith(specialFeatureId);
+      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith(
+        specialFeatureId
+      );
     });
 
     it('should default allowDismiss to true (freemium model)', () => {
@@ -699,7 +717,9 @@ describe('FeatureGate Component', () => {
 
     it('should handle undefined return from canAccessSync', () => {
       // Given: Service returns undefined
-      mockFeatureGatingService.canAccessSync.mockReturnValue(undefined as unknown as boolean);
+      mockFeatureGatingService.canAccessSync.mockReturnValue(
+        undefined as unknown as boolean
+      );
 
       // When: Component renders
       render(
@@ -813,7 +833,9 @@ describe('FeatureGate Component', () => {
       );
 
       // Then: Service should be called with new feature ID
-      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith('feature2');
+      expect(mockFeatureGatingService.canAccessSync).toHaveBeenCalledWith(
+        'feature2'
+      );
     });
   });
 
@@ -917,7 +939,11 @@ describe('FeatureGate Component', () => {
       mockFeatureGatingService.canAccessSync.mockReturnValue(false);
       const darkColors = {
         ...mockColors,
-        background: { base: '#000000', secondary: '#1C1C1E', tertiary: '#2C2C2E' },
+        background: {
+          base: '#000000',
+          secondary: '#1C1C1E',
+          tertiary: '#2C2C2E',
+        },
       };
       (useThemedColors as jest.Mock).mockReturnValue({
         colors: darkColors,

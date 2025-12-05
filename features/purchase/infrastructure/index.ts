@@ -39,8 +39,18 @@ export type { RetryConfig, RetryResult } from './retry-handler';
 export { errorHandler } from './error-handler';
 export type { UserFacingError } from './error-handler';
 
-export { mapPurchaseError, mapStoreKit2Error, mapGooglePlayBillingError, mapRevenueCatError } from './error-mapper';
-export { isNetworkError, isStoreKit2Error, isRevenueCatError, isBillingResponseObject } from './error-mapper';
+export {
+  mapPurchaseError,
+  mapStoreKit2Error,
+  mapGooglePlayBillingError,
+  mapRevenueCatError,
+} from './error-mapper';
+export {
+  isNetworkError,
+  isStoreKit2Error,
+  isRevenueCatError,
+  isBillingResponseObject,
+} from './error-mapper';
 
 // Task 10.2: Analytics engine for purchase event tracking
 export { analyticsEngine } from './analytics-engine';

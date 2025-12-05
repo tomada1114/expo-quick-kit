@@ -27,7 +27,12 @@
 /* eslint-disable @typescript-eslint/no-require-imports, import/first */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react-native';
 import { View, Text } from 'react-native';
 
 // ============================================================================
@@ -81,9 +86,9 @@ jest.mock('@/features/purchase/infrastructure/currency-formatter', () => ({
 jest.mock('@/database/client', () => ({
   db: {
     select: jest.fn(() => ({
-      from: jest.fn(function() {
+      from: jest.fn(function () {
         return {
-          where: jest.fn(function() {
+          where: jest.fn(function () {
             return {
               all: jest.fn(() => []),
               get: jest.fn(() => undefined),
@@ -98,7 +103,7 @@ jest.mock('@/database/client', () => ({
       })),
     })),
     update: jest.fn(() => ({
-      set: jest.fn(function() {
+      set: jest.fn(function () {
         return {
           where: jest.fn(() => Promise.resolve([])),
         };
@@ -136,9 +141,12 @@ const mockVerificationMetadataStore = {
   saveVerificationMetadata: jest.fn(),
 };
 
-jest.mock('@/features/purchase/infrastructure/verification-metadata-store', () => ({
-  verificationMetadataStore: mockVerificationMetadataStore,
-}));
+jest.mock(
+  '@/features/purchase/infrastructure/verification-metadata-store',
+  () => ({
+    verificationMetadataStore: mockVerificationMetadataStore,
+  })
+);
 
 // Mock purchase store
 const mockPurchaseStore = {
@@ -166,13 +174,20 @@ jest.mock('@/features/purchase/application/feature-gating-service', () => ({
 
 // Import component after mocks
 import { PaywallComponent } from '../components/paywall';
-import { Product, FeatureDefinition, Purchase } from '@/features/purchase/core/types';
+import {
+  Product,
+  FeatureDefinition,
+  Purchase,
+} from '@/features/purchase/core/types';
 
 // ============================================================================
 // Test Fixtures
 // ============================================================================
 
-const createMockProduct = (id: string, overrides?: Partial<Product>): Product => ({
+const createMockProduct = (
+  id: string,
+  overrides?: Partial<Product>
+): Product => ({
   id,
   title: `Premium Feature ${id}`,
   description: `Unlock all features with ${id}`,
@@ -181,7 +196,10 @@ const createMockProduct = (id: string, overrides?: Partial<Product>): Product =>
   ...overrides,
 });
 
-const createMockFeature = (id: string, overrides?: Partial<FeatureDefinition>): FeatureDefinition => ({
+const createMockFeature = (
+  id: string,
+  overrides?: Partial<FeatureDefinition>
+): FeatureDefinition => ({
   id,
   name: `Feature ${id}`,
   description: `Feature ${id} description`,
@@ -190,7 +208,10 @@ const createMockFeature = (id: string, overrides?: Partial<FeatureDefinition>): 
   ...overrides,
 });
 
-const createMockPurchase = (id: string, overrides?: Partial<Purchase>): Purchase => ({
+const createMockPurchase = (
+  id: string,
+  overrides?: Partial<Purchase>
+): Purchase => ({
   transactionId: `txn-${id}`,
   productId: `premium-${id}`,
   purchasedAt: new Date(),
@@ -249,12 +270,17 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
         data: mockPurchase,
       });
 
-      mockFeatureGatingService.getUnlockedFeaturesByProduct.mockReturnValue([mockFeature]);
+      mockFeatureGatingService.getUnlockedFeaturesByProduct.mockReturnValue([
+        mockFeature,
+      ]);
       mockFeatureGatingService.canAccessSync.mockReturnValue(true);
 
       // WHEN: Render PaywallComponent
       const { getByTestId, getByText } = render(
-        <PaywallComponent featureId="advanced-analytics" products={[mockProduct]} />
+        <PaywallComponent
+          featureId="advanced-analytics"
+          products={[mockProduct]}
+        />
       );
 
       // THEN: Component should be rendered
@@ -268,13 +294,17 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
       fireEvent.press(getByTestId('product-card-premium-unlock'));
 
       // THEN: Product should be selected (store called)
-      expect(mockPurchaseStore.setSelectedProductId).toHaveBeenCalledWith('premium-unlock');
+      expect(mockPurchaseStore.setSelectedProductId).toHaveBeenCalledWith(
+        'premium-unlock'
+      );
 
       // WHEN: Purchase flow is triggered (simulating button press in parent)
       await mockPurchaseService.purchaseProduct('premium-unlock');
 
       // THEN: PurchaseService.purchaseProduct should have been called with correct productId
-      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith('premium-unlock');
+      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith(
+        'premium-unlock'
+      );
 
       // THEN: Paywall should still be rendered (integration test focuses on component + service)
       expect(getByTestId('paywall-component')).toBeTruthy();
@@ -315,7 +345,9 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
       await mockPurchaseService.purchaseProduct('unlock-pro');
 
       // THEN: Verification metadata should be saved (via purchase service)
-      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith('unlock-pro');
+      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith(
+        'unlock-pro'
+      );
 
       // THEN: No error should be displayed
       expect(mockPurchaseStore.error).toBeNull();
@@ -341,7 +373,11 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
 
       const mockPurchase = createMockPurchase('003', {
         productId: 'bundle-pro',
-        unlockedFeatures: ['advanced-analytics', 'priority-support', 'custom-branding'],
+        unlockedFeatures: [
+          'advanced-analytics',
+          'priority-support',
+          'custom-branding',
+        ],
       });
 
       mockPurchaseService.purchaseProduct.mockResolvedValue({
@@ -349,11 +385,16 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
         data: mockPurchase,
       });
 
-      mockFeatureGatingService.getUnlockedFeaturesByProduct.mockReturnValue(features);
+      mockFeatureGatingService.getUnlockedFeaturesByProduct.mockReturnValue(
+        features
+      );
 
       // WHEN: User selects and completes purchase
       const { getByTestId, getByText } = render(
-        <PaywallComponent featureId="advanced-analytics" products={[mockProduct]} />
+        <PaywallComponent
+          featureId="advanced-analytics"
+          products={[mockProduct]}
+        />
       );
 
       fireEvent.press(getByTestId('product-card-bundle-pro'));
@@ -362,7 +403,9 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
       await mockPurchaseService.purchaseProduct('bundle-pro');
 
       // THEN: All features should be unlocked
-      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith('bundle-pro');
+      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith(
+        'bundle-pro'
+      );
       expect(mockPurchaseStore.error).toBeNull();
 
       // THEN: Feature list should show all unlocked features
@@ -399,13 +442,17 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
 
       // WHEN: User selects product
       const { getByTestId } = render(
-        <PaywallComponent featureId="premium-feature" products={[mockProduct]} />
+        <PaywallComponent
+          featureId="premium-feature"
+          products={[mockProduct]}
+        />
       );
 
       fireEvent.press(getByTestId('product-card-premium-unlock'));
 
       // WHEN: Purchase is attempted and fails with network error
-      const result = await mockPurchaseService.purchaseProduct('premium-unlock');
+      const result =
+        await mockPurchaseService.purchaseProduct('premium-unlock');
 
       // THEN: Error should be returned but component handles it
       expect(result.success).toBe(false);
@@ -442,13 +489,17 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
 
       // WHEN: User taps on product and cancels purchase
       const { getByTestId } = render(
-        <PaywallComponent featureId="premium-feature" products={[mockProduct]} />
+        <PaywallComponent
+          featureId="premium-feature"
+          products={[mockProduct]}
+        />
       );
 
       fireEvent.press(getByTestId('product-card-premium-unlock'));
 
       // WHEN: Purchase is attempted but user cancels
-      const result = await mockPurchaseService.purchaseProduct('premium-unlock');
+      const result =
+        await mockPurchaseService.purchaseProduct('premium-unlock');
 
       // THEN: Cancellation should be handled
       expect(result.success).toBe(false);
@@ -484,19 +535,25 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
 
       // WHEN: User selects product and purchase is attempted
       const { getByTestId } = render(
-        <PaywallComponent featureId="premium-feature" products={[mockProduct]} />
+        <PaywallComponent
+          featureId="premium-feature"
+          products={[mockProduct]}
+        />
       );
 
       fireEvent.press(getByTestId('product-card-premium-unlock'));
 
       // WHEN: Purchase fails during verification
-      const result = await mockPurchaseService.purchaseProduct('premium-unlock');
+      const result =
+        await mockPurchaseService.purchaseProduct('premium-unlock');
 
       // THEN: Verification error should be returned
       expect(result.success).toBe(false);
 
       // THEN: Feature should not be accessible
-      expect(mockFeatureGatingService.canAccessSync('premium-feature')).toBe(false);
+      expect(mockFeatureGatingService.canAccessSync('premium-feature')).toBe(
+        false
+      );
 
       // THEN: Paywall should remain open
       expect(getByTestId('paywall-component')).toBeTruthy();
@@ -544,7 +601,9 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
       await mockPurchaseService.purchaseProduct('free-upgrade');
 
       // THEN: Purchase should complete successfully
-      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith('free-upgrade');
+      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith(
+        'free-upgrade'
+      );
       expect(mockPurchaseStore.error).toBeNull();
 
       // THEN: Price should display correctly
@@ -590,7 +649,9 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
       await mockPurchaseService.purchaseProduct('enterprise-plan');
 
       // THEN: Purchase should complete with correct price
-      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith('enterprise-plan');
+      expect(mockPurchaseService.purchaseProduct).toHaveBeenCalledWith(
+        'enterprise-plan'
+      );
     });
 
     /**
@@ -611,7 +672,10 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
 
       // WHEN: Render paywall
       const { getByTestId } = render(
-        <PaywallComponent featureId="premium-feature" products={[mockProduct]} />
+        <PaywallComponent
+          featureId="premium-feature"
+          products={[mockProduct]}
+        />
       );
 
       // WHEN: User taps the product card to select it
@@ -620,7 +684,9 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
       fireEvent.press(getByTestId('product-card-premium-unlock'));
 
       // THEN: Product selection should be updated appropriately
-      expect(mockPurchaseStore.setSelectedProductId).toHaveBeenCalledWith('premium-unlock');
+      expect(mockPurchaseStore.setSelectedProductId).toHaveBeenCalledWith(
+        'premium-unlock'
+      );
 
       // WHEN: Purchase is triggered
       await mockPurchaseService.purchaseProduct('premium-unlock');
@@ -659,13 +725,17 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
 
       // WHEN: User selects product and attempts purchase
       const { getByTestId } = render(
-        <PaywallComponent featureId="premium-feature" products={[mockProduct]} />
+        <PaywallComponent
+          featureId="premium-feature"
+          products={[mockProduct]}
+        />
       );
 
       fireEvent.press(getByTestId('product-card-premium-unlock'));
 
       // WHEN: Database error occurs
-      const result = await mockPurchaseService.purchaseProduct('premium-unlock');
+      const result =
+        await mockPurchaseService.purchaseProduct('premium-unlock');
 
       // THEN: Error should be returned
       expect(result.success).toBe(false);
@@ -699,13 +769,17 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
 
       // WHEN: User selects product and unexpected error occurs
       const { getByTestId } = render(
-        <PaywallComponent featureId="premium-feature" products={[mockProduct]} />
+        <PaywallComponent
+          featureId="premium-feature"
+          products={[mockProduct]}
+        />
       );
 
       fireEvent.press(getByTestId('product-card-premium-unlock'));
 
       // WHEN: Unexpected error is returned
-      const result = await mockPurchaseService.purchaseProduct('premium-unlock');
+      const result =
+        await mockPurchaseService.purchaseProduct('premium-unlock');
 
       // THEN: Error should be returned but app doesn't crash
       expect(result.success).toBe(false);
@@ -744,13 +818,17 @@ describe('Full Purchase Flow Integration Test (Task 16.6)', () => {
 
       // WHEN: User selects product and completes purchase
       const { getByTestId } = render(
-        <PaywallComponent featureId="advanced-analytics" products={[mockProduct]} />
+        <PaywallComponent
+          featureId="advanced-analytics"
+          products={[mockProduct]}
+        />
       );
 
       fireEvent.press(getByTestId('product-card-analytics-unlock'));
 
       // WHEN: Purchase is completed
-      const result = await mockPurchaseService.purchaseProduct('analytics-unlock');
+      const result =
+        await mockPurchaseService.purchaseProduct('analytics-unlock');
 
       // THEN: Purchase should succeed
       expect(result.success).toBe(true);

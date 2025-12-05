@@ -72,10 +72,11 @@ export function RestoreButton({
       // Handle malformed response
       if (!result || typeof result !== 'object' || !('success' in result)) {
         const error = new Error('Invalid restore service response');
-        Alert.alert('Error', 'Failed to restore purchases: Invalid service response', [
-          { text: 'Retry', onPress: retryRestore },
-          { text: 'Cancel' },
-        ]);
+        Alert.alert(
+          'Error',
+          'Failed to restore purchases: Invalid service response',
+          [{ text: 'Retry', onPress: retryRestore }, { text: 'Cancel' }]
+        );
         onError?.(error);
         setIsRestoring(false);
         return;
@@ -117,9 +118,7 @@ export function RestoreButton({
       ]);
 
       onError?.(
-        error instanceof Error
-          ? error
-          : new Error('Unknown restore error')
+        error instanceof Error ? error : new Error('Unknown restore error')
       );
     } finally {
       setIsRestoring(false);

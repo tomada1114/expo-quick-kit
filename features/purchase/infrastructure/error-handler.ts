@@ -117,7 +117,7 @@ export const errorHandler = {
       case 'STORE_PROBLEM_ERROR':
         return {
           title: 'Store Unavailable',
-          message: `The app store is temporarily unavailable (Code: ${('nativeErrorCode' in error) ? (error as any).nativeErrorCode : 'unknown'}). Please try again in a few moments.`,
+          message: `The app store is temporarily unavailable (Code: ${'nativeErrorCode' in error ? (error as any).nativeErrorCode : 'unknown'}). Please try again in a few moments.`,
           canRetry: true,
           canDismiss: true,
           suggestSupport: true,
@@ -128,7 +128,8 @@ export const errorHandler = {
       case 'PURCHASE_INVALID':
         return {
           title: 'Purchase Invalid',
-          message: 'The purchase was rejected. Please try again or contact support if the problem persists.',
+          message:
+            'The purchase was rejected. Please try again or contact support if the problem persists.',
           canRetry: false,
           canDismiss: true,
           suggestSupport: true,
@@ -139,7 +140,7 @@ export const errorHandler = {
       case 'PRODUCT_UNAVAILABLE':
         return {
           title: 'Product Unavailable',
-          message: `The product is no longer available in your region. Product ID: ${('productId' in error) ? (error as any).productId : 'unknown'}`,
+          message: `The product is no longer available in your region. Product ID: ${'productId' in error ? (error as any).productId : 'unknown'}`,
           canRetry: false,
           canDismiss: true,
           suggestSupport: false,
@@ -186,7 +187,8 @@ export const errorHandler = {
       case 'CANCELLED':
         return {
           title: 'Purchase Cancelled',
-          message: 'You cancelled the purchase. No charges were made. Feel free to try again anytime.',
+          message:
+            'You cancelled the purchase. No charges were made. Feel free to try again anytime.',
           canRetry: true,
           canDismiss: true,
           suggestSupport: false,
@@ -197,7 +199,8 @@ export const errorHandler = {
       case 'NETWORK_ERROR':
         return {
           title: 'Connection Problem',
-          message: 'Network connection failed. Checking your internet and trying again...',
+          message:
+            'Network connection failed. Checking your internet and trying again...',
           canRetry: true,
           canDismiss: true,
           suggestSupport: true,
@@ -220,7 +223,8 @@ export const errorHandler = {
       case 'DB_ERROR':
         return {
           title: 'Storage Error',
-          message: 'Failed to save your purchase locally. The system will retry automatically.',
+          message:
+            'Failed to save your purchase locally. The system will retry automatically.',
           canRetry: true,
           canDismiss: false,
           suggestSupport: true,
@@ -354,10 +358,7 @@ export const errorHandler = {
    * @param context - Additional context
    * @returns Formatted error string
    */
-  formatForLogging(
-    error: unknown,
-    context?: Record<string, unknown>
-  ): string {
+  formatForLogging(error: unknown, context?: Record<string, unknown>): string {
     const userError = this.getUserError(error);
     const parts = [
       `[${userError.category.toUpperCase()}]`,

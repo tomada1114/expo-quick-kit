@@ -359,7 +359,10 @@ describe('SecureStorage - Purchase Verification Keys', () => {
     mockSecureStore.setItemAsync.mockResolvedValueOnce(undefined);
 
     // When: Storing large JSON
-    const result = await saveSecure(SecureStorageKey.PURCHASE_METADATA, largeJson);
+    const result = await saveSecure(
+      SecureStorageKey.PURCHASE_METADATA,
+      largeJson
+    );
 
     // Then: Should handle large but valid structure
     expect(result.success).toBe(true);
@@ -658,7 +661,9 @@ describe('SecureStorage - Concurrent Operations', () => {
   it('should handle error in one concurrent operation without affecting others', async () => {
     // Given: One operation fails, others succeed
     mockSecureStore.setItemAsync.mockResolvedValueOnce(undefined);
-    mockSecureStore.getItemAsync.mockRejectedValueOnce(new Error('Read failed'));
+    mockSecureStore.getItemAsync.mockRejectedValueOnce(
+      new Error('Read failed')
+    );
     mockSecureStore.deleteItemAsync.mockResolvedValueOnce(undefined);
 
     // When: Concurrent operations with one failure
@@ -687,7 +692,10 @@ describe('SecureStorage - Sequential Operations Flow', () => {
     mockSecureStore.deleteItemAsync.mockResolvedValueOnce(undefined);
 
     // When: Performing sequential operations
-    const saveResult = await saveSecure(SecureStorageKey.AUTH_TOKEN, 'token123');
+    const saveResult = await saveSecure(
+      SecureStorageKey.AUTH_TOKEN,
+      'token123'
+    );
     const getResult = await getSecure(SecureStorageKey.AUTH_TOKEN);
     const deleteResult = await deleteSecure(SecureStorageKey.AUTH_TOKEN);
 

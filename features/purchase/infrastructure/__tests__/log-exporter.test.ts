@@ -13,8 +13,19 @@
  * @module features/purchase/infrastructure/__tests__/log-exporter
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { logExporter, type ExportOptions, type ExportError } from '../log-exporter';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
+import {
+  logExporter,
+  type ExportOptions,
+  type ExportError,
+} from '../log-exporter';
 import { errorLogger, type ErrorLogEntry } from '../error-logger';
 import type { Result } from '@/lib/result';
 
@@ -175,7 +186,9 @@ describe('LogExporter - Task 9.4: Log Export Functionality', () => {
       expect(result.success).toBe(true);
       expect(mockFileSystem.writeAsStringAsync).toHaveBeenCalled();
       if (result.success) {
-        expect(result.data.filePath).toMatch(/error-logs-\d{4}-\d{2}-\d{2}\.gz$/);
+        expect(result.data.filePath).toMatch(
+          /error-logs-\d{4}-\d{2}-\d{2}\.gz$/
+        );
       }
     });
 
@@ -227,9 +240,15 @@ describe('LogExporter - Task 9.4: Log Export Functionality', () => {
      */
     it('should export logs with error code filter', async () => {
       // Given: Mixed error codes
-      errorLogger.logs.push(createErrorLogEntry({ errorCode: 'NETWORK_ERROR' }));
-      errorLogger.logs.push(createErrorLogEntry({ errorCode: 'NETWORK_ERROR' }));
-      errorLogger.logs.push(createErrorLogEntry({ errorCode: 'VERIFICATION_FAILED' }));
+      errorLogger.logs.push(
+        createErrorLogEntry({ errorCode: 'NETWORK_ERROR' })
+      );
+      errorLogger.logs.push(
+        createErrorLogEntry({ errorCode: 'NETWORK_ERROR' })
+      );
+      errorLogger.logs.push(
+        createErrorLogEntry({ errorCode: 'VERIFICATION_FAILED' })
+      );
       errorLogger.logs.push(createErrorLogEntry({ errorCode: 'DB_ERROR' }));
 
       // When: Filter by error code
@@ -258,7 +277,10 @@ describe('LogExporter - Task 9.4: Log Export Functionality', () => {
       errorLogger.logError(createErrorLogEntry({ platform: 'ios' }));
       errorLogger.logError(createErrorLogEntry({ platform: 'ios' }));
       errorLogger.logError(
-        createErrorLogEntry({ platform: 'android', errorCode: 'STORE_PROBLEM_ERROR' })
+        createErrorLogEntry({
+          platform: 'android',
+          errorCode: 'STORE_PROBLEM_ERROR',
+        })
       );
       errorLogger.logError(
         createErrorLogEntry({
@@ -311,12 +333,8 @@ describe('LogExporter - Task 9.4: Log Export Functionality', () => {
      */
     it('should export logs with metadata summary', async () => {
       // Given: Multiple error entries
-      errorLogger.logError(
-        createErrorLogEntry({ errorCode: 'NETWORK_ERROR' })
-      );
-      errorLogger.logError(
-        createErrorLogEntry({ errorCode: 'NETWORK_ERROR' })
-      );
+      errorLogger.logError(createErrorLogEntry({ errorCode: 'NETWORK_ERROR' }));
+      errorLogger.logError(createErrorLogEntry({ errorCode: 'NETWORK_ERROR' }));
       errorLogger.logError(
         createErrorLogEntry({ errorCode: 'VERIFICATION_FAILED' })
       );
@@ -529,11 +547,9 @@ describe('LogExporter - Task 9.4: Log Export Functionality', () => {
      */
     it('should fail when ErrorLogger throws exception', async () => {
       // Given: errorLogger.getLogs throws
-      jest
-        .spyOn(errorLogger, 'getLogs')
-        .mockImplementationOnce(() => {
-          throw new Error('Internal error');
-        });
+      jest.spyOn(errorLogger, 'getLogs').mockImplementationOnce(() => {
+        throw new Error('Internal error');
+      });
 
       // When: Export logs
       const result = await logExporter.exportLogs();
@@ -656,9 +672,7 @@ describe('LogExporter - Task 9.4: Log Export Functionality', () => {
           mockPako.ungzip(result.data.compressedData)
         );
         expect(decompressed.entries[0].metadata?.emoji).toBe('🚀💰');
-        expect(decompressed.entries[0].metadata?.japanese).toBe(
-          '日本語エラー'
-        );
+        expect(decompressed.entries[0].metadata?.japanese).toBe('日本語エラー');
       }
     });
 
@@ -672,7 +686,10 @@ describe('LogExporter - Task 9.4: Log Export Functionality', () => {
       // Given: Error at specific time
       const timestamp = new Date('2025-12-04T10:00:00.000Z');
       errorLogger.logError(
-        createErrorLogEntry({ timestamp, timestampISO: timestamp.toISOString() })
+        createErrorLogEntry({
+          timestamp,
+          timestampISO: timestamp.toISOString(),
+        })
       );
 
       // When: Export with exact timestamp filter

@@ -63,7 +63,8 @@ export const PaywallComponent: React.FC<PaywallComponentProps> = ({
   testID = 'paywall-component',
 }) => {
   const { colors } = useThemedColors();
-  const { selectedProductId, setSelectedProductId, error, setError } = usePurchaseStore();
+  const { selectedProductId, setSelectedProductId, error, setError } =
+    usePurchaseStore();
 
   // Task 12.1: Filter and memoize valid products
   const validProducts = useMemo(() => {
@@ -82,10 +83,11 @@ export const PaywallComponent: React.FC<PaywallComponentProps> = ({
 
     for (const product of validProducts) {
       try {
-        const unlockedFeatures = featureGatingService.getUnlockedFeaturesByProduct(
-          product.id
-        );
-        features[product.id] = Array.isArray(unlockedFeatures) ? unlockedFeatures : [];
+        const unlockedFeatures =
+          featureGatingService.getUnlockedFeaturesByProduct(product.id);
+        features[product.id] = Array.isArray(unlockedFeatures)
+          ? unlockedFeatures
+          : [];
       } catch (err) {
         console.error(
           `Failed to load features for product ${product.id}:`,
@@ -107,10 +109,7 @@ export const PaywallComponent: React.FC<PaywallComponentProps> = ({
   if (validProducts.length === 0) {
     return (
       <View
-        style={[
-          styles.container,
-          { backgroundColor: colors.background.base },
-        ]}
+        style={[styles.container, { backgroundColor: colors.background.base }]}
         testID={testID}
       >
         <Text style={[styles.emptyStateText, { color: colors.text.secondary }]}>
@@ -141,18 +140,30 @@ export const PaywallComponent: React.FC<PaywallComponentProps> = ({
       </ScrollView>
 
       {error && (
-        <View style={[styles.errorBanner, { backgroundColor: colors.semantic.error }]}>
-          <Text style={[styles.errorText, { color: colors.text.inverse }]}>{error}</Text>
+        <View
+          style={[
+            styles.errorBanner,
+            { backgroundColor: colors.semantic.error },
+          ]}
+        >
+          <Text style={[styles.errorText, { color: colors.text.inverse }]}>
+            {error}
+          </Text>
         </View>
       )}
 
       {allowDismiss && (
         <TouchableOpacity
-          style={[styles.dismissButton, { backgroundColor: colors.background.secondary }]}
+          style={[
+            styles.dismissButton,
+            { backgroundColor: colors.background.secondary },
+          ]}
           onPress={onDismiss}
           testID="paywall-dismiss-button"
         >
-          <Text style={[styles.dismissButtonText, { color: colors.text.primary }]}>
+          <Text
+            style={[styles.dismissButtonText, { color: colors.text.primary }]}
+          >
             Cancel
           </Text>
         </TouchableOpacity>
@@ -202,7 +213,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
       testID={testID}
     >
       {/* Product Name (Task 12.2) */}
-      <Text style={[styles.productTitle, { color: colors.text.primary }]} numberOfLines={2}>
+      <Text
+        style={[styles.productTitle, { color: colors.text.primary }]}
+        numberOfLines={2}
+      >
         {displayTitle}
       </Text>
 
@@ -223,8 +237,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Unlocked Features List (Task 12.2) */}
       {features.length > 0 && (
-        <View style={styles.featuresSection} testID={`features-list-${product.id}`}>
-          <Text style={[styles.featuresSectionTitle, { color: colors.text.primary }]}>
+        <View
+          style={styles.featuresSection}
+          testID={`features-list-${product.id}`}
+        >
+          <Text
+            style={[
+              styles.featuresSectionTitle,
+              { color: colors.text.primary },
+            ]}
+          >
             Unlocks:
           </Text>
           <FlatList
@@ -244,7 +266,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           style={[styles.selectionBadge, { backgroundColor: colors.primary }]}
           testID={`selection-badge-${product.id}`}
         >
-          <Text style={[styles.selectionBadgeText, { color: colors.text.inverse }]}>
+          <Text
+            style={[styles.selectionBadgeText, { color: colors.text.inverse }]}
+          >
             ✓ Selected
           </Text>
         </View>
@@ -262,9 +286,14 @@ interface FeatureListItemProps {
   colors: ReturnType<typeof useThemedColors>['colors'];
 }
 
-const FeatureListItem: React.FC<FeatureListItemProps> = ({ feature, colors }) => (
+const FeatureListItem: React.FC<FeatureListItemProps> = ({
+  feature,
+  colors,
+}) => (
   <View style={styles.featureItem}>
-    <Text style={[styles.featureBullet, { color: colors.text.secondary }]}>•</Text>
+    <Text style={[styles.featureBullet, { color: colors.text.secondary }]}>
+      •
+    </Text>
     <Text style={[styles.featureName, { color: colors.text.secondary }]}>
       {feature.name}
     </Text>

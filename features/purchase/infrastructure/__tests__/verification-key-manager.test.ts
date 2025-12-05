@@ -32,7 +32,9 @@ describe('VerificationKeyManager', () => {
   describe('loadVerificationKey - iOS', () => {
     it('should return cached iOS key when available', async () => {
       // Given: A cached iOS key exists in secure store
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(mockIOSPublicKey);
+      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(
+        mockIOSPublicKey
+      );
 
       // When: Loading verification key for iOS
       const result = await manager.loadVerificationKey('ios');
@@ -73,7 +75,10 @@ describe('VerificationKeyManager', () => {
       (SecureStore.setItemAsync as jest.Mock).mockResolvedValue(undefined);
 
       // When: Caching the iOS key
-      const result = await manager.cacheVerificationKey('ios', mockIOSPublicKey);
+      const result = await manager.cacheVerificationKey(
+        'ios',
+        mockIOSPublicKey
+      );
 
       // Then: Should return success
       expect(result.success).toBe(true);
@@ -189,7 +194,10 @@ describe('VerificationKeyManager', () => {
 
       // When: Attempting to cache null/undefined
       const result1 = await manager.cacheVerificationKey('ios', null as any);
-      const result2 = await manager.cacheVerificationKey('ios', undefined as any);
+      const result2 = await manager.cacheVerificationKey(
+        'ios',
+        undefined as any
+      );
 
       // Then: Both should return validation errors
       expect(result1.success).toBe(false);
@@ -272,7 +280,10 @@ describe('VerificationKeyManager', () => {
       (SecureStore.setItemAsync as jest.Mock).mockRejectedValue(storageError);
 
       // When: Attempting to cache key
-      const result = await manager.cacheVerificationKey('ios', mockIOSPublicKey);
+      const result = await manager.cacheVerificationKey(
+        'ios',
+        mockIOSPublicKey
+      );
 
       // Then: Should return UNKNOWN_ERROR
       expect(result.success).toBe(false);
@@ -288,7 +299,10 @@ describe('VerificationKeyManager', () => {
       (SecureStore.setItemAsync as jest.Mock).mockRejectedValue(keychainError);
 
       // When: Attempting to cache key
-      const result = await manager.cacheVerificationKey('ios', mockIOSPublicKey);
+      const result = await manager.cacheVerificationKey(
+        'ios',
+        mockIOSPublicKey
+      );
 
       // Then: Should return error
       expect(result.success).toBe(false);
@@ -364,7 +378,9 @@ describe('VerificationKeyManager', () => {
     it('should handle concurrent cache and load operations', async () => {
       // Given: Multiple concurrent operations with proper mocking setup
       (SecureStore.setItemAsync as jest.Mock).mockResolvedValue(undefined);
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(mockIOSPublicKey);
+      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(
+        mockIOSPublicKey
+      );
 
       // When: Running operations concurrently
       const results = await Promise.all([
@@ -382,7 +398,9 @@ describe('VerificationKeyManager', () => {
     it('should handle concurrent iOS and Android operations', async () => {
       // Given: Concurrent operations for different platforms
       (SecureStore.setItemAsync as jest.Mock).mockResolvedValue(undefined);
-      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(mockIOSPublicKey);
+      (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(
+        mockIOSPublicKey
+      );
 
       // When: Running concurrent operations for both platforms
       const results = await Promise.all([

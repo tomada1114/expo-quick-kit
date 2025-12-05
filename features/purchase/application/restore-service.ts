@@ -70,7 +70,9 @@ export type RestoreError =
 /**
  * Generic Result type for restore operation
  */
-export type Result<T, E> = { success: true; data: T } | { success: false; error: E };
+export type Result<T, E> =
+  | { success: true; data: T }
+  | { success: false; error: E };
 
 /**
  * Restore Service - Orchestrates purchase restoration
@@ -139,7 +141,8 @@ export const restoreService = {
       // Step 1: Fetch purchase history from platform
       console.log('[RestoreService] Fetching purchase history from platform');
 
-      const historyResult = await purchaseRepository.requestAllPurchaseHistory();
+      const historyResult =
+        await purchaseRepository.requestAllPurchaseHistory();
 
       if (!historyResult.success) {
         // Handle platform API error
@@ -163,7 +166,9 @@ export const restoreService = {
       );
 
       // Step 2: Fetch current purchases from LocalDatabase
-      console.log('[RestoreService] Fetching current purchases from LocalDatabase');
+      console.log(
+        '[RestoreService] Fetching current purchases from LocalDatabase'
+      );
 
       const currentPurchasesResult = await purchaseService.getActivePurchases();
 
@@ -208,7 +213,9 @@ export const restoreService = {
             continue;
           }
 
-          const isExisting = existingTransactionIds.has(transaction.transactionId);
+          const isExisting = existingTransactionIds.has(
+            transaction.transactionId
+          );
 
           if (isExisting) {
             // Step 3a: Update existing purchase
@@ -298,7 +305,9 @@ export const restoreService = {
  *
  * @private Internal helper for restorePurchases
  */
-async function updatePurchaseSyncStatus(transactionId: string): Promise<boolean> {
+async function updatePurchaseSyncStatus(
+  transactionId: string
+): Promise<boolean> {
   try {
     const now = Math.floor(Date.now() / 1000); // Unix timestamp in seconds
 
@@ -328,9 +337,13 @@ async function updatePurchaseSyncStatus(transactionId: string): Promise<boolean>
  *
  * @private Internal helper for restorePurchases
  */
-async function recordRestoredPurchase(transaction: Transaction): Promise<boolean> {
+async function recordRestoredPurchase(
+  transaction: Transaction
+): Promise<boolean> {
   try {
-    const purchasedAtUnix = Math.floor(transaction.purchaseDate.getTime() / 1000);
+    const purchasedAtUnix = Math.floor(
+      transaction.purchaseDate.getTime() / 1000
+    );
     const now = Math.floor(Date.now() / 1000);
 
     // Insert new purchase record
@@ -376,7 +389,10 @@ function validateTransaction(transaction: any): boolean {
     return false;
   }
 
-  if (!transaction.transactionId || typeof transaction.transactionId !== 'string') {
+  if (
+    !transaction.transactionId ||
+    typeof transaction.transactionId !== 'string'
+  ) {
     return false;
   }
 

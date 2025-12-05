@@ -18,7 +18,10 @@ jest.mock('../../application/restore-service');
 
 import { RestoreButton } from '../restore-button';
 import { restoreService } from '../../application/restore-service';
-import type { RestoreResult, RestoreError } from '../../application/restore-service';
+import type {
+  RestoreResult,
+  RestoreError,
+} from '../../application/restore-service';
 
 // Spy on Alert.alert
 const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation();
@@ -95,7 +98,9 @@ describe('RestoreButton', () => {
         data: mockResult,
       });
 
-      const { getByTestId } = render(<RestoreButton onRestoreComplete={mockCallback} />);
+      const { getByTestId } = render(
+        <RestoreButton onRestoreComplete={mockCallback} />
+      );
       fireEvent.press(getByTestId('restore-button'));
 
       await waitFor(() => {
@@ -200,8 +205,12 @@ describe('RestoreButton', () => {
       await waitFor(() => {
         const call = alertSpy.mock.calls[0];
         const buttons = call[2];
-        expect(buttons).not.toContainEqual(expect.objectContaining({ text: 'Retry' }));
-        expect(buttons).toContainEqual(expect.objectContaining({ text: 'Cancel' }));
+        expect(buttons).not.toContainEqual(
+          expect.objectContaining({ text: 'Retry' })
+        );
+        expect(buttons).toContainEqual(
+          expect.objectContaining({ text: 'Cancel' })
+        );
       });
     });
   });
@@ -212,7 +221,11 @@ describe('RestoreButton', () => {
         () =>
           new Promise((resolve) =>
             setTimeout(
-              () => resolve({ success: true, data: { restoredCount: 0, newCount: 0, updatedCount: 0 } }),
+              () =>
+                resolve({
+                  success: true,
+                  data: { restoredCount: 0, newCount: 0, updatedCount: 0 },
+                }),
               100
             )
           )
@@ -298,7 +311,9 @@ describe('RestoreButton', () => {
     });
 
     it('should handle malformed service response', async () => {
-      (restoreService.restorePurchases as jest.Mock).mockResolvedValueOnce(null);
+      (restoreService.restorePurchases as jest.Mock).mockResolvedValueOnce(
+        null
+      );
 
       const { getByTestId } = render(<RestoreButton />);
       fireEvent.press(getByTestId('restore-button'));

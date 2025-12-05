@@ -63,8 +63,10 @@ const ERROR_MESSAGES: Record<string, Record<string, string>> = {
       'An unexpected error occurred. Please try again or contact support if the problem persists.',
   },
   ja: {
-    NETWORK_ERROR: 'ネットワーク接続に失敗しました。インターネット接続を確認して、もう一度お試しください。',
-    STORE_PROBLEM_ERROR: 'App Store/Play Storeが一時的に利用できません。しばらく待ってからもう一度お試しください。',
+    NETWORK_ERROR:
+      'ネットワーク接続に失敗しました。インターネット接続を確認して、もう一度お試しください。',
+    STORE_PROBLEM_ERROR:
+      'App Store/Play Storeが一時的に利用できません。しばらく待ってからもう一度お試しください。',
     DB_ERROR:
       '購入情報の保存に失敗しました。購入はオフラインで利用可能な場合があります。',
     UNKNOWN_ERROR:
@@ -86,11 +88,11 @@ const SUGGESTION_MESSAGES: Record<string, Record<string, string>> = {
       'Contact support with error details if this problem continues.',
   },
   ja: {
-    NETWORK_ERROR: 'Wi-Fiまたはモバイルネットワークをチェックして、「再試行」をタップしてください。',
+    NETWORK_ERROR:
+      'Wi-Fiまたはモバイルネットワークをチェックして、「再試行」をタップしてください。',
     STORE_PROBLEM_ERROR:
       '数分後にもう一度お試しください。問題が継続する場合は、後でもう一度お試しください。',
-    DB_ERROR:
-      '購入がローカルに記録されました。購入履歴をご確認ください。',
+    DB_ERROR: '購入がローカルに記録されました。購入履歴をご確認ください。',
     UNKNOWN_ERROR:
       'この問題が継続する場合は、サポートに詳細情報をご連絡ください。',
   },
@@ -136,7 +138,10 @@ export class RestoreErrorHandler {
    * @param locale - User language preference (default: 'en')
    * @returns ClassifiedError with user messaging and retry info
    */
-  classifyError(error: RestoreError | null | undefined, locale: string = 'en'): ClassifiedError {
+  classifyError(
+    error: RestoreError | null | undefined,
+    locale: string = 'en'
+  ): ClassifiedError {
     // Validate error object
     if (!error || typeof error !== 'object') {
       return this.createUnknownError(locale);
@@ -212,7 +217,12 @@ export class RestoreErrorHandler {
    * @private
    */
   private normalizeErrorCode(code: string): string {
-    const knownCodes = ['NETWORK_ERROR', 'STORE_PROBLEM_ERROR', 'DB_ERROR', 'UNKNOWN_ERROR'];
+    const knownCodes = [
+      'NETWORK_ERROR',
+      'STORE_PROBLEM_ERROR',
+      'DB_ERROR',
+      'UNKNOWN_ERROR',
+    ];
     return knownCodes.includes(code) ? code : 'UNKNOWN_ERROR';
   }
 
@@ -249,7 +259,10 @@ export class RestoreErrorHandler {
    *
    * @private
    */
-  private getRetryConfig(code: string): { maxRetries: number; retryBackoffMs: number } {
+  private getRetryConfig(code: string): {
+    maxRetries: number;
+    retryBackoffMs: number;
+  } {
     switch (code) {
       case 'NETWORK_ERROR':
         return { maxRetries: 3, retryBackoffMs: 1000 };
@@ -272,7 +285,11 @@ export class RestoreErrorHandler {
    *
    * @private
    */
-  private getUserMessage(code: string, locale: string, originalMessage?: string): string {
+  private getUserMessage(
+    code: string,
+    locale: string,
+    originalMessage?: string
+  ): string {
     const messages = ERROR_MESSAGES[locale] || ERROR_MESSAGES['en'];
     return messages[code] || messages['UNKNOWN_ERROR'];
   }
@@ -338,12 +355,15 @@ export class RestoreErrorHandler {
   private createUnknownError(locale: string): ClassifiedError {
     return {
       code: 'UNKNOWN_ERROR',
-      userMessage: ERROR_MESSAGES[locale]?.['UNKNOWN_ERROR'] || ERROR_MESSAGES['en']['UNKNOWN_ERROR'],
+      userMessage:
+        ERROR_MESSAGES[locale]?.['UNKNOWN_ERROR'] ||
+        ERROR_MESSAGES['en']['UNKNOWN_ERROR'],
       suggestionMessage:
         SUGGESTION_MESSAGES[locale]?.['UNKNOWN_ERROR'] ||
         SUGGESTION_MESSAGES['en']['UNKNOWN_ERROR'],
       recoveryAction:
-        RECOVERY_ACTIONS[locale]?.['UNKNOWN_ERROR'] || RECOVERY_ACTIONS['en']['UNKNOWN_ERROR'],
+        RECOVERY_ACTIONS[locale]?.['UNKNOWN_ERROR'] ||
+        RECOVERY_ACTIONS['en']['UNKNOWN_ERROR'],
       retryable: false,
       showRetryButton: false,
       showSupportButton: true,

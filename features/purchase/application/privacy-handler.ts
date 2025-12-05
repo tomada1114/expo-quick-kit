@@ -17,9 +17,7 @@
 
 import type { Result } from '../core/types';
 import { localDatabase } from '../infrastructure/local-database';
-import {
-  verificationMetadataStore,
-} from '../infrastructure/verification-metadata-store';
+import { verificationMetadataStore } from '../infrastructure/verification-metadata-store';
 
 /**
  * Database error type for Result pattern
@@ -102,7 +100,9 @@ export const privacyHandler = {
    * }
    * ```
    */
-  async deleteAllPurchaseData(): Promise<Result<DeletePurchasesResult, DatabaseError>> {
+  async deleteAllPurchaseData(): Promise<
+    Result<DeletePurchasesResult, DatabaseError>
+  > {
     try {
       // Step 1: Retrieve all purchases
       const purchasesResult = await localDatabase.getAllPurchases();
@@ -186,7 +186,9 @@ export const privacyHandler = {
    * }
    * ```
    */
-  async deleteSecureStoreData(): Promise<Result<DeleteSecureStoreResult, DatabaseError>> {
+  async deleteSecureStoreData(): Promise<
+    Result<DeleteSecureStoreResult, DatabaseError>
+  > {
     try {
       // Step 1: Clear all verification metadata
       const clearResult =
@@ -259,15 +261,15 @@ export const privacyHandler = {
    * }
    * ```
    */
-  async deleteUserAllPurchaseData(): Promise<Result<DeleteUserDataResult, DatabaseError>> {
+  async deleteUserAllPurchaseData(): Promise<
+    Result<DeleteUserDataResult, DatabaseError>
+  > {
     try {
       // Step 1: Delete all purchase records
-      const purchasesResult =
-        await privacyHandler.deleteAllPurchaseData();
+      const purchasesResult = await privacyHandler.deleteAllPurchaseData();
 
       // Step 2: Delete all secure store data (continue even if purchases fail)
-      const secureStoreResult =
-        await privacyHandler.deleteSecureStoreData();
+      const secureStoreResult = await privacyHandler.deleteSecureStoreData();
 
       // Step 3: Determine overall success
       // Consider success if we were able to delete data or data didn't exist
@@ -304,8 +306,8 @@ export const privacyHandler = {
         failedTransactionIds: [],
       };
 
-      const totalDeleted = purchaseData.deletedCount +
-        (secureStoreSuccess ? 1 : 0); // Count secure store clear as 1 operation
+      const totalDeleted =
+        purchaseData.deletedCount + (secureStoreSuccess ? 1 : 0); // Count secure store clear as 1 operation
 
       // Step 5: Return comprehensive result
       return {

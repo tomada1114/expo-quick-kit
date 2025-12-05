@@ -11,18 +11,15 @@ import { VerificationStateInitializer } from '../verification-state-initializer'
 import { VerificationMetadataStore } from '../verification-metadata-store';
 
 // Mock the metadata store
-jest.mock(
-  '../verification-metadata-store',
-  () => ({
-    VerificationMetadataStore: jest.fn().mockImplementation(() => ({
-      restoreAllVerificationMetadata: jest.fn(),
-      saveVerificationMetadata: jest.fn(),
-      deleteVerificationMetadata: jest.fn(),
-      clearAllVerificationMetadata: jest.fn(),
-    })),
-    verificationMetadataStore: {},
-  })
-);
+jest.mock('../verification-metadata-store', () => ({
+  VerificationMetadataStore: jest.fn().mockImplementation(() => ({
+    restoreAllVerificationMetadata: jest.fn(),
+    saveVerificationMetadata: jest.fn(),
+    deleteVerificationMetadata: jest.fn(),
+    clearAllVerificationMetadata: jest.fn(),
+  })),
+  verificationMetadataStore: {},
+}));
 
 describe('VerificationStateInitializer', () => {
   let initializer: VerificationStateInitializer;
@@ -56,9 +53,9 @@ describe('VerificationStateInitializer', () => {
       // Then: Should load metadata into cache
       expect(result.success).toBe(true);
       expect(initializer.isInitialized()).toBe(true);
-      expect(
-        initializer.getVerificationMetadata('txn_123')
-      ).toEqual(mockMetadata);
+      expect(initializer.getVerificationMetadata('txn_123')).toEqual(
+        mockMetadata
+      );
     });
 
     it('should mark initialization complete after successful load', async () => {
@@ -219,9 +216,9 @@ describe('VerificationStateInitializer', () => {
       // Then: Should reload fresh data
       expect(result.success).toBe(true);
       expect(initializer.getVerificationMetadata('txn_123')).toBeNull();
-      expect(
-        initializer.getVerificationMetadata('txn_new')
-      ).toEqual(newMetadata);
+      expect(initializer.getVerificationMetadata('txn_new')).toEqual(
+        newMetadata
+      );
     });
 
     it('should clear all verification state', async () => {

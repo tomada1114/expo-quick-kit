@@ -12,10 +12,7 @@
  */
 
 import { describe, it, expect, beforeEach } from '@jest/globals';
-import {
-  retryHandler,
-  DEFAULT_RETRY_CONFIG,
-} from '../retry-handler';
+import { retryHandler, DEFAULT_RETRY_CONFIG } from '../retry-handler';
 
 describe('RetryHandler - Task 6.5: Automatic Retry with Exponential Backoff', () => {
   beforeEach(() => {
@@ -77,10 +74,14 @@ describe('RetryHandler - Task 6.5: Automatic Retry with Exponential Backoff', ()
 
       // When: Executing with retry
       const startTime = Date.now();
-      const result = await retryHandler.executeWithRetry(operation, isRetryable, {
-        maxRetries: 3,
-        initialDelayMs: 50,
-      });
+      const result = await retryHandler.executeWithRetry(
+        operation,
+        isRetryable,
+        {
+          maxRetries: 3,
+          initialDelayMs: 50,
+        }
+      );
       const elapsed = Date.now() - startTime;
 
       // Then: Should succeed after retry with delay
@@ -135,10 +136,14 @@ describe('RetryHandler - Task 6.5: Automatic Retry with Exponential Backoff', ()
       const isRetryable = () => true;
 
       // When: Executing with retry
-      const result = await retryHandler.executeWithRetry(operation, isRetryable, {
-        maxRetries: 2,
-        initialDelayMs: 10,
-      });
+      const result = await retryHandler.executeWithRetry(
+        operation,
+        isRetryable,
+        {
+          maxRetries: 2,
+          initialDelayMs: 10,
+        }
+      );
 
       // Then: Should fail after max retries
       expect(result.success).toBe(false);
@@ -166,12 +171,16 @@ describe('RetryHandler - Task 6.5: Automatic Retry with Exponential Backoff', ()
       const isRetryable = () => true;
 
       // When: Executing with large backoff but maxDelayMs limit
-      const result = await retryHandler.executeWithRetry(operation, isRetryable, {
-        maxRetries: 1,
-        initialDelayMs: 100,
-        backoffMultiplier: 10, // Would cause 1000ms delay without limit
-        maxDelayMs: 200,
-      });
+      const result = await retryHandler.executeWithRetry(
+        operation,
+        isRetryable,
+        {
+          maxRetries: 1,
+          initialDelayMs: 100,
+          backoffMultiplier: 10, // Would cause 1000ms delay without limit
+          maxDelayMs: 200,
+        }
+      );
 
       // Then: Should respect max delay
       expect(result.success).toBe(true);
@@ -231,10 +240,10 @@ describe('RetryHandler - Task 6.5: Automatic Retry with Exponential Backoff', ()
       };
 
       // When: Executing with retry
-      const result = await retryHandler.executeResultWithRetry(
-        operation,
-        { maxRetries: 3, initialDelayMs: 10 }
-      );
+      const result = await retryHandler.executeResultWithRetry(operation, {
+        maxRetries: 3,
+        initialDelayMs: 10,
+      });
 
       // Then: Should succeed after retry
       expect(result.success).toBe(true);

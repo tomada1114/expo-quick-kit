@@ -16,7 +16,12 @@
 /* eslint-disable @typescript-eslint/no-require-imports, import/first */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react-native';
 import { View, Text, ActivityIndicator } from 'react-native';
 
 // ===== Mock Setup =====
@@ -72,9 +77,12 @@ const mockPurchaseService = {
   getPurchase: jest.fn(),
 };
 
-jest.mock('@/features/purchase/presentation/hooks/use-purchase-service', () => ({
-  usePurchaseService: () => mockPurchaseService,
-}));
+jest.mock(
+  '@/features/purchase/presentation/hooks/use-purchase-service',
+  () => ({
+    usePurchaseService: () => mockPurchaseService,
+  })
+);
 
 // Mock FeatureGatingService
 const mockFeatureGatingService = {
@@ -84,18 +92,24 @@ const mockFeatureGatingService = {
   canAccessSync: jest.fn(),
 };
 
-jest.mock('@/features/purchase/presentation/hooks/use-feature-gating-service', () => ({
-  useFeatureGatingService: () => mockFeatureGatingService,
-}));
+jest.mock(
+  '@/features/purchase/presentation/hooks/use-feature-gating-service',
+  () => ({
+    useFeatureGatingService: () => mockFeatureGatingService,
+  })
+);
 
 // Mock AnalyticsEngine
 const mockAnalyticsEngine = {
   trackEvent: jest.fn(),
 };
 
-jest.mock('@/features/purchase/presentation/hooks/use-analytics-engine', () => ({
-  useAnalyticsEngine: () => mockAnalyticsEngine,
-}));
+jest.mock(
+  '@/features/purchase/presentation/hooks/use-analytics-engine',
+  () => ({
+    useAnalyticsEngine: () => mockAnalyticsEngine,
+  })
+);
 
 // Mock Zustand store
 const mockPaywallStore = {
@@ -131,7 +145,12 @@ interface Purchase {
 }
 
 interface PurchaseFlowError {
-  code: 'CANCELLED' | 'NETWORK_ERROR' | 'VERIFICATION_FAILED' | 'DB_ERROR' | 'UNKNOWN_ERROR';
+  code:
+    | 'CANCELLED'
+    | 'NETWORK_ERROR'
+    | 'VERIFICATION_FAILED'
+    | 'DB_ERROR'
+    | 'UNKNOWN_ERROR';
   retryable: boolean;
 }
 
@@ -155,7 +174,8 @@ const PaywallComponent: React.FC<PaywallComponentProps> = ({
   const [isPurchasing, setIsPurchasing] = React.useState(false);
   const [products, setProducts] = React.useState<Product[]>([]);
   const [error, setError] = React.useState<PurchaseFlowError | null>(null);
-  const { selectedProductId, setSelectedProductId, resetSelection } = mockPaywallStore;
+  const { selectedProductId, setSelectedProductId, resetSelection } =
+    mockPaywallStore;
   const { getUnlockedFeaturesByProduct } = mockFeatureGatingService;
 
   // Simulate product loading on mount
@@ -230,7 +250,9 @@ const PaywallComponent: React.FC<PaywallComponentProps> = ({
       {products.map((product) => (
         <View key={product.id} testID={`product-card-${product.id}`}>
           <Text testID={`product-title-${product.id}`}>{product.title}</Text>
-          <Text testID={`product-price-${product.id}`}>{product.priceString}</Text>
+          <Text testID={`product-price-${product.id}`}>
+            {product.priceString}
+          </Text>
           <Text
             testID={`select-button-${product.id}`}
             onPress={() => setSelectedProductId(product.id)}
@@ -392,7 +414,9 @@ describe('PaywallComponent', () => {
 
       // Then: Prices display with formatting
       await waitFor(() => {
-        const priceElement = screen.queryByTestId('product-price-premium_unlock');
+        const priceElement = screen.queryByTestId(
+          'product-price-premium_unlock'
+        );
         if (priceElement) {
           expect(priceElement.props.children).toMatch(/\$/);
         }
@@ -515,7 +539,9 @@ describe('PaywallComponent', () => {
       // Then: Component renders (either with products or empty state)
       // In the mock, it always has at least one product, so this verifies the component loads
       await waitFor(() => {
-        const component = screen.queryByTestId('paywall-component') || screen.queryByTestId('paywall-empty');
+        const component =
+          screen.queryByTestId('paywall-component') ||
+          screen.queryByTestId('paywall-empty');
         expect(component).toBeTruthy();
       });
     });
@@ -786,9 +812,10 @@ describe('PaywallComponent', () => {
     it('should timeout long-running purchase operations', async () => {
       // Given: PurchaseService hangs >30s
       mockPurchaseService.purchaseProduct.mockImplementation(
-        () => new Promise(() => {
-          /* Never resolves */
-        })
+        () =>
+          new Promise(() => {
+            /* Never resolves */
+          })
       );
 
       // When: Purchase initiated
@@ -1071,8 +1098,18 @@ describe('PaywallComponent', () => {
     it('should display unlocked features from FeatureGatingService', async () => {
       // Given: FeatureGatingService provides feature metadata
       mockFeatureGatingService.getUnlockedFeaturesByProduct.mockReturnValue([
-        { id: 'f1', name: 'Feature 1', level: 'premium', description: 'Feature 1' },
-        { id: 'f2', name: 'Feature 2', level: 'premium', description: 'Feature 2' },
+        {
+          id: 'f1',
+          name: 'Feature 1',
+          level: 'premium',
+          description: 'Feature 1',
+        },
+        {
+          id: 'f2',
+          name: 'Feature 2',
+          level: 'premium',
+          description: 'Feature 2',
+        },
       ]);
 
       // When: Component displays product

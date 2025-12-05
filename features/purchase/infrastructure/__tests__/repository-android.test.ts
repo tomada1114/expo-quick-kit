@@ -37,26 +37,24 @@ interface MockPurchaseDetails {
  * Mock Google Play Billing Client
  */
 const createMockBillingClient = () => ({
-  queryProductDetails: jest
-    .fn()
-    .mockResolvedValue({
-      productDetailsList: [
-        {
-          productId: 'premium_unlock',
-          title: 'Premium Unlock',
-          description: 'Unlock all premium features',
-          oneTimePurchaseOfferDetails: {
-            priceMicros: 9990000,
-            formattedPrice: '$9.99',
-            currencyCode: 'USD',
-          },
-        } as MockProductDetails,
-      ],
-      billingResult: {
-        responseCode: 0,
-        debugMessage: 'OK',
-      },
-    }),
+  queryProductDetails: jest.fn().mockResolvedValue({
+    productDetailsList: [
+      {
+        productId: 'premium_unlock',
+        title: 'Premium Unlock',
+        description: 'Unlock all premium features',
+        oneTimePurchaseOfferDetails: {
+          priceMicros: 9990000,
+          formattedPrice: '$9.99',
+          currencyCode: 'USD',
+        },
+      } as MockProductDetails,
+    ],
+    billingResult: {
+      responseCode: 0,
+      debugMessage: 'OK',
+    },
+  }),
   launchBillingFlow: jest.fn().mockResolvedValue({
     responseCode: 0,
     debugMessage: 'OK',

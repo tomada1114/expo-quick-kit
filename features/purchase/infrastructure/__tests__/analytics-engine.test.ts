@@ -1,4 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { AnalyticsEngine } from '../analytics-engine-impl';
 
 describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
@@ -18,8 +25,15 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
 
   describe('Happy Path - Successful Event Recording', () => {
     it('should record purchase_initiated event successfully', async () => {
-      const metadata = { productId: 'premium_unlock', price: 9.99, currency: 'USD' };
-      const result = await analyticsEngine.recordEvent('purchase_initiated', metadata);
+      const metadata = {
+        productId: 'premium_unlock',
+        price: 9.99,
+        currency: 'USD',
+      };
+      const result = await analyticsEngine.recordEvent(
+        'purchase_initiated',
+        metadata
+      );
 
       expect(result.success).toBe(true);
       const event = result.data;
@@ -36,7 +50,10 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
         price: 9.99,
         currency: 'USD',
       };
-      const result = await analyticsEngine.recordEvent('purchase_completed', metadata);
+      const result = await analyticsEngine.recordEvent(
+        'purchase_completed',
+        metadata
+      );
 
       expect(result.success).toBe(true);
       const event = result.data;
@@ -51,7 +68,10 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
         errorCode: 'NETWORK_ERROR',
         errorMessage: 'Connection timeout',
       };
-      const result = await analyticsEngine.recordEvent('purchase_failed', metadata);
+      const result = await analyticsEngine.recordEvent(
+        'purchase_failed',
+        metadata
+      );
 
       expect(result.success).toBe(true);
       const event = result.data;
@@ -64,7 +84,10 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
         featureId: 'advanced_analytics',
         products: ['premium_unlock', 'premium_plus'],
       };
-      const result = await analyticsEngine.recordEvent('paywall_displayed', metadata);
+      const result = await analyticsEngine.recordEvent(
+        'paywall_displayed',
+        metadata
+      );
 
       expect(result.success).toBe(true);
       const event = result.data;
@@ -74,7 +97,10 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
 
     it('should record restore_attempted event with platform info', async () => {
       const metadata = { platform: 'ios' };
-      const result = await analyticsEngine.recordEvent('restore_attempted', metadata);
+      const result = await analyticsEngine.recordEvent(
+        'restore_attempted',
+        metadata
+      );
 
       expect(result.success).toBe(true);
       const event = result.data;
@@ -142,7 +168,10 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
 
   describe('Sad Path - Expected Error Scenarios', () => {
     it('should handle invalid event type gracefully', async () => {
-      const result = await analyticsEngine.recordEvent('invalid_event' as any, {});
+      const result = await analyticsEngine.recordEvent(
+        'invalid_event' as any,
+        {}
+      );
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -189,7 +218,9 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
 
     it('should handle multiple provider failures', async () => {
       const mockFirebase = {
-        logEvent: jest.fn().mockRejectedValueOnce(new Error('Firebase unavailable')),
+        logEvent: jest
+          .fn()
+          .mockRejectedValueOnce(new Error('Firebase unavailable')),
       };
 
       analyticsEngine.configureFirebaseAnalytics(mockFirebase);
@@ -242,7 +273,10 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
 
   describe('Edge Cases - Boundary Values & Special Inputs', () => {
     it('should accept empty metadata object', async () => {
-      const result = await analyticsEngine.recordEvent('purchase_initiated', {});
+      const result = await analyticsEngine.recordEvent(
+        'purchase_initiated',
+        {}
+      );
 
       expect(result.success).toBe(true);
       expect(result.data.metadata).toEqual({});
@@ -346,8 +380,12 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
 
     it('should handle concurrent event recording', async () => {
       const results = await Promise.all([
-        analyticsEngine.recordEvent('purchase_initiated', { productId: 'test1' }),
-        analyticsEngine.recordEvent('purchase_initiated', { productId: 'test2' }),
+        analyticsEngine.recordEvent('purchase_initiated', {
+          productId: 'test1',
+        }),
+        analyticsEngine.recordEvent('purchase_initiated', {
+          productId: 'test2',
+        }),
       ]);
 
       expect(results[0].success).toBe(true);
@@ -419,12 +457,12 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
 
     it('should handle network timeout scenario', async () => {
       const mockFirebase = {
-        logEvent: jest.fn().mockImplementationOnce(
-          () =>
-            new Promise((resolve) =>
-              setTimeout(() => resolve(null), 35000)
-            )
-        ),
+        logEvent: jest
+          .fn()
+          .mockImplementationOnce(
+            () =>
+              new Promise((resolve) => setTimeout(() => resolve(null), 35000))
+          ),
       };
 
       analyticsEngine.configureFirebaseAnalytics(mockFirebase);
@@ -565,7 +603,9 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
 
     it('should filter events by time range', async () => {
       const now = Date.now();
-      await analyticsEngine.recordEvent('purchase_initiated', { timestamp: now });
+      await analyticsEngine.recordEvent('purchase_initiated', {
+        timestamp: now,
+      });
 
       const since3DaysAgo = analyticsEngine.getEventsSince(
         new Date(now - 3 * 24 * 60 * 60 * 1000)
@@ -673,8 +713,7 @@ describe('AnalyticsEngine - Event Recording (Task 10.1)', () => {
 
       const queued = analyticsEngine.getQueuedEvents();
       const expired = queued.filter(
-        (e) =>
-          (Date.now() - e.timestamp.getTime()) / (24 * 60 * 60 * 1000) > 7
+        (e) => (Date.now() - e.timestamp.getTime()) / (24 * 60 * 60 * 1000) > 7
       );
 
       expect(expired.length).toBe(0);

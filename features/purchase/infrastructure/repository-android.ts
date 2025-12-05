@@ -14,7 +14,12 @@
  * @module features/purchase/infrastructure/repository-android
  */
 
-import type { Product, Transaction, PurchaseError, Result } from '../core/types';
+import type {
+  Product,
+  Transaction,
+  PurchaseError,
+  Result,
+} from '../core/types';
 
 /**
  * Google Play Billing Library error codes
@@ -405,8 +410,7 @@ export function createAndroidBillingRepository(billingClient: BillingClient) {
       Result<Transaction[], PurchaseError>
     > {
       try {
-        const purchaseDetailsList =
-          await billingClient.queryPurchasesAsync();
+        const purchaseDetailsList = await billingClient.queryPurchasesAsync();
 
         // Convert to domain Transaction array
         const transactions: Transaction[] = purchaseDetailsList.map(

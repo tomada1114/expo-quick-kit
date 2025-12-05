@@ -225,7 +225,7 @@ describe('PurchaseDetailsModal', () => {
       );
 
       // Then: All features should be displayed
-      features.forEach(feature => {
+      features.forEach((feature) => {
         expect(screen.getByText(feature)).toBeTruthy();
       });
     });
@@ -311,7 +311,7 @@ describe('PurchaseDetailsModal', () => {
       expect(screen.getByTestId('purchase-details-modal')).toBeTruthy();
     });
 
-    it("should handle unsynced purchase", () => {
+    it('should handle unsynced purchase', () => {
       // Given: A purchase that has not been synced
       const purchase: Purchase = {
         transactionId: 'txn_unsynced',
@@ -425,7 +425,7 @@ describe('PurchaseDetailsModal', () => {
       // Given: Purchases with different currency codes
       const currencies = ['USD', 'JPY', 'EUR', 'GBP', 'CAD'];
 
-      currencies.forEach(currencyCode => {
+      currencies.forEach((currencyCode) => {
         const purchase: Purchase = {
           transactionId: `txn_${currencyCode}`,
           productId: 'currency_test',
@@ -513,7 +513,7 @@ describe('PurchaseDetailsModal', () => {
         new Date('2025-02-28T12:00:00Z'), // February
       ];
 
-      boundaryDates.forEach(date => {
+      boundaryDates.forEach((date) => {
         const purchase: Purchase = {
           transactionId: `txn_${date.getTime()}`,
           productId: 'date_test',

@@ -8,19 +8,23 @@
  */
 
 // Mock ALL dependencies BEFORE any imports to avoid native module issues
-jest.mock('react-native', () => ({
-  Platform: {
-    OS: 'ios',
-  },
-}), { virtual: true });
+jest.mock(
+  'react-native',
+  () => ({
+    Platform: {
+      OS: 'ios',
+    },
+  }),
+  { virtual: true }
+);
 
 // Mock database client to avoid native module initialization
 jest.mock('@/database/client', () => ({
   db: {
     select: jest.fn(() => ({
-      from: jest.fn(function() {
+      from: jest.fn(function () {
         return {
-          where: jest.fn(function() {
+          where: jest.fn(function () {
             return {
               all: jest.fn(() => []),
               get: jest.fn(() => undefined),
@@ -63,10 +67,12 @@ import type { Transaction } from '../../core/types';
 import type { VerificationResult } from '../../infrastructure/receipt-verifier';
 
 // Get references to the mocked modules
-const { receiptVerifier: mockReceiptVerifier } = require('../../infrastructure/receipt-verifier');
-const { verificationMetadataStore: mockVerificationMetadataStore } = require(
-  '../../infrastructure/verification-metadata-store'
-);
+const {
+  receiptVerifier: mockReceiptVerifier,
+} = require('../../infrastructure/receipt-verifier');
+const {
+  verificationMetadataStore: mockVerificationMetadataStore,
+} = require('../../infrastructure/verification-metadata-store');
 const { db: mockDb } = require('@/database/client');
 
 describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', () => {
@@ -116,9 +122,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
 
       // Setup mock to return verified purchases
       const mockSelect = jest.fn(() => ({
-        from: jest.fn(function() {
+        from: jest.fn(function () {
           return {
-            where: jest.fn(function() {
+            where: jest.fn(function () {
               return {
                 all: jest.fn(() => dbPurchases),
                 get: jest.fn(() => undefined),
@@ -150,9 +156,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
     it('should return empty array when no purchases exist', async () => {
       // Given: LocalDatabase contains no purchase records
       const mockSelect = jest.fn(() => ({
-        from: jest.fn(function() {
+        from: jest.fn(function () {
           return {
-            where: jest.fn(function() {
+            where: jest.fn(function () {
               return {
                 all: jest.fn(() => []),
                 get: jest.fn(() => undefined),
@@ -193,7 +199,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       if (!result.success) {
         expect(result.error.code).toBe('DB_ERROR');
         expect(result.error.retryable).toBe(true);
-        expect(result.error.message).toContain('Failed to fetch active purchases');
+        expect(result.error.message).toContain(
+          'Failed to fetch active purchases'
+        );
       }
     });
   });
@@ -222,9 +230,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
 
       // Setup mock to return specific purchase
       const mockSelect = jest.fn(() => ({
-        from: jest.fn(function() {
+        from: jest.fn(function () {
           return {
-            where: jest.fn(function() {
+            where: jest.fn(function () {
               return {
                 all: jest.fn(() => []),
                 get: jest.fn(() => dbPurchase),
@@ -254,9 +262,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
     it('should return null when transaction ID is not found', async () => {
       // Given: LocalDatabase does not contain a purchase with this transactionId
       const mockSelect = jest.fn(() => ({
-        from: jest.fn(function() {
+        from: jest.fn(function () {
           return {
-            where: jest.fn(function() {
+            where: jest.fn(function () {
               return {
                 all: jest.fn(() => []),
                 get: jest.fn(() => undefined),
@@ -338,9 +346,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       };
 
       const mockSelect = jest.fn(() => ({
-        from: jest.fn(function() {
+        from: jest.fn(function () {
           return {
-            where: jest.fn(function() {
+            where: jest.fn(function () {
               return {
                 all: jest.fn(() => []),
                 get: jest.fn(() => dbPurchase),
@@ -504,7 +512,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       }
 
       // And: Metadata should NOT be saved
-      expect(mockVerificationMetadataStore.saveVerificationMetadata).not.toHaveBeenCalled();
+      expect(
+        mockVerificationMetadataStore.saveVerificationMetadata
+      ).not.toHaveBeenCalled();
     });
 
     it('should log error when receipt verification fails', async () => {
@@ -538,7 +548,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
 
       // Then: Error should be logged with [PurchaseService] prefix
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[PurchaseService] Receipt verification failed'),
+        expect.stringContaining(
+          '[PurchaseService] Receipt verification failed'
+        ),
         expect.any(Object)
       );
 
@@ -878,7 +890,8 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       });
 
       // When: verifyAndSavePurchase is called
-      const result = await purchaseService.verifyAndSavePurchase(testTransaction);
+      const result =
+        await purchaseService.verifyAndSavePurchase(testTransaction);
 
       // Then: Receipt was verified
       expect(mockReceiptVerifier.verifyReceiptSignature).toHaveBeenCalledWith(
@@ -888,7 +901,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       );
 
       // And: Metadata was saved to secure store
-      expect(mockVerificationMetadataStore.saveVerificationMetadata).toHaveBeenCalledWith(
+      expect(
+        mockVerificationMetadataStore.saveVerificationMetadata
+      ).toHaveBeenCalledWith(
         expect.objectContaining({
           transactionId: 'test-txn-123',
           productId: 'premium_unlock',
@@ -923,7 +938,8 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       });
 
       // When: verifyAndSavePurchase is called
-      const result = await purchaseService.verifyAndSavePurchase(testTransaction);
+      const result =
+        await purchaseService.verifyAndSavePurchase(testTransaction);
 
       // Then: Verification failed
       expect(result.success).toBe(false);
@@ -932,7 +948,9 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       }
 
       // And: Metadata was NOT saved
-      expect(mockVerificationMetadataStore.saveVerificationMetadata).not.toHaveBeenCalled();
+      expect(
+        mockVerificationMetadataStore.saveVerificationMetadata
+      ).not.toHaveBeenCalled();
     });
 
     it('should return DB_ERROR if metadata save fails', async () => {
@@ -967,7 +985,8 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       });
 
       // When: verifyAndSavePurchase is called
-      const result = await purchaseService.verifyAndSavePurchase(testTransaction);
+      const result =
+        await purchaseService.verifyAndSavePurchase(testTransaction);
 
       // Then: Operation failed with DB_ERROR code
       expect(result.success).toBe(false);
@@ -987,12 +1006,15 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       } as Transaction;
 
       // When: verifyAndSavePurchase is called
-      const result = await purchaseService.verifyAndSavePurchase(invalidTransaction);
+      const result =
+        await purchaseService.verifyAndSavePurchase(invalidTransaction);
 
       // Then: Operation failed without calling verifier
       expect(result.success).toBe(false);
       expect(mockReceiptVerifier.verifyReceiptSignature).not.toHaveBeenCalled();
-      expect(mockVerificationMetadataStore.saveVerificationMetadata).not.toHaveBeenCalled();
+      expect(
+        mockVerificationMetadataStore.saveVerificationMetadata
+      ).not.toHaveBeenCalled();
     });
 
     it('should include verifiedAt timestamp in saved metadata', async () => {
@@ -1023,13 +1045,16 @@ describe('PurchaseService - Task 6.2 & 6.4: Receipt Verification Integration', (
       });
 
       // When: verifyAndSavePurchase is called
-      const result = await purchaseService.verifyAndSavePurchase(testTransaction);
+      const result =
+        await purchaseService.verifyAndSavePurchase(testTransaction);
 
       // Then: Success
       expect(result.success).toBe(true);
       if (result.success) {
         // And: Metadata includes verifiedAt timestamp
-        const savedCall = mockVerificationMetadataStore.saveVerificationMetadata.mock.calls[0][0];
+        const savedCall =
+          mockVerificationMetadataStore.saveVerificationMetadata.mock
+            .calls[0][0];
         expect(savedCall.verifiedAt).toBeDefined();
         expect(savedCall.verifiedAt instanceof Date).toBe(true);
       }
@@ -1055,7 +1080,9 @@ describe('PurchaseService - Task 9.2: Network Error Retry with Exponential Backo
     require('react-native').Platform.OS = 'ios';
   });
 
-  const { purchaseRepository: mockPurchaseRepository } = require('../../core/repository');
+  const {
+    purchaseRepository: mockPurchaseRepository,
+  } = require('../../core/repository');
 
   /**
    * Test: HAPPY PATH - Successful purchase on first attempt
@@ -1173,37 +1200,35 @@ describe('PurchaseService - Task 9.2: Network Error Retry with Exponential Backo
    * When: purchaseProduct is called with max retries
    * Then: Should return network error after exhausting retries
    */
-  it(
-    'should return network error after max retries exhausted',
-    async () => {
-      // Given: Network error that persists across all attempts
-      const networkError = {
-        success: false,
-        error: {
-          code: 'NETWORK_ERROR' as const,
-          message: 'Network connection failed',
-          retryable: true,
-          platform: 'ios' as const,
-        },
-      };
+  it('should return network error after max retries exhausted', async () => {
+    // Given: Network error that persists across all attempts
+    const networkError = {
+      success: false,
+      error: {
+        code: 'NETWORK_ERROR' as const,
+        message: 'Network connection failed',
+        retryable: true,
+        platform: 'ios' as const,
+      },
+    };
 
-      // Mock to always fail with network error
-      mockPurchaseRepository.launchPurchaseFlow.mockResolvedValue(networkError);
+    // Mock to always fail with network error
+    mockPurchaseRepository.launchPurchaseFlow.mockResolvedValue(networkError);
 
-      // When: purchaseProduct is called
-      const result = await purchaseService.purchaseProduct('premium_unlock');
+    // When: purchaseProduct is called
+    const result = await purchaseService.purchaseProduct('premium_unlock');
 
-      // Then: Should return error after max retries
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.code).toBe('NETWORK_ERROR');
-        expect(result.error.retryable).toBe(true);
-      }
-      // Verify multiple attempts were made (initial + retries)
-      expect(mockPurchaseRepository.launchPurchaseFlow.mock.calls.length).toBeGreaterThan(1);
-    },
-    20000 // 20 second timeout for retries with exponential backoff
-  );
+    // Then: Should return error after max retries
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe('NETWORK_ERROR');
+      expect(result.error.retryable).toBe(true);
+    }
+    // Verify multiple attempts were made (initial + retries)
+    expect(
+      mockPurchaseRepository.launchPurchaseFlow.mock.calls.length
+    ).toBeGreaterThan(1);
+  }, 20000); // 20 second timeout for retries with exponential backoff
 
   /**
    * Test: EDGE CASE - Non-retryable error should fail immediately
@@ -1244,65 +1269,61 @@ describe('PurchaseService - Task 9.2: Network Error Retry with Exponential Backo
    * When: purchaseProduct retries with exponential backoff
    * Then: Each retry should have increasing delays (1s → 2s → 4s)
    */
-  it(
-    'should apply exponential backoff delays between retries',
-    async () => {
-      // Given: Network error that triggers retries
-      const networkError = {
-        success: false,
-        error: {
-          code: 'NETWORK_ERROR' as const,
-          message: 'Network timeout',
-          retryable: true,
-          platform: 'ios' as const,
-        },
-      };
+  it('should apply exponential backoff delays between retries', async () => {
+    // Given: Network error that triggers retries
+    const networkError = {
+      success: false,
+      error: {
+        code: 'NETWORK_ERROR' as const,
+        message: 'Network timeout',
+        retryable: true,
+        platform: 'ios' as const,
+      },
+    };
 
-      const transaction: Transaction = {
-        transactionId: 'txn-backoff-test',
-        productId: 'premium_unlock',
-        purchaseDate: new Date(),
-        receiptData: 'valid.receipt.jws',
-      };
+    const transaction: Transaction = {
+      transactionId: 'txn-backoff-test',
+      productId: 'premium_unlock',
+      purchaseDate: new Date(),
+      receiptData: 'valid.receipt.jws',
+    };
 
-      // Fail twice, succeed on third attempt
-      mockPurchaseRepository.launchPurchaseFlow
-        .mockResolvedValueOnce(networkError)
-        .mockResolvedValueOnce(networkError)
-        .mockResolvedValueOnce({ success: true, data: transaction });
+    // Fail twice, succeed on third attempt
+    mockPurchaseRepository.launchPurchaseFlow
+      .mockResolvedValueOnce(networkError)
+      .mockResolvedValueOnce(networkError)
+      .mockResolvedValueOnce({ success: true, data: transaction });
 
-      // Mock successful verification
-      const verificationResult: VerificationResult = {
-        isValid: true,
-        transactionId: 'txn-backoff-test',
-        productId: 'premium_unlock',
-        purchaseDate: new Date(),
-      };
+    // Mock successful verification
+    const verificationResult: VerificationResult = {
+      isValid: true,
+      transactionId: 'txn-backoff-test',
+      productId: 'premium_unlock',
+      purchaseDate: new Date(),
+    };
 
-      mockReceiptVerifier.verifyReceiptSignature.mockResolvedValue({
-        success: true,
-        data: verificationResult,
-      });
+    mockReceiptVerifier.verifyReceiptSignature.mockResolvedValue({
+      success: true,
+      data: verificationResult,
+    });
 
-      mockVerificationMetadataStore.saveVerificationMetadata.mockResolvedValue({
-        success: true,
-        data: undefined,
-      });
+    mockVerificationMetadataStore.saveVerificationMetadata.mockResolvedValue({
+      success: true,
+      data: undefined,
+    });
 
-      // When: purchaseProduct is called
-      const startTime = Date.now();
-      const result = await purchaseService.purchaseProduct('premium_unlock');
-      const elapsed = Date.now() - startTime;
+    // When: purchaseProduct is called
+    const startTime = Date.now();
+    const result = await purchaseService.purchaseProduct('premium_unlock');
+    const elapsed = Date.now() - startTime;
 
-      // Then: Should succeed and have taken at least the sum of exponential backoff delays
-      expect(result.success).toBe(true);
-      // Minimum expected: 1s (first retry) + 2s (second retry) = 3000ms
-      // Allow some variance for execution time
-      expect(elapsed).toBeGreaterThanOrEqual(2800); // Account for timing variance
-      expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(3);
-    },
-    20000 // 20 second timeout for retries with exponential backoff
-  );
+    // Then: Should succeed and have taken at least the sum of exponential backoff delays
+    expect(result.success).toBe(true);
+    // Minimum expected: 1s (first retry) + 2s (second retry) = 3000ms
+    // Allow some variance for execution time
+    expect(elapsed).toBeGreaterThanOrEqual(2800); // Account for timing variance
+    expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(3);
+  }, 20000); // 20 second timeout for retries with exponential backoff
 
   /**
    * Test: UNHAPPY PATH - Verification fails after successful retry
@@ -1354,7 +1375,9 @@ describe('PurchaseService - Task 9.2: Network Error Retry with Exponential Backo
     // Should have called repository twice (retry), but not for verification
     expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(2);
     // Should not call metadata save since verification failed
-    expect(mockVerificationMetadataStore.saveVerificationMetadata).not.toHaveBeenCalled();
+    expect(
+      mockVerificationMetadataStore.saveVerificationMetadata
+    ).not.toHaveBeenCalled();
   });
 
   /**
@@ -1384,60 +1407,56 @@ describe('PurchaseService - Task 9.2: Network Error Retry with Exponential Backo
    * When: purchaseProduct is called
    * Then: Should handle mixed error scenarios correctly
    */
-  it(
-    'should handle multiple network errors and succeed on final retry',
-    async () => {
-      // Given: Three network errors before success
-      const networkError = {
-        success: false,
-        error: {
-          code: 'NETWORK_ERROR' as const,
-          message: 'Temporary network issue',
-          retryable: true,
-          platform: 'ios' as const,
-        },
-      };
+  it('should handle multiple network errors and succeed on final retry', async () => {
+    // Given: Three network errors before success
+    const networkError = {
+      success: false,
+      error: {
+        code: 'NETWORK_ERROR' as const,
+        message: 'Temporary network issue',
+        retryable: true,
+        platform: 'ios' as const,
+      },
+    };
 
-      const transaction: Transaction = {
-        transactionId: 'txn-multi-retry',
-        productId: 'premium_unlock',
-        purchaseDate: new Date(),
-        receiptData: 'valid.receipt.jws',
-      };
+    const transaction: Transaction = {
+      transactionId: 'txn-multi-retry',
+      productId: 'premium_unlock',
+      purchaseDate: new Date(),
+      receiptData: 'valid.receipt.jws',
+    };
 
-      // Fail 3 times, succeed on 4th attempt
-      mockPurchaseRepository.launchPurchaseFlow
-        .mockResolvedValueOnce(networkError)
-        .mockResolvedValueOnce(networkError)
-        .mockResolvedValueOnce(networkError)
-        .mockResolvedValueOnce({ success: true, data: transaction });
+    // Fail 3 times, succeed on 4th attempt
+    mockPurchaseRepository.launchPurchaseFlow
+      .mockResolvedValueOnce(networkError)
+      .mockResolvedValueOnce(networkError)
+      .mockResolvedValueOnce(networkError)
+      .mockResolvedValueOnce({ success: true, data: transaction });
 
-      // Mock successful verification
-      const verificationResult: VerificationResult = {
-        isValid: true,
-        transactionId: 'txn-multi-retry',
-        productId: 'premium_unlock',
-        purchaseDate: new Date(),
-      };
+    // Mock successful verification
+    const verificationResult: VerificationResult = {
+      isValid: true,
+      transactionId: 'txn-multi-retry',
+      productId: 'premium_unlock',
+      purchaseDate: new Date(),
+    };
 
-      mockReceiptVerifier.verifyReceiptSignature.mockResolvedValue({
-        success: true,
-        data: verificationResult,
-      });
+    mockReceiptVerifier.verifyReceiptSignature.mockResolvedValue({
+      success: true,
+      data: verificationResult,
+    });
 
-      mockVerificationMetadataStore.saveVerificationMetadata.mockResolvedValue({
-        success: true,
-        data: undefined,
-      });
+    mockVerificationMetadataStore.saveVerificationMetadata.mockResolvedValue({
+      success: true,
+      data: undefined,
+    });
 
-      // When: purchaseProduct is called
-      const result = await purchaseService.purchaseProduct('premium_unlock');
+    // When: purchaseProduct is called
+    const result = await purchaseService.purchaseProduct('premium_unlock');
 
-      // Then: Should eventually succeed
-      expect(result.success).toBe(true);
-      // Should have made 4 attempts
-      expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(4);
-    },
-    20000 // 20 second timeout for retries with exponential backoff
-  );
+    // Then: Should eventually succeed
+    expect(result.success).toBe(true);
+    // Should have made 4 attempts
+    expect(mockPurchaseRepository.launchPurchaseFlow).toHaveBeenCalledTimes(4);
+  }, 20000); // 20 second timeout for retries with exponential backoff
 });

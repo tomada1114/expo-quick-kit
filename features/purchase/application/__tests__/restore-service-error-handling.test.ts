@@ -44,7 +44,9 @@ describe('RestoreService - Task 8.3: Error Handling Integration', () => {
         retryable: true,
       };
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: false,
         error: networkError,
       });
@@ -73,7 +75,9 @@ describe('RestoreService - Task 8.3: Error Handling Integration', () => {
         retryable: true,
       };
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: false,
         error: networkError,
       });
@@ -102,7 +106,9 @@ describe('RestoreService - Task 8.3: Error Handling Integration', () => {
         retryable: true,
       };
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: false,
         error: storeError,
       });
@@ -135,7 +141,9 @@ describe('RestoreService - Task 8.3: Error Handling Integration', () => {
         receiptData: 'receipt-1',
       };
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: [mockTransaction],
       });
@@ -172,9 +180,9 @@ describe('RestoreService - Task 8.3: Error Handling Integration', () => {
   describe('Critical Error Handling', () => {
     test('should handle unknown errors without retry', async () => {
       // Given: Unexpected error occurs
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockRejectedValue(
-        new Error('Unexpected native module error')
-      );
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockRejectedValue(new Error('Unexpected native module error'));
 
       // When: Restoration is attempted
       const result = await restoreService.restorePurchases();
@@ -216,7 +224,9 @@ describe('RestoreService - Task 8.3: Error Handling Integration', () => {
         retryable: true,
       };
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: false,
         error: networkError,
       });
@@ -233,7 +243,9 @@ describe('RestoreService - Task 8.3: Error Handling Integration', () => {
 
     test('should provide success notification on restoration complete', async () => {
       // Given: Restoration succeeds
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: true,
         data: [
           {
@@ -276,7 +288,9 @@ describe('RestoreService - Task 8.3: Error Handling Integration', () => {
         retryable: true,
       };
 
-      (purchaseRepository.requestAllPurchaseHistory as jest.Mock).mockResolvedValue({
+      (
+        purchaseRepository.requestAllPurchaseHistory as jest.Mock
+      ).mockResolvedValue({
         success: false,
         error: networkError,
       });

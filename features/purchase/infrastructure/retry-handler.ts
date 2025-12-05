@@ -119,7 +119,12 @@ export const retryHandler = {
     isRetryable: (error: unknown) => boolean,
     config: RetryConfig = DEFAULT_RETRY_CONFIG
   ): Promise<RetryResult<T>> {
-    const { maxRetries, initialDelayMs, backoffMultiplier = 2, maxDelayMs = 32000 } = config;
+    const {
+      maxRetries,
+      initialDelayMs,
+      backoffMultiplier = 2,
+      maxDelayMs = 32000,
+    } = config;
     let lastError: unknown = null;
     let lastDelayMs = 0;
 
@@ -144,7 +149,9 @@ export const retryHandler = {
 
         // Success
         if (attempt > 0) {
-          console.log(`[RetryHandler] Operation succeeded on retry attempt ${attempt + 1}`);
+          console.log(
+            `[RetryHandler] Operation succeeded on retry attempt ${attempt + 1}`
+          );
         }
 
         return {
@@ -220,7 +227,12 @@ export const retryHandler = {
     operation: () => Promise<{ success: boolean; data?: T; error?: E }>,
     config: RetryConfig = DEFAULT_RETRY_CONFIG
   ): Promise<{ success: boolean; data?: T; error?: E; attempts: number }> {
-    const { maxRetries, initialDelayMs, backoffMultiplier = 2, maxDelayMs = 32000 } = config;
+    const {
+      maxRetries,
+      initialDelayMs,
+      backoffMultiplier = 2,
+      maxDelayMs = 32000,
+    } = config;
     let lastError: E | null = null;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -243,7 +255,9 @@ export const retryHandler = {
 
         if (result.success) {
           if (attempt > 0) {
-            console.log(`[RetryHandler] Operation succeeded on retry attempt ${attempt + 1}`);
+            console.log(
+              `[RetryHandler] Operation succeeded on retry attempt ${attempt + 1}`
+            );
           }
           return { success: true, data: result.data, attempts: attempt + 1 };
         }
@@ -255,7 +269,11 @@ export const retryHandler = {
           // Check if error is retryable
           if (!result.error.retryable || attempt === maxRetries) {
             // Non-retryable or max retries exhausted
-            return { success: false, error: result.error, attempts: attempt + 1 };
+            return {
+              success: false,
+              error: result.error,
+              attempts: attempt + 1,
+            };
           }
 
           // Log and continue to next retry
@@ -269,7 +287,10 @@ export const retryHandler = {
         }
       } catch (unexpectedError) {
         // Unexpected exception - fail immediately
-        console.error('[RetryHandler] Unexpected error during operation:', unexpectedError);
+        console.error(
+          '[RetryHandler] Unexpected error during operation:',
+          unexpectedError
+        );
         return {
           success: false,
           error: { retryable: false } as E,
@@ -316,11 +337,7 @@ export const retryHandler = {
    * ```
    */
   isRetryableError(error: unknown): boolean {
-    if (
-      error &&
-      typeof error === 'object' &&
-      'retryable' in error
-    ) {
+    if (error && typeof error === 'object' && 'retryable' in error) {
       const err = error as any;
       return err.retryable === true;
     }

@@ -280,7 +280,7 @@ export class AnalyticsEngine {
         },
       };
     }
-  },
+  }
 
   /**
    * Record a purchase initiated event

@@ -51,8 +51,12 @@ describe('ErrorLogger - Task 6.5: Error Logging with Timestamps', () => {
 
       // Then: Should have timestamp between before and after times
       expect(entry).toHaveProperty('timestamp');
-      expect(entry.timestamp.getTime()).toBeGreaterThanOrEqual(beforeTime.getTime());
-      expect(entry.timestamp.getTime()).toBeLessThanOrEqual(afterTime.getTime());
+      expect(entry.timestamp.getTime()).toBeGreaterThanOrEqual(
+        beforeTime.getTime()
+      );
+      expect(entry.timestamp.getTime()).toBeLessThanOrEqual(
+        afterTime.getTime()
+      );
     });
 
     it('should record error with ISO 8601 timestamp string', () => {
@@ -69,7 +73,9 @@ describe('ErrorLogger - Task 6.5: Error Logging with Timestamps', () => {
 
       // Then: Should have ISO 8601 formatted timestamp
       expect(entry.timestampISO).toBeDefined();
-      expect(entry.timestampISO).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+      expect(entry.timestampISO).toMatch(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/
+      );
       // Verify it matches the timestamp
       expect(entry.timestampISO).toBe(entry.timestamp.toISOString());
     });

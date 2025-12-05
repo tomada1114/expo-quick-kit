@@ -5,7 +5,14 @@
  */
 
 import { sql } from 'drizzle-orm';
-import { index, integer, real, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import {
+  index,
+  integer,
+  real,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from 'drizzle-orm/sqlite-core';
 
 /**
  * Items table - Sample table for demonstrating CRUD operations
@@ -90,10 +97,9 @@ export const purchaseFeatures = sqliteTable(
     createdAt: integer('created_at').default(sql`(unixepoch())`),
   },
   (table) => ({
-    purchaseIdFeatureIdUnique: uniqueIndex('purchase_features_purchase_id_feature_id_unique').on(
-      table.purchaseId,
-      table.featureId
-    ),
+    purchaseIdFeatureIdUnique: uniqueIndex(
+      'purchase_features_purchase_id_feature_id_unique'
+    ).on(table.purchaseId, table.featureId),
     purchaseIdIdx: index('idx_purchase_id').on(table.purchaseId),
     featureIdIdx: index('idx_feature_id').on(table.featureId),
   })

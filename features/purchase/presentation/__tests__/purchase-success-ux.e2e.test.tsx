@@ -89,9 +89,23 @@ jest.mock('@/hooks/use-theme-color', () => ({
   useThemedColors: jest.fn(() => ({
     colors: {
       background: { base: '#fff', secondary: '#f5f5f5', tertiary: '#eee' },
-      text: { primary: '#000', secondary: '#666', tertiary: '#999', inverse: '#fff' },
-      semantic: { success: '#34C759', error: '#FF3B30', warning: '#FF9500', info: '#00C7FC' },
-      interactive: { separator: '#ddd', fill: '#007AFF', fillSecondary: '#ccc' },
+      text: {
+        primary: '#000',
+        secondary: '#666',
+        tertiary: '#999',
+        inverse: '#fff',
+      },
+      semantic: {
+        success: '#34C759',
+        error: '#FF3B30',
+        warning: '#FF9500',
+        info: '#00C7FC',
+      },
+      interactive: {
+        separator: '#ddd',
+        fill: '#007AFF',
+        fillSecondary: '#ccc',
+      },
     },
     colorScheme: 'light',
   })),
@@ -113,7 +127,9 @@ function TestSuccessComponent({
   onPurchaseCompleted?: (purchase: Purchase) => void;
 }): React.JSX.Element {
   const [showPaywall, setShowPaywall] = React.useState(true);
-  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(
+    null
+  );
   const [isFeatureUnlocked, setIsFeatureUnlocked] = React.useState(false);
 
   const handlePurchaseComplete = React.useCallback(
@@ -244,9 +260,7 @@ describe('Purchase Success UX E2E Tests', () => {
     // When: Purchase completes
     // Then: Success message is displayed to confirm the transaction
     it('should display success message after purchase completes', async () => {
-      const { getByTestId, queryByTestId } = render(
-        <TestSuccessComponent />
-      );
+      const { getByTestId, queryByTestId } = render(<TestSuccessComponent />);
 
       // Verify success message is not shown initially
       expect(queryByTestId('success-message-container')).toBeNull();
@@ -318,9 +332,7 @@ describe('Purchase Success UX E2E Tests', () => {
     // When: All operations (close, unlock, message) happen almost simultaneously
     // Then: UI renders all states correctly without race conditions
     it('should handle rapid purchase completion without UI glitches', async () => {
-      const { getByTestId, queryByTestId } = render(
-        <TestSuccessComponent />
-      );
+      const { getByTestId, queryByTestId } = render(<TestSuccessComponent />);
 
       // Simulate very fast purchase completion
       const purchaseButton = getByTestId('paywall-purchase-button');
@@ -365,7 +377,9 @@ describe('Purchase Success UX E2E Tests', () => {
         );
       };
 
-      const { getByTestId, queryByTestId } = render(<TestPreUnlockedComponent />);
+      const { getByTestId, queryByTestId } = render(
+        <TestPreUnlockedComponent />
+      );
 
       // Premium content should be shown (not paywall)
       expect(getByTestId('premium-content-already-unlocked')).toBeTruthy();

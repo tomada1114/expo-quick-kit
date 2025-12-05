@@ -130,7 +130,11 @@ export const localDatabaseService = {
   > {
     try {
       // Early return for empty transaction ID
-      if (!transactionId || typeof transactionId !== 'string' || transactionId.trim() === '') {
+      if (
+        !transactionId ||
+        typeof transactionId !== 'string' ||
+        transactionId.trim() === ''
+      ) {
         return {
           success: true,
           data: null, // Not found (empty ID is treated as no match)
@@ -161,7 +165,9 @@ export const localDatabaseService = {
         currencyCode: dbRecord.currencyCode,
         isVerified: dbRecord.isVerified,
         isSynced: dbRecord.isSynced,
-        syncedAt: dbRecord.syncedAt ? new Date(dbRecord.syncedAt * 1000) : undefined,
+        syncedAt: dbRecord.syncedAt
+          ? new Date(dbRecord.syncedAt * 1000)
+          : undefined,
         unlockedFeatures: [], // Will be populated from purchaseFeatures table in future enhancement
       };
 
@@ -255,7 +261,9 @@ export const localDatabaseService = {
         currencyCode: record.currencyCode,
         isVerified: record.isVerified,
         isSynced: record.isSynced,
-        syncedAt: record.syncedAt ? new Date(record.syncedAt * 1000) : undefined,
+        syncedAt: record.syncedAt
+          ? new Date(record.syncedAt * 1000)
+          : undefined,
         unlockedFeatures: [], // Will be populated from purchaseFeatures table in future enhancement
       }));
 
@@ -267,7 +275,10 @@ export const localDatabaseService = {
       const message =
         error instanceof Error ? error.message : 'Unknown database error';
 
-      console.error('[LocalDatabaseService] Error fetching all purchases:', error);
+      console.error(
+        '[LocalDatabaseService] Error fetching all purchases:',
+        error
+      );
 
       return {
         success: false,
@@ -370,7 +381,8 @@ export const localDatabaseService = {
       };
     } catch (error) {
       // Capture error for logging and retry determination
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       const lowerMessage = errorMessage.toLowerCase();
 
       console.error('[LocalDatabaseService] updateSyncStatus error:', error);
@@ -446,7 +458,11 @@ export const localDatabaseService = {
   > {
     try {
       // Validate input
-      if (!transactionId || typeof transactionId !== 'string' || transactionId.trim() === '') {
+      if (
+        !transactionId ||
+        typeof transactionId !== 'string' ||
+        transactionId.trim() === ''
+      ) {
         return {
           success: false,
           error: {
@@ -485,10 +501,14 @@ export const localDatabaseService = {
       };
     } catch (error) {
       // Capture error for logging and retry determination
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       const lowerMessage = errorMessage.toLowerCase();
 
-      console.error('[LocalDatabaseService] updateVerificationStatus error:', error);
+      console.error(
+        '[LocalDatabaseService] updateVerificationStatus error:',
+        error
+      );
 
       // Determine if error is retryable (connection/timeout issues are retryable)
       const isRetryable =
@@ -563,7 +583,11 @@ export const localDatabaseService = {
   > {
     try {
       // Step 1: Validate transaction ID
-      if (!transactionId || typeof transactionId !== 'string' || transactionId.trim() === '') {
+      if (
+        !transactionId ||
+        typeof transactionId !== 'string' ||
+        transactionId.trim() === ''
+      ) {
         return {
           success: false,
           error: {
@@ -593,7 +617,10 @@ export const localDatabaseService = {
         };
       }
 
-      console.log('[LocalDatabaseService] Successfully deleted purchase:', transactionId);
+      console.log(
+        '[LocalDatabaseService] Successfully deleted purchase:',
+        transactionId
+      );
 
       return {
         success: true,
@@ -601,7 +628,8 @@ export const localDatabaseService = {
       };
     } catch (error) {
       // Capture error for logging and retry determination
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       const lowerMessage = errorMessage.toLowerCase();
 
       console.error('[LocalDatabaseService] deletePurchase error:', error);

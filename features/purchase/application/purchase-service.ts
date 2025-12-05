@@ -28,7 +28,10 @@ import {
   verificationMetadataStore,
   type VerificationMetadata,
 } from '../infrastructure/verification-metadata-store';
-import { retryHandler, DEFAULT_RETRY_CONFIG } from '../infrastructure/retry-handler';
+import {
+  retryHandler,
+  DEFAULT_RETRY_CONFIG,
+} from '../infrastructure/retry-handler';
 import { db } from '@/database/client';
 import { purchases } from '@/database/schema';
 
@@ -172,9 +175,8 @@ export const purchaseService = {
         platform,
       };
 
-      const metadataSaveResult = await verificationMetadataStore.saveVerificationMetadata(
-        metadata
-      );
+      const metadataSaveResult =
+        await verificationMetadataStore.saveVerificationMetadata(metadata);
 
       if (!metadataSaveResult.success) {
         // Failed to save metadata - this is a critical error
@@ -277,7 +279,11 @@ export const purchaseService = {
   ): Promise<Result<Purchase, PurchaseFlowError>> {
     try {
       // Validate product ID (non-retryable validation error)
-      if (!productId || typeof productId !== 'string' || productId.trim() === '') {
+      if (
+        !productId ||
+        typeof productId !== 'string' ||
+        productId.trim() === ''
+      ) {
         return {
           success: false,
           error: {
@@ -333,7 +339,8 @@ export const purchaseService = {
 
       // Step 2: Verify and save (Task 6.4)
       const transaction = purchaseResult.data;
-      const verifyResult = await purchaseService.verifyAndSavePurchase(transaction);
+      const verifyResult =
+        await purchaseService.verifyAndSavePurchase(transaction);
 
       if (!verifyResult.success) {
         return verifyResult;
@@ -343,7 +350,9 @@ export const purchaseService = {
       return verifyResult;
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Unknown error during purchase';
+        error instanceof Error
+          ? error.message
+          : 'Unknown error during purchase';
 
       console.error('[PurchaseService] purchaseProduct error:', error);
 
@@ -397,9 +406,7 @@ export const purchaseService = {
    * }
    * ```
    */
-  async getActivePurchases(): Promise<
-    Result<Purchase[], PurchaseFlowError>
-  > {
+  async getActivePurchases(): Promise<Result<Purchase[], PurchaseFlowError>> {
     try {
       // Query database for all verified purchases
       const dbRecords = db
@@ -417,7 +424,9 @@ export const purchaseService = {
         currencyCode: record.currencyCode,
         isVerified: record.isVerified,
         isSynced: record.isSynced,
-        syncedAt: record.syncedAt ? new Date(record.syncedAt * 1000) : undefined,
+        syncedAt: record.syncedAt
+          ? new Date(record.syncedAt * 1000)
+          : undefined,
         unlockedFeatures: [], // Will be populated from purchaseFeatures table in future enhancement
       }));
 
@@ -429,7 +438,10 @@ export const purchaseService = {
       const message =
         error instanceof Error ? error.message : 'Unknown database error';
 
-      console.error('[PurchaseService] Error fetching active purchases:', error);
+      console.error(
+        '[PurchaseService] Error fetching active purchases:',
+        error
+      );
 
       return {
         success: false,
@@ -499,7 +511,11 @@ export const purchaseService = {
   ): Promise<Result<Purchase | null, PurchaseFlowError>> {
     try {
       // Early return for empty transaction ID
-      if (!transactionId || typeof transactionId !== 'string' || transactionId.trim() === '') {
+      if (
+        !transactionId ||
+        typeof transactionId !== 'string' ||
+        transactionId.trim() === ''
+      ) {
         return {
           success: true,
           data: null, // Not found (empty ID is treated as no match)
@@ -530,7 +546,9 @@ export const purchaseService = {
         currencyCode: dbRecord.currencyCode,
         isVerified: dbRecord.isVerified,
         isSynced: dbRecord.isSynced,
-        syncedAt: dbRecord.syncedAt ? new Date(dbRecord.syncedAt * 1000) : undefined,
+        syncedAt: dbRecord.syncedAt
+          ? new Date(dbRecord.syncedAt * 1000)
+          : undefined,
         unlockedFeatures: [], // Will be populated from purchaseFeatures table in future enhancement
       };
 
@@ -661,7 +679,10 @@ export const purchaseService = {
           ? error.message
           : 'Unknown error during verification and record';
 
-      console.error('[PurchaseService] Unexpected error in recordPurchaseAfterVerification:', error);
+      console.error(
+        '[PurchaseService] Unexpected error in recordPurchaseAfterVerification:',
+        error
+      );
 
       return {
         success: false,
@@ -778,7 +799,10 @@ function validateTransaction(
   }
 
   // Validate required fields
-  if (!transaction.transactionId || typeof transaction.transactionId !== 'string') {
+  if (
+    !transaction.transactionId ||
+    typeof transaction.transactionId !== 'string'
+  ) {
     return {
       success: false,
       error: {
@@ -811,7 +835,10 @@ function validateTransaction(
     };
   }
 
-  if (!transaction.purchaseDate || !(transaction.purchaseDate instanceof Date)) {
+  if (
+    !transaction.purchaseDate ||
+    !(transaction.purchaseDate instanceof Date)
+  ) {
     return {
       success: false,
       error: {

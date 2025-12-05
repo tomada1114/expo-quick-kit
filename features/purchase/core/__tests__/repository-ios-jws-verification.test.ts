@@ -39,7 +39,10 @@ describe('verifyIOSTransaction - iOS JWS Signature Verification (Task 4.1)', () 
     Platform.OS = 'ios';
 
     // Default mock for jose.importSPKI
-    mockedJose.importSPKI.mockResolvedValue({ alg: 'ES256', type: 'public' } as any);
+    mockedJose.importSPKI.mockResolvedValue({
+      alg: 'ES256',
+      type: 'public',
+    } as any);
 
     // Default mock for jose.jwtVerify - successful verification
     mockedJose.jwtVerify.mockResolvedValue({
