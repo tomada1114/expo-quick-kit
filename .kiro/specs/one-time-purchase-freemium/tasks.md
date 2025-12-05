@@ -528,10 +528,11 @@
   - _Requirements: 3.3, 3.4, 3.5, 4.2_
   - ✅ Completed: Comprehensive integration test suite with 15 test cases covering happy/sad/edge/unhappy paths. Tests verify: (1) Offline purchase recording with isSynced=false (E2E-1-2), (2) Validation of offline purchases (E2E-3-5), (3) Sync status updates when network restored (E2E-6-7), (4) Feature access check offline (E2E-8-9), (5) Complete offline lifecycle workflows (E2E-10-11), (6) Edge cases including old purchases, multiple currencies, zero price (E2E-12-14), (7) Performance of synchronous feature checks (E2E-15). Test file: features/purchase/__tests__/integration/offline-purchase-state.integration.test.ts
 
-- [ ] 16.8 Purchase restoration インテグレーションテスト
+- [x] 16.8 Purchase restoration インテグレーションテスト
   - Platform から履歴取得 → LocalDB と照合 → 重複排除 → 同期状態更新
   - Idempotent operation 検証
   - _Requirements: 6.2, 6.3_
+  - ✅ Completed: Implemented comprehensive integration test suite with 30 test cases covering happy/sad/edge/unhappy paths (E2E-1 through E2E-30). Tests verify: (1) New purchase restoration (6 tests), (2) Error handling for network/DB/platform errors (5 tests), (3) Boundary values and validation (7 tests), (4) System error handling (4 tests), (5) Idempotency across multiple calls and race conditions (5 tests), (6) Real-world integration workflows (3 tests). Full Given/When/Then structure. All 30 tests passing with 100% coverage of restoration flow including transaction validation, deduplication, sync status updates, and large history support (50+ transactions).
 
 - [ ] 16.9 Error recovery with retry インテグレーションテスト
   - Network error during payment → automatic retry with exponential backoff
