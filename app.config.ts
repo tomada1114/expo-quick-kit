@@ -317,10 +317,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       origin: false,
     },
 
-    // OPTIONAL: EAS project configuration
-    // eas: {
-    //   projectId: 'your-eas-project-id',
-    // },
+    // EAS project configuration
+    eas: {
+      projectId: 'e9acf52c-64fd-4390-a7bc-fa554df3056b',
+    },
 
     // Environment variables accessible at runtime
     // Note: EXPO_PUBLIC_* variables are automatically available
