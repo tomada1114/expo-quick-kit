@@ -540,10 +540,11 @@
   - _Requirements: 8.1, 9.2_
   - ✅ Completed: Implemented comprehensive integration test suite with 17 test cases covering all perspectives (happy/sad/edge/unhappy paths). Tests verify: (1) Successful recovery after retries with exponential backoff (1s→2s→4s delays), (2) Immediate success without retry, (3) Graceful degradation after max retries exhausted (4 total attempts: 1 initial + 3 retries), (4) Non-retryable errors fail immediately, (5) Verification failures, (6) Metadata save failures, (7) Exponential backoff delay validation, (8) Error type switching, (9) Delay boundary limits, (10) Unexpected exceptions with proper error wrapping, (11) Database error handling, (12) Partial recovery workflows, (13) Intermittent network simulation, (14) Complete lifecycle with retry+verification+metadata save, (15) Custom retry configuration support. All 17 tests passing with 100% coverage.
 
-- [ ] 16.10 Multi-feature unlock インテグレーションテスト
+- [x] 16.10 Multi-feature unlock インテグレーションテスト
   - Product X 購入 → 複数 feature unlock 検証
   - Feature access confirmation
   - _Requirements: 4.6_
+  - ✅ Completed: Comprehensive integration test suite with 12 passing tests covering all scenarios. Tests verify: (1) Happy path (5 tests) - multiple feature unlock, single feature products, different products, (2) Sad path (2 tests) - feature access denial, wrong product, (3) Edge cases (3 tests) - unknown product, null/undefined IDs, (4) Integration (2 tests) - complete workflow, feature definition consistency. Test file: features/purchase/__tests__/integration/multi-feature-unlock.integration.test.ts
 
 - [x] 16.11 (P) PaywallComponent rendering E2E テスト
   - Premium feature tap → Paywall displayed
