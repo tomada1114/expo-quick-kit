@@ -6,6 +6,7 @@
  * - Secure storage of verification metadata
  * - Verification state management and restoration
  * - Error handling: logging, retry, and user-facing messages (Task 6.5)
+ * - Analytics engine for purchase event tracking (Task 10.2)
  *
  * @module features/purchase/infrastructure
  */
@@ -40,3 +41,16 @@ export type { UserFacingError } from './error-handler';
 
 export { mapPurchaseError, mapStoreKit2Error, mapGooglePlayBillingError, mapRevenueCatError } from './error-mapper';
 export { isNetworkError, isStoreKit2Error, isRevenueCatError, isBillingResponseObject } from './error-mapper';
+
+// Task 10.2: Analytics engine for purchase event tracking
+export { analyticsEngine } from './analytics-engine';
+export type {
+  PurchaseCompletionEvent,
+  PurchaseEvent,
+  FunnelEvent,
+  AnalyticsError,
+} from './analytics-engine';
+
+// Task 10.5: Error monitoring with rate tracking and anomaly detection
+export { ErrorMonitoring, errorMonitoring } from './error-monitoring';
+export type { AlertData, ErrorMonitoringConfig } from './error-monitoring';
