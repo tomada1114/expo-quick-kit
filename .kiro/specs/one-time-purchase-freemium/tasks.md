@@ -490,12 +490,13 @@
   - Missing key：KEY_NOT_FOUND error
   - _Requirements: 7.3, 7.4_
 
-- [ ] 16.3 (P) FeatureGatingService.canAccessSync() ユニットテスト
+- [x] 16.3 (P) FeatureGatingService.canAccessSync() ユニットテスト
   - Free feature：always true
   - Premium + purchased：true
   - Premium + not purchased：false
   - Offline with cache：true
   - _Requirements: 4.1, 4.2, 4.3_
+  - ✅ Completed: Comprehensive unit tests implemented with 24 passing tests covering happy/sad/edge/unhappy paths. Tests verify: free features always return true, premium features with purchases return true, premium features without purchases return false, offline scenarios use cached data, empty/invalid IDs handled gracefully, database errors handled safely. Plus additional coverage for feature definitions, filtering, and multiple feature access scenarios. All 47 tests in the suite passing.
 
 - [ ] 16.4 (P) LocalDatabase.recordPurchase() ユニットテスト
   - Successful insert：purchase record created
