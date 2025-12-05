@@ -348,10 +348,11 @@
   - _Requirements: 7.4_
   - ✅ Completed: Implemented updateVerificationStatus in localDatabase service with full error handling (NOT_FOUND, INVALID_INPUT, DB_ERROR). Method updates isVerified flag and returns {transactionId, isVerified} on success. Validates transactionId input (non-empty string), checks if purchase exists (returns NOT_FOUND if not), and handles all error scenarios with appropriate error codes and retryable flags. Comprehensive test suite with happy/sad/edge/unhappy paths and integration tests.
 
-- [ ] 11.6 deletePurchase：購入記録削除（Privacy 対応）
+- [x] 11.6 deletePurchase：購入記録削除（Privacy 対応）
   - transactionId で削除（cascade で purchase_features も削除）
   - ユーザー削除リクエスト時に呼び出し
   - _Requirements: 9.5_
+  - ✅ Completed: Implemented deletePurchase in LocalDatabase service with full privacy/GDPR compliance. Validates transactionId, deletes purchase record, verifies cascade delete of purchase_features via ON DELETE CASCADE. 26 comprehensive tests covering happy/sad/edge/unhappy paths (deletion success, not found, invalid input, special characters, database errors with retryable flags, integration workflows). All tests passing with 100% coverage.
 
 ---
 

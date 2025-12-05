@@ -508,4 +508,122 @@ export const localDatabaseService = {
       };
     }
   },
+
+  /**
+   * Delete a purchase record - Task 11.6 (Privacy/GDPR Compliance)
+   *
+   * Removes purchase record and associated data for privacy/GDPR compliance.
+   * Called when user requests account deletion or data removal.
+   * Purchase_features records are automatically deleted via ON DELETE CASCADE.
+   *
+   * Process:
+   * 1. Validate transactionId (non-empty string)
+   * 2. Delete from purchases table where transactionId matches
+   * 3. Verify that exactly one row was affected (purchase existed)
+   * 4. Return success or appropriate error
+   *
+   * Given/When/Then:
+   * - Given: Valid transactionId exists in database
+   * - When: deletePurchase(transactionId) is called
+   * - Then: Successfully deletes record and returns success
+   *
+   * - Given: Non-existent transactionId
+   * - When: deletePurchase(transactionId) is called
+   * - Then: Returns NOT_FOUND error (no rows affected)
+   *
+   * - Given: Empty or null transactionId
+   * - When: deletePurchase(transactionId) is called
+   * - Then: Returns INVALID_INPUT validation error
+   *
+   * - Given: Database connection fails
+   * - When: deletePurchase(transactionId) is called
+   * - Then: Returns DB_ERROR with retryable flag based on error type
+   *
+   * @param transactionId - Transaction ID to delete
+   * @returns Result with void data on success or LocalDatabaseError on failure
+   *
+   * @example
+   * ```typescript
+   * // Delete purchase for privacy/GDPR compliance
+   * const result = await localDatabaseService.deletePurchase('txn-123');
+   * if (result.success) {
+   *   console.log('Purchase and associated features deleted');
+   * } else if (result.error.code === 'NOT_FOUND') {
+   *   console.log('Purchase not found');
+   * } else if (result.error.retryable) {
+   *   console.log('Database error, will retry:', result.error.message);
+   * }
+   * ```
+   */
+  async deletePurchase(
+    transactionId: string
+  ): Promise<
+    | { success: true; data: undefined }
+    | { success: false; error: LocalDatabaseError }
+  > {
+    try {
+      // Step 1: Validate transaction ID
+      if (!transactionId || typeof transactionId !== 'string' || transactionId.trim() === '') {
+        return {
+          success: false,
+          error: {
+            code: 'INVALID_INPUT',
+            message: 'transactionId must be a non-empty string',
+            retryable: false,
+          },
+        };
+      }
+
+      // Step 2: Delete from database
+      // ON DELETE CASCADE in schema ensures purchase_features are also deleted
+      const result = db
+        .delete(purchases)
+        .where(eq(purchases.transactionId, transactionId))
+        .run();
+
+      // Step 3: Check if any rows were affected
+      if (!result || !('changes' in result) || result.changes === 0) {
+        return {
+          success: false,
+          error: {
+            code: 'NOT_FOUND',
+            message: `Purchase with transaction ID not found: ${transactionId}`,
+            retryable: false,
+          },
+        };
+      }
+
+      console.log('[LocalDatabaseService] Successfully deleted purchase:', transactionId);
+
+      return {
+        success: true,
+        data: undefined,
+      };
+    } catch (error) {
+      // Capture error for logging and retry determination
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const lowerMessage = errorMessage.toLowerCase();
+
+      console.error('[LocalDatabaseService] deletePurchase error:', error);
+
+      // Determine if error is retryable
+      // Transient errors (connection/timeout/lock) are retryable
+      // Persistent errors (constraint violations, etc.) are not
+      const isRetryable =
+        lowerMessage.includes('timeout') ||
+        lowerMessage.includes('connection') ||
+        lowerMessage.includes('lost') ||
+        lowerMessage.includes('ECONNREFUSED') ||
+        lowerMessage.includes('locked');
+
+      return {
+        success: false,
+        error: {
+          code: 'DB_ERROR',
+          message: `Failed to delete purchase: ${errorMessage}`,
+          retryable: isRetryable,
+        },
+      };
+    }
+  },
 };
