@@ -65,6 +65,58 @@ pnpm test               # Jest テスト
 pnpm db:generate        # Drizzle マイグレーション
 ```
 
+## 開発ビルド（Development Build）
+
+プッシュ通知、セキュアストレージ、サブスクリプション機能など、ネイティブモジュールが必要な機能を使う場合は、Expo Go ではなく **Development Build** をインストールする必要があります。
+
+### 開発中・テスト中：ローカルビルド推奨
+
+```bash
+# iOS (Xcodeが必要)
+pnpm ios
+
+# Android (Android Studio が必要)
+pnpm android
+
+# 実機でテストしたい場合（tunnel 経由で接続）
+pnpm dev:ios
+pnpm dev:android
+```
+
+開発・テスト段階では **ローカルビルドで十分**。速く、ループが早く、何度でも修正・再ビルドできます。
+
+### リリース前：クラウドビルド（EAS Build）
+
+アプリを App Store / Google Play に公開する際は、EAS Build を使用して本番ビルドを作成します：
+
+```bash
+eas login
+eas build --platform ios
+eas build --platform android
+```
+
+詳細は [docs/SETUP.md](./docs/SETUP.md) の「Development Build」を参照。
+
+## サブスクリプション・課金システム
+
+このテンプレートは **RevenueCat** を使用したサブスクリプション機能が統合されています。
+
+### 機能
+
+- 月額・年額プランのサポート
+- Sandbox テスト環境での購入テスト
+- プレミアム機能のロック・アンロック
+- 購入の復元（Restore）
+
+### セットアップ
+
+1. RevenueCat アカウントを作成（無料）
+2. App Store Connect でサブスクリプション商品を設定
+3. `.env.local` に API キーを追加
+4. Development Build で実機テスト
+
+詳細手順は [docs/REVENUECAT_SETUP.md](./docs/REVENUECAT_SETUP.md) を参照。サンドボックス環境での完全なテスト手順が記載されています。
+
 ## アーキテクチャ
 
 ```
