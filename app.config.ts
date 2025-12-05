@@ -101,6 +101,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // REMOVE IF NOT NEEDED: Delete permissions your app doesn't use
     // =========================================================================
     infoPlist: {
+      // Required for App Store submission: Indicates app uses only standard/exempt encryption
+      ITSAppUsesNonExemptEncryption: false,
+
       // REMOVE IF NOT NEEDED: Camera permission
       // NSCameraUsageDescription: 'Used to take profile photos and scan documents',
       // REMOVE IF NOT NEEDED: Photo library permission
