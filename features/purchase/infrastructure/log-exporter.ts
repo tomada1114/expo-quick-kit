@@ -185,13 +185,38 @@ export const logExporter = {
     includeMetadata?: boolean
   ): string {
     try {
+      // Map logs to ensure timestamp is properly converted to ISO string
+      // and all fields are serializable
+      const entries = logs.map((log) => {
+        const entry: any = {
+          timestamp: log.timestamp.toISOString(),
+          timestampISO: log.timestampISO,
+          errorCode: log.errorCode,
+          message: log.message,
+          retryable: log.retryable,
+        };
+
+        // Add optional fields if present
+        if (log.platform) {
+          entry.platform = log.platform;
+        }
+        if (log.metadata) {
+          entry.metadata = log.metadata;
+        }
+        if (log.stack) {
+          entry.stack = log.stack;
+        }
+        if (log.nativeErrorCode !== undefined) {
+          entry.nativeErrorCode = log.nativeErrorCode;
+        }
+
+        return entry;
+      });
+
       const data: any = {
         exportedAt: new Date().toISOString(),
         entryCount: logs.length,
-        entries: logs.map((log) => ({
-          ...log,
-          timestamp: log.timestamp.toISOString(),
-        })),
+        entries,
       };
 
       if (includeMetadata && logs.length > 0) {

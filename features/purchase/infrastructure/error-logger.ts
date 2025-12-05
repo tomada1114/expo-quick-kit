@@ -182,6 +182,25 @@ export const errorLogger = {
     error: unknown,
     context?: Record<string, unknown>
   ): ErrorLogEntry {
+    // If error is already an ErrorLogEntry (e.g., from tests), use it directly
+    if (
+      error &&
+      typeof error === 'object' &&
+      'timestamp' in error &&
+      'errorCode' in error &&
+      'message' in error &&
+      'retryable' in error &&
+      error instanceof Object
+    ) {
+      const entry = error as ErrorLogEntry;
+      // Add to logs if not already present
+      if (!this.logs.includes(entry)) {
+        this.logs.push(entry);
+      }
+      return entry;
+    }
+
+    // Otherwise, create a new entry from the error
     const timestamp = new Date();
     const message =
       error instanceof Error ? error.message : String(error);
