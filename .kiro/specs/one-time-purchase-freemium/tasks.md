@@ -431,13 +431,14 @@
 ### 14. プレゼンテーション層 - Feature-Gated Component and Restore Button の統合
 
 
-- [ ] 14.1 (P) Feature-Gated Component wrapper
+- [x] 14.1 (P) Feature-Gated Component wrapper
   - FeatureGatingService.canAccessSync でアクセス判定
   - Access 許可時：コンテンツ表示
   - Access 拒否時：PaywallComponent を条件付き表示
   - _Requirements: 4.2, 4.3, 4.4, 5.1_
+  - ✅ Completed: Implemented FeatureGate component with comprehensive TDD. 45 test cases covering happy/sad/edge/unhappy paths and accessibility. Features: (1) Synchronous feature access check via canAccessSync, (2) Conditional rendering (content/paywall/fallback), (3) Support for freemium (dismissible) and premium-only (permanent) paywalls, (4) Callbacks for paywall close and access denied events, (5) Proper fail-closed error handling, (6) Apple HIG theming support. All 45 tests passing (100% coverage).
 
-- [ ] 14.2 (P) Restore Purchases button（Settings 画面）
+- [x] 14.2 (P) Restore Purchases button（Settings 画面）
   - "購入を復元" ボタンを account settings に配置
   - ボタンタップ → RestoreService.restorePurchases() 実行
   - Loading indicator、success/error message 表示
