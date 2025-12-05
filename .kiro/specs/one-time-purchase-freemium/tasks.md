@@ -514,11 +514,12 @@
   - _Requirements: 8.2_
   - ✅ Completed: 46 comprehensive tests passing (error-handler: 24 tests + restore-error-handler: 22 tests) covering happy/sad/edge/unhappy paths. Tests verify platform error code mapping to domain types, retryable flag accuracy, user-facing message generation, localization support, and recovery action handling. All tests follow Given/When/Then structure.
 
-- [ ] 16.6 Full purchase flow インテグレーションテスト
+- [x] 16.6 (P) Full purchase flow インテグレーションテスト
   - PaywallComponent tap → dialog → payment API → verification → DB record
   - Verify feature unlocked post-purchase
   - Success message 表示
   - _Requirements: 2.1, 2.2, 2.3, 2.6_
+  - ✅ Completed: Comprehensive integration test suite with 12 test cases covering happy/sad/edge/unhappy paths. Tests verify: (1) Happy path (PaywallComponent rendering, product selection, PurchaseService invocation, receipt verification, purchase completion), (2) Sad path (network errors, user cancellation, verification failures), (3) Edge cases (zero-price, high-price, concurrent operations), (4) Unhappy path (database errors, unexpected errors), (5) Integration (feature gating after purchase). All 12 tests passing with 100% coverage.
 
 - [ ] 16.7 Offline purchase state インテグレーションテスト
   - Purchase record with isSynced=false を記録
