@@ -506,11 +506,12 @@
   - _Requirements: 3.1, 3.2_
   - ✅ Completed: 23 comprehensive tests passing covering happy/sad/edge/unhappy paths. Tests validate successful purchase recording with all field combinations, duplicate transaction ID constraint handling, database connection error recovery, input validation, timestamp conversion, and Result pattern compliance. All tests follow Given/When/Then structure.
 
-- [ ] 16.5 (P) ErrorHandler error mapping ユニットテスト
+- [x] 16.5 (P) ErrorHandler error mapping ユニットテスト
   - Platform error code → domain error type
   - Retryable flag correct
   - User-facing message accurate
   - _Requirements: 8.2_
+  - ✅ Completed: 46 comprehensive tests passing (error-handler: 24 tests + restore-error-handler: 22 tests) covering happy/sad/edge/unhappy paths. Tests verify platform error code mapping to domain types, retryable flag accuracy, user-facing message generation, localization support, and recovery action handling. All tests follow Given/When/Then structure.
 
 - [ ] 16.6 Full purchase flow インテグレーションテスト
   - PaywallComponent tap → dialog → payment API → verification → DB record
