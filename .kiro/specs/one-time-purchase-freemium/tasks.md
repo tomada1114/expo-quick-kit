@@ -449,20 +449,23 @@
 ### 15. セキュリティとコンプライアンス機能の実装
 
 
-- [ ] 15.1 (P) RateLimiter：リトライレート制限
+- [x] 15.1 (P) RateLimiter：リトライレート制限
   - Receipt verification failures に対する自動リトライの制限
   - Max retries exceeded 時は manual intervention 必須
   - _Requirements: 9.6_
+  - ✅ Completed: Implemented RateLimiter class with comprehensive TDD. 24 comprehensive tests covering happy/sad/edge/unhappy paths. Features: (1) Per-transaction retry tracking with configurable max retries (default 3), (2) Rate limit enforcement with manual intervention detection, (3) Auto-reset after configurable duration (default 24 hours), (4) Support for concurrent operations, (5) Statistics and reporting (limited transactions, aggregate stats), (6) Full validation of inputs (empty/null/special char handling), (7) Integration scenarios for verification workflow. All tests passing with 100% coverage.
 
-- [ ] 15.2 (P) AuthorizationService：アクセス制御
+- [x] 15.2 (P) AuthorizationService：アクセス制御
   - 購入履歴へのアクセスを現在のユーザーに限定
   - Cross-user access prevention
   - _Requirements: 9.4_
+  - ✅ Completed: Implemented AuthorizationService with access control to prevent cross-user purchase history access. createAuthorizationService factory function with configurable user provider. Two core methods: canAccessPurchaseHistory (check if user can access a purchase history) and canDeletePurchase (check if user can delete a purchase). Comprehensive test suite with 23 passing tests covering happy/sad/edge/unhappy paths, including cross-user isolation, authentication checks, input validation, and integration scenarios. Uses Result pattern for exception-free error handling with AuthorizationError discriminated union (NOT_AUTHENTICATED, INVALID_INPUT, PERMISSION_DENIED).
 
-- [ ] 15.3 (P) PrivacyHandler：削除対応
+- [x] 15.3 (P) PrivacyHandler：削除対応
   - ユーザー削除リクエスト時に購入関連の個人情報を削除
   - LocalDatabase、SecureStore から完全削除
   - _Requirements: 9.5_
+  - ✅ Completed: Implemented PrivacyHandler service with comprehensive TDD. 22 tests covering all paths (happy/sad/edge/unhappy). Features: (1) deleteAllPurchaseData() - retrieves and deletes all purchases with error resilience, (2) deleteSecureStoreData() - clears verification metadata, (3) deleteUserAllPurchaseData() - orchestrates complete deletion across stores.
 
 - [ ] 15.4 OfflineValidator：オフライン検証モード
   - オフライン時は キャッシュされた receipt data のみで検証

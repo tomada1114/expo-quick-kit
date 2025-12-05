@@ -58,3 +58,7 @@ export type { AlertData, ErrorMonitoringConfig } from './error-monitoring';
 // Task 11.2: LocalDatabase service for purchase queries
 export { localDatabaseService } from './local-database-service';
 export type { LocalDatabaseError } from './local-database-service';
+
+// Task 15.1: Rate limiting for verification retry failures
+export { RateLimiter } from './rate-limiter';
+export type { RetryStatus, RateLimiterConfig } from './rate-limiter';

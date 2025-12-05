@@ -8,6 +8,7 @@
  * - Purchase restoration (RestoreService)
  * - Sync reconciliation (SyncReconciler)
  * - Recovery handling (RecoveryHandler)
+ * - Authorization service (AuthorizationService) - Task 15.2
  *
  * Task 7.1: Feature gating service with synchronous access checking
  * Task 6.1-6.4: Purchase service orchestration
@@ -15,6 +16,7 @@
  * Task 8.1: Purchase restoration flow
  * Task 9.3: Sync reconciliation
  * Task 9.5: Database corruption detection and recovery
+ * Task 15.2: Authorization service for cross-user access control
  *
  * @module features/purchase/application
  */
@@ -36,3 +38,5 @@ export type {
   RecoveryValidation,
   RecoveryStatus,
 } from './recovery-handler';
+export { createAuthorizationService, authorizationService } from './authorization-service';
+export type { AuthorizationService, AuthorizationError, CurrentUser, CurrentUserProvider } from './authorization-service';
