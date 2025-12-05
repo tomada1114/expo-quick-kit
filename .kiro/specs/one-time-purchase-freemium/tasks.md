@@ -521,11 +521,12 @@
   - _Requirements: 2.1, 2.2, 2.3, 2.6_
   - ✅ Completed: Comprehensive integration test suite with 12 test cases covering happy/sad/edge/unhappy paths. Tests verify: (1) Happy path (PaywallComponent rendering, product selection, PurchaseService invocation, receipt verification, purchase completion), (2) Sad path (network errors, user cancellation, verification failures), (3) Edge cases (zero-price, high-price, concurrent operations), (4) Unhappy path (database errors, unexpected errors), (5) Integration (feature gating after purchase). All 12 tests passing with 100% coverage.
 
-- [ ] 16.7 Offline purchase state インテグレーションテスト
+- [x] 16.7 Offline purchase state インテグレーションテスト
   - Purchase record with isSynced=false を記録
   - ネットワーク接続なしでも feature access 可能
   - ネットワーク復帰時に同期完了
   - _Requirements: 3.3, 3.4, 3.5, 4.2_
+  - ✅ Completed: Comprehensive integration test suite with 15 test cases covering happy/sad/edge/unhappy paths. Tests verify: (1) Offline purchase recording with isSynced=false (E2E-1-2), (2) Validation of offline purchases (E2E-3-5), (3) Sync status updates when network restored (E2E-6-7), (4) Feature access check offline (E2E-8-9), (5) Complete offline lifecycle workflows (E2E-10-11), (6) Edge cases including old purchases, multiple currencies, zero price (E2E-12-14), (7) Performance of synchronous feature checks (E2E-15). Test file: features/purchase/__tests__/integration/offline-purchase-state.integration.test.ts
 
 - [ ] 16.8 Purchase restoration インテグレーションテスト
   - Platform から履歴取得 → LocalDB と照合 → 重複排除 → 同期状態更新
