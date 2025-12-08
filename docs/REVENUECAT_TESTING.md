@@ -127,7 +127,7 @@ john+sandbox-jp@example.com
 # iPhone/iPad を USB で接続してください
 
 # 接続されたデバイス向けにビルドしてインストール
-pnpm dev:ios --device
+pnpm ios --device
 ```
 
 このコマンドは以下を実行します：

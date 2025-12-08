@@ -49,8 +49,10 @@ pnpm android
 
 ```bash
 # 開発
-pnpm start              # Expo dev server
-pnpm ios                # iOS シミュレータ
+pnpm start              # Expo dev server（シミュレータ向け）
+pnpm dev                # 実機向け dev server（tunnel 経由）
+pnpm ios                # iOS シミュレータでビルド＆起動
+pnpm ios --device       # iOS 実機にビルド＆インストール
 pnpm android            # Android エミュレータ
 pnpm web                # Web ブラウザ
 
@@ -69,7 +71,7 @@ pnpm db:generate        # Drizzle マイグレーション
 
 プッシュ通知、セキュアストレージ、サブスクリプション機能など、ネイティブモジュールが必要な機能を使う場合は、Expo Go ではなく **Development Build** をインストールする必要があります。
 
-### 開発中・テスト中：ローカルビルド推奨
+### シミュレータでの開発
 
 ```bash
 # iOS (Xcodeが必要)
@@ -77,13 +79,35 @@ pnpm ios
 
 # Android (Android Studio が必要)
 pnpm android
-
-# 実機でテストしたい場合（tunnel 経由で接続）
-pnpm dev:ios
-pnpm dev:android
 ```
 
-開発・テスト段階では **ローカルビルドで十分**。速く、ループが早く、何度でも修正・再ビルドできます。
+### 実機での開発
+
+```bash
+# 1. 初回：実機にアプリをインストール
+pnpm ios --device
+
+# 2. 以降：開発サーバーを起動してQRコードをスキャン
+pnpm dev
+```
+
+**接続方法**: ターミナルに表示される QR コードを iPhone カメラでスキャン → アプリが起動
+
+### 実機接続のトラブルシューティング
+
+実機で「No development servers found」エラーが出る場合：
+
+| 症状 | 原因 | 対処 |
+|------|------|------|
+| QRコードで接続できない | LAN接続がブロックされている | `pnpm dev`（tunnel モード）を使用 |
+| `ngrok tunnel took too long` | ngrok接続タイムアウト | 数回リトライ、または時間を置いて再試行 |
+| `Connection reset by peer` | macOS Firewall | Firewall設定でnodeを許可 |
+
+**調査メモ（2024-12）**:
+- LAN モード（`pnpm start --dev-client`）は macOS Firewall や Metro の外部IP応答問題で不安定
+- Tunnel モード（`pnpm dev`）が実機テストでは最も安定
+- Firewall OFF でも `curl http://<LAN-IP>:8081/status` が `Empty reply from server` を返す場合あり（Metro側の問題）
+- localhost 経由は正常動作するため、シミュレータでは問題なし
 
 ### リリース前：クラウドビルド（EAS Build）
 

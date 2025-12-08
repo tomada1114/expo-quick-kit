@@ -10,11 +10,12 @@ expo-quick-kit is an Expo SDK 54 boilerplate template with tabs navigation, desi
 
 ```bash
 # Development
-pnpm start              # Start Expo dev server
-pnpm ios                # Run on iOS simulator
+pnpm start              # Start Expo dev server (for simulator)
+pnpm dev                # Start dev server with tunnel (for physical device)
+pnpm ios                # Build and run on iOS simulator
+pnpm ios --device       # Build and install on physical iOS device
 pnpm android            # Run on Android emulator
 pnpm web                # Run on web
-pnpm dev:ios            # Run on iOS with dev-client and tunnel (for testing on physical device)
 
 # Code Quality
 pnpm lint               # Run ESLint
