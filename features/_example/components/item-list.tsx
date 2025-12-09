@@ -96,6 +96,7 @@ export function ItemList({
 
   return (
     <FlatList
+      style={styles.container}
       testID={testID}
       data={items}
       renderItem={renderItem}
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   emptyListContent: {
-    flex: 1,
+    flexGrow: 1,
   },
   emptyContainer: {
     flex: 1,
@@ -140,5 +141,8 @@ const styles = StyleSheet.create({
   },
   emptyHint: {
     textAlign: 'center',
+  },
+  container: {
+    flex: 1,
   },
 });
