@@ -114,9 +114,13 @@ export default function HomeScreen() {
                 },
               ]}
             >
-              <View style={styles.featureIconBox}>
-                <ThemedText style={styles.featureIcon}>✨</ThemedText>
-              </View>
+              {/* Feature accent line */}
+              <View
+                style={[
+                  styles.featureAccent,
+                  { backgroundColor: colors.primary },
+                ]}
+              />
 
               <ThemedText
                 style={[styles.featureTitle, { color: colors.text.primary }]}
@@ -198,16 +202,11 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
 
-  featureIconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+  featureAccent: {
+    width: 3,
+    height: 24,
+    borderRadius: BorderRadius.sm,
     marginBottom: Spacing.md,
-  },
-  featureIcon: {
-    fontSize: 24,
   },
 
   featureTitle: {

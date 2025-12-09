@@ -202,6 +202,7 @@ describe('SettingsScreen', () => {
 
       renderWithSafeArea(<SettingsScreen />);
 
+      expect(screen.getByText('PREMIUM')).toBeTruthy();
       expect(screen.getByText("You're Premium")).toBeTruthy();
     });
   });

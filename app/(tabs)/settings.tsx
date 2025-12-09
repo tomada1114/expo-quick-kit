@@ -172,7 +172,7 @@ export default function SettingsScreen() {
               },
             ]}
           >
-            <ThemedText style={styles.badgeText}>✓ Premium</ThemedText>
+            <ThemedText style={styles.badgeText}>PREMIUM</ThemedText>
           </Animated.View>
         )}
 
