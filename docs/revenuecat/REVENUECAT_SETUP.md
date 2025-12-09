@@ -233,7 +233,20 @@ In-App Purchase Keyとは別に、App Store Connect API Keyも必要です。こ
 2.  `monthly_plan` をクリックします。
 3.  **Entitlements** セクションで、ステップ1.4で作成した `premium` を選択して紐付けます。
 4.  **Save** をクリックします。
-5.  `annual_plan` についても同様に行います。
+3. `annual_plan` についても同様に行います。
+
+### 3.5 Paywall (UI) の作成と公開
+
+アプリ内で `RevenueCatUI` を使用するには、ダッシュボードでのPaywall設定が必須です。
+
+1.  左メニューの **Paywalls** をクリックします。
+2.  **New Paywall** をクリックし、**Using template** を選択します。
+3.  お好みのテンプレートを選択します（テスト用なのでどれでも構いません）。
+4.  設定画面左側の **Offering** プルダウンで、先ほど作成した **default** を選択します。
+    - これにより、このデザインが `default` オファリングのサブスクリプション商品（月額・年額）と紐付きます。
+5.  画面右上の **Publish** をクリックして公開します。
+
+> ⚠️ **重要**: Paywallを作成しても **Publish（公開）** しないと、アプリ側で「Paywallが見つからない」というエラーになります。
 
 -----
 
