@@ -11,8 +11,9 @@
  */
 
 import { router, type Href } from 'expo-router';
-import React, { useState, useCallback } from 'react';
-import { StyleSheet, ScrollView, View, Alert } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -20,8 +21,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Spacer } from '@/components/ui/spacer';
 import { Spacing, Typography } from '@/constants/theme';
-import { useSubscription } from '@/features/subscription/hooks';
 import type { SubscriptionErrorCode } from '@/features/subscription/core/types';
+import { useSubscription } from '@/features/subscription/hooks';
 import { useThemedColors } from '@/hooks/use-theme-color';
 
 /**
@@ -50,6 +51,7 @@ const ERROR_MESSAGES: Record<SubscriptionErrorCode, string> = {
 
 export default function SettingsScreen() {
   const { colors } = useThemedColors();
+  const { top } = useSafeAreaInsets();
   const { isPremium, subscription, restorePurchases, refetchSubscription } =
     useSubscription();
 
@@ -118,7 +120,10 @@ export default function SettingsScreen() {
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background.base }]}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={[
+        styles.contentContainer,
+        { paddingTop: top + Spacing.xl },
+      ]}
       testID="settings-screen-container"
     >
       <ThemedView style={styles.header}>
@@ -207,7 +212,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: Spacing.lg,
-    paddingTop: Spacing.xl,
   },
   header: {
     alignItems: 'center',

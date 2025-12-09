@@ -12,7 +12,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import React, { useCallback } from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -20,13 +21,13 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Spacer } from '@/components/ui/spacer';
 import { Spacing, Typography } from '@/constants/theme';
-import { ItemList } from '@/features/_example/components/item-list';
 import {
-  ValidationDemo,
   DateDemo,
-  SecureStorageDemo,
   NotificationDemo,
+  SecureStorageDemo,
+  ValidationDemo,
 } from '@/features/_example';
+import { ItemList } from '@/features/_example/components/item-list';
 import { useItemList } from '@/features/_example/hooks/use-item-list';
 import { itemKeys } from '@/features/_example/services/query-keys';
 import { itemRepository } from '@/features/_example/services/repository';
@@ -35,6 +36,7 @@ import { useStore } from '@/store';
 
 export default function DemoScreen() {
   const { colors } = useThemedColors();
+  const { top } = useSafeAreaInsets();
   const { items, isLoading, refetch } = useItemList();
   const queryClient = useQueryClient();
 
@@ -101,7 +103,7 @@ export default function DemoScreen() {
   }, []);
 
   const renderHeader = () => (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: top + Spacing.xl }]}>
       {/* Zustand state management demo */}
       <Card style={styles.section}>
         <ThemedText style={styles.sectionTitle}>
@@ -238,7 +240,6 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: Spacing.lg,
-    paddingTop: Spacing.xl,
   },
   footer: {
     padding: Spacing.lg,

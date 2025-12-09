@@ -3,7 +3,8 @@
  * Main home screen of the boilerplate
  */
 
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -40,11 +41,15 @@ const features: FeatureItem[] = [
 
 export default function HomeScreen() {
   const { colors } = useThemedColors();
+  const { top } = useSafeAreaInsets();
 
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background.base }]}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={[
+        styles.contentContainer,
+        { paddingTop: top + Spacing.xl },
+      ]}
       testID="home-container"
     >
       <ThemedView style={styles.header}>
@@ -92,7 +97,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: Spacing.lg,
-    paddingTop: Spacing.xl,
   },
   header: {
     alignItems: 'center',

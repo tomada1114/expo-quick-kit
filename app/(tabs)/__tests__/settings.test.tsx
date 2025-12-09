@@ -113,12 +113,23 @@ const alertSpy = jest.spyOn(Alert, 'alert');
 
 // Import after mocks
 import {
+  fireEvent,
   render,
   screen,
-  fireEvent,
   waitFor,
 } from '@testing-library/react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SettingsScreen from '../settings';
+
+const renderWithSafeArea = (ui: React.ReactElement) => {
+  const initialMetrics = {
+    frame: { x: 0, y: 0, width: 0, height: 0 },
+    insets: { top: 0, left: 0, right: 0, bottom: 0 },
+  };
+  return render(
+    <SafeAreaProvider initialMetrics={initialMetrics}>{ui}</SafeAreaProvider>
+  );
+};
 
 describe('SettingsScreen', () => {
   beforeEach(() => {
@@ -135,7 +146,7 @@ describe('SettingsScreen', () => {
     // When: The screen is rendered
     // Then: The screen title should be visible
     it('should render screen title', () => {
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.getByText('Settings')).toBeTruthy();
     });
@@ -144,7 +155,7 @@ describe('SettingsScreen', () => {
     // When: The screen is rendered
     // Then: The restore purchases button should be visible (iOS App Store compliance)
     it('should render restore purchases button for iOS App Store compliance', () => {
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.getByTestId('restore-purchases-button')).toBeTruthy();
       expect(screen.getByText('Restore Purchases')).toBeTruthy();
@@ -154,7 +165,7 @@ describe('SettingsScreen', () => {
     // When: The screen is rendered
     // Then: It should apply themed background color
     it('should apply themed background color', () => {
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const container = screen.getByTestId('settings-screen-container');
       expect(container).toBeTruthy();
@@ -172,7 +183,7 @@ describe('SettingsScreen', () => {
         productId: null,
       };
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.getByText('Free')).toBeTruthy();
     });
@@ -189,7 +200,7 @@ describe('SettingsScreen', () => {
         productId: 'monthly_plan',
       };
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.getByText('Premium')).toBeTruthy();
     });
@@ -200,7 +211,7 @@ describe('SettingsScreen', () => {
     // When: User presses "Restore Purchases" button
     // Then: restorePurchases should be called
     it('should call restorePurchases when button is pressed', async () => {
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -225,7 +236,7 @@ describe('SettingsScreen', () => {
         };
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -256,7 +267,7 @@ describe('SettingsScreen', () => {
         throw new Error('NO_ACTIVE_SUBSCRIPTION');
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -285,7 +296,7 @@ describe('SettingsScreen', () => {
           })
       );
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -314,7 +325,7 @@ describe('SettingsScreen', () => {
           })
       );
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -342,7 +353,7 @@ describe('SettingsScreen', () => {
 
       mockRestorePurchases.mockImplementation(() => restorePromise);
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
 
@@ -381,7 +392,7 @@ describe('SettingsScreen', () => {
         throw new Error('NETWORK_ERROR');
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -408,7 +419,7 @@ describe('SettingsScreen', () => {
         throw new Error('STORE_PROBLEM_ERROR');
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -435,7 +446,7 @@ describe('SettingsScreen', () => {
         throw new Error('CONFIGURATION_ERROR');
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -462,7 +473,7 @@ describe('SettingsScreen', () => {
         throw new Error('INVALID_CREDENTIALS_ERROR');
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -489,7 +500,7 @@ describe('SettingsScreen', () => {
         throw new Error('RECEIPT_ALREADY_IN_USE_ERROR');
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -516,7 +527,7 @@ describe('SettingsScreen', () => {
         throw new Error('PURCHASE_CANCELLED');
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -542,7 +553,7 @@ describe('SettingsScreen', () => {
         throw new Error('UNKNOWN_ERROR');
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -564,7 +575,7 @@ describe('SettingsScreen', () => {
         throw new Error('SOME_UNEXPECTED_ERROR_CODE');
       });
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -584,7 +595,7 @@ describe('SettingsScreen', () => {
     it('should reset loading state after error', async () => {
       mockRestorePurchases.mockRejectedValue(new Error('NETWORK_ERROR'));
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const restoreButton = screen.getByTestId('restore-purchases-button');
       fireEvent.press(restoreButton);
@@ -614,7 +625,7 @@ describe('SettingsScreen', () => {
         productId: 'monthly_plan',
       };
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.getByText('Expires:')).toBeTruthy();
       // Date format depends on locale, just check the label is shown
@@ -633,7 +644,7 @@ describe('SettingsScreen', () => {
         productId: null,
       };
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.queryByText('Expires:')).toBeNull();
     });
@@ -645,7 +656,7 @@ describe('SettingsScreen', () => {
       mockIsPremium = false;
       mockSubscription = null;
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.getByText('Settings')).toBeTruthy();
       expect(screen.getByText('Free')).toBeTruthy();
@@ -659,7 +670,7 @@ describe('SettingsScreen', () => {
     it('should show upgrade button for free users', () => {
       mockIsPremium = false;
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.getByTestId('upgrade-premium-button')).toBeTruthy();
     });
@@ -676,7 +687,7 @@ describe('SettingsScreen', () => {
         productId: 'monthly_plan',
       };
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.queryByTestId('upgrade-premium-button')).toBeNull();
     });
@@ -687,7 +698,7 @@ describe('SettingsScreen', () => {
     it('should always show restore purchases button regardless of subscription status', () => {
       // Test with free subscription
       mockIsPremium = false;
-      const { unmount } = render(<SettingsScreen />);
+      const { unmount } = renderWithSafeArea(<SettingsScreen />);
       expect(screen.getByTestId('restore-purchases-button')).toBeTruthy();
       unmount();
 
@@ -699,7 +710,7 @@ describe('SettingsScreen', () => {
         expiresAt: new Date('2025-12-31'),
         productId: 'monthly_plan',
       };
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
       expect(screen.getByTestId('restore-purchases-button')).toBeTruthy();
     });
   });
@@ -711,7 +722,7 @@ describe('SettingsScreen', () => {
     it('should navigate to paywall when upgrade button is pressed', () => {
       mockIsPremium = false;
 
-      render(<SettingsScreen />);
+      renderWithSafeArea(<SettingsScreen />);
 
       const upgradeButton = screen.getByTestId('upgrade-premium-button');
       fireEvent.press(upgradeButton);

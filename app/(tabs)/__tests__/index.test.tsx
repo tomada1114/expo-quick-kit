@@ -5,8 +5,19 @@
 
 import { render, screen } from '@testing-library/react-native';
 import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import HomeScreen from '../index';
+
+const renderWithSafeArea = (ui: React.ReactElement) => {
+  const initialMetrics = {
+    frame: { x: 0, y: 0, width: 0, height: 0 },
+    insets: { top: 0, left: 0, right: 0, bottom: 0 },
+  };
+  return render(
+    <SafeAreaProvider initialMetrics={initialMetrics}>{ui}</SafeAreaProvider>
+  );
+};
 
 // Mock dependencies
 jest.mock('@/hooks/use-theme-color', () => ({
@@ -52,17 +63,17 @@ jest.mock('@/hooks/use-color-scheme', () => ({
 describe('HomeScreen', () => {
   describe('Rendering', () => {
     it('should render welcome title', () => {
-      render(<HomeScreen />);
+      renderWithSafeArea(<HomeScreen />);
       expect(screen.getByText('expo-quick-kit')).toBeTruthy();
     });
 
     it('should render subtitle description', () => {
-      render(<HomeScreen />);
+      renderWithSafeArea(<HomeScreen />);
       expect(screen.getByText(/Expo SDK 54 Boilerplate/i)).toBeTruthy();
     });
 
     it('should render feature sections', () => {
-      render(<HomeScreen />);
+      renderWithSafeArea(<HomeScreen />);
       // Verify that key feature sections are displayed
       expect(screen.getByText(/Zustand/i)).toBeTruthy();
       expect(screen.getByText(/Drizzle/i)).toBeTruthy();
@@ -72,7 +83,7 @@ describe('HomeScreen', () => {
 
   describe('Layout', () => {
     it('should apply themed background color', () => {
-      const { getByTestId } = render(<HomeScreen />);
+      const { getByTestId } = renderWithSafeArea(<HomeScreen />);
       const container = getByTestId('home-container');
       expect(container).toBeTruthy();
     });
