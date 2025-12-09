@@ -143,9 +143,9 @@ export async function configurePurchases(): Promise<void> {
     );
   }
 
-  // Enable debug logging in development
+  // Enable error-only logging in development
   if (__DEV__) {
-    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    Purchases.setLogLevel(LOG_LEVEL.ERROR);
   }
 
   // Configure the SDK

@@ -122,7 +122,7 @@ describe('SDK Configuration', () => {
       });
     });
 
-    it('should enable DEBUG log level in development mode', async () => {
+    it('should enable ERROR log level in development mode', async () => {
       process.env.EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE = 'test_apple_key';
       (Platform as { OS: string }).OS = 'ios';
       const originalDev = __DEV__;
@@ -131,7 +131,7 @@ describe('SDK Configuration', () => {
 
       await configurePurchases();
 
-      expect(Purchases.setLogLevel).toHaveBeenCalledWith(LOG_LEVEL.DEBUG);
+      expect(Purchases.setLogLevel).toHaveBeenCalledWith(LOG_LEVEL.ERROR);
 
       // Restore
       // @ts-expect-error - Modifying __DEV__ for testing
