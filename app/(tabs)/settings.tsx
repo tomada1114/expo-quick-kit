@@ -152,7 +152,9 @@ export default function SettingsScreen() {
         style={[
           styles.premiumCard,
           {
-            backgroundColor: isPremium ? colors.semantic.info : colors.background.secondary,
+            backgroundColor: isPremium
+              ? colors.semantic.info
+              : colors.background.secondary,
             opacity: isPremium ? 0.08 : 1,
             borderWidth: isPremium ? 1.5 : 0,
             borderColor: isPremium ? colors.primary : 'transparent',
