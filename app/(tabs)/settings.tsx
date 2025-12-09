@@ -12,15 +12,13 @@
 
 import { router, type Href } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Animated, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Spacer } from '@/components/ui/spacer';
-import { Spacing, Typography } from '@/constants/theme';
+import { BorderRadius, Shadows, Spacing, Typography } from '@/constants/theme';
 import type { SubscriptionErrorCode } from '@/features/subscription/core/types';
 import { useSubscription } from '@/features/subscription/hooks';
 import { useThemedColors } from '@/hooks/use-theme-color';
@@ -56,6 +54,18 @@ export default function SettingsScreen() {
     useSubscription();
 
   const [isRestoring, setIsRestoring] = useState(false);
+  const [scaleAnim] = useState(new Animated.Value(0));
+
+  // Animate premium badge on mount
+  React.useEffect(() => {
+    if (isPremium) {
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 8,
+      }).start();
+    }
+  }, [isPremium, scaleAnim]);
 
   /**
    * Handle restore purchases button press
@@ -122,86 +132,150 @@ export default function SettingsScreen() {
       style={[styles.container, { backgroundColor: colors.background.base }]}
       contentContainerStyle={[
         styles.contentContainer,
-        { paddingTop: top + Spacing.xl },
+        { paddingTop: top + Spacing.lg },
       ]}
       testID="settings-screen-container"
+      showsVerticalScrollIndicator={false}
     >
-      <ThemedView style={styles.header}>
+      {/* Header - Minimalist design */}
+      <View style={styles.headerWrapper}>
         <ThemedText style={styles.title}>Settings</ThemedText>
-      </ThemedView>
+        <ThemedText style={[styles.subtitle, { color: colors.text.secondary }]}>
+          Manage your account
+        </ThemedText>
+      </View>
 
-      <Spacer size="lg" />
+      <Spacer size="xl" />
 
-      {/* Subscription Status Section */}
-      <Card style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>Subscription</ThemedText>
-        <Spacer size="sm" />
-
-        <View style={styles.statusRow}>
-          <ThemedText style={styles.statusLabel}>Current Plan:</ThemedText>
-          <ThemedText
+      {/* Subscription Status Section - Refined Card with Premium Badge */}
+      <View
+        style={[
+          styles.premiumCard,
+          { backgroundColor: colors.background.secondary },
+        ]}
+      >
+        {/* Premium Badge - Animated */}
+        {isPremium && (
+          <Animated.View
             style={[
-              styles.statusValue,
-              isPremium
-                ? { color: colors.semantic.success }
-                : { color: colors.text.secondary },
+              styles.premiumBadge,
+              {
+                backgroundColor: colors.semantic.success,
+                transform: [{ scale: scaleAnim }],
+              },
             ]}
           >
-            {isPremium ? 'Premium' : 'Free'}
-          </ThemedText>
-        </View>
+            <ThemedText style={styles.badgeText}>✓ Premium</ThemedText>
+          </Animated.View>
+        )}
 
+        {/* Plan Title */}
+        <ThemedText style={styles.planTitle}>
+          {isPremium ? "You're Premium" : 'Free Plan'}
+        </ThemedText>
+
+        {/* Expiry info */}
         {subscription?.expiresAt && (
-          <>
-            <Spacer size="xs" />
-            <View style={styles.statusRow}>
-              <ThemedText style={styles.statusLabel}>Expires:</ThemedText>
-              <ThemedText style={styles.statusValue}>
-                {subscription.expiresAt.toLocaleDateString()}
-              </ThemedText>
-            </View>
-          </>
+          <ThemedText
+            style={[styles.expiryText, { color: colors.text.secondary }]}
+          >
+            Expires {subscription.expiresAt.toLocaleDateString()}
+          </ThemedText>
+        )}
+
+        {!isPremium && (
+          <ThemedText
+            style={[styles.freeText, { color: colors.text.secondary }]}
+          >
+            Unlock all features with Premium
+          </ThemedText>
         )}
 
         <Spacer size="md" />
 
-        {!isPremium && (
-          <>
-            <Button
-              testID="upgrade-premium-button"
-              variant="primary"
-              onPress={handleUpgrade}
+        {/* CTA Button */}
+        {!isPremium ? (
+          <Button
+            testID="upgrade-premium-button"
+            variant="primary"
+            onPress={handleUpgrade}
+            style={styles.primaryButton}
+          >
+            Upgrade to Premium
+          </Button>
+        ) : (
+          <View
+            style={[
+              styles.statusBadge,
+              { backgroundColor: colors.background.tertiary },
+            ]}
+          >
+            <ThemedText
+              style={[styles.statusText, { color: colors.semantic.success }]}
             >
-              Upgrade to Premium
-            </Button>
-            <Spacer size="sm" />
-          </>
+              Active Subscription
+            </ThemedText>
+          </View>
         )}
+      </View>
 
-        {/* Restore Purchases Button - iOS App Store Compliance */}
+      <Spacer size="xl" />
+
+      {/* Actions Section */}
+      <View style={styles.sectionContainer}>
+        <ThemedText
+          style={[styles.sectionLabel, { color: colors.text.tertiary }]}
+        >
+          ACTIONS
+        </ThemedText>
+
+        <Spacer size="sm" />
+
+        {/* Restore Purchases Button */}
         <Button
           testID="restore-purchases-button"
           variant="secondary"
           onPress={handleRestorePurchases}
           loading={isRestoring}
           disabled={isRestoring}
+          style={styles.secondaryButton}
         >
-          Restore Purchases
+          {isRestoring ? 'Restoring...' : 'Restore Purchases'}
         </Button>
-      </Card>
+      </View>
 
-      <Spacer size="lg" />
+      <Spacer size="xl" />
 
-      {/* App Info Section */}
-      <Card style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>About</ThemedText>
+      {/* About Section */}
+      <View style={styles.sectionContainer}>
+        <ThemedText
+          style={[styles.sectionLabel, { color: colors.text.tertiary }]}
+        >
+          ABOUT
+        </ThemedText>
+
         <Spacer size="sm" />
 
-        <View style={styles.infoRow}>
-          <ThemedText style={styles.infoLabel}>Version:</ThemedText>
-          <ThemedText style={styles.infoValue}>1.0.0</ThemedText>
+        <View
+          style={[
+            styles.infoItem,
+            { borderBottomColor: colors.interactive.separator },
+          ]}
+        >
+          <ThemedText
+            style={[styles.infoLabel, { color: colors.text.secondary }]}
+          >
+            Version
+          </ThemedText>
+          <ThemedText
+            style={[styles.infoValue, { color: colors.text.primary }]}
+          >
+            1.0.0
+          </ThemedText>
         </View>
-      </Card>
+      </View>
+
+      <Spacer size="2xl" />
     </ScrollView>
   );
 }
@@ -213,43 +287,99 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: Spacing.lg,
   },
-  header: {
-    alignItems: 'center',
+
+  // ===== Header Section =====
+  headerWrapper: {
+    marginBottom: Spacing.sm,
   },
   title: {
     ...Typography.largeTitle,
     fontWeight: '700',
+    letterSpacing: -0.5,
   },
-  section: {
-    padding: Spacing.md,
+  subtitle: {
+    ...Typography.subheadline,
+    marginTop: Spacing.sm,
   },
-  sectionTitle: {
-    ...Typography.headline,
-    fontWeight: '600',
+
+  // ===== Premium Card Section =====
+  premiumCard: {
+    padding: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    ...Shadows.md,
   },
-  statusRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+
+  premiumBadge: {
+    paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+    alignSelf: 'flex-start',
+    marginBottom: Spacing.md,
   },
-  statusLabel: {
-    ...Typography.body,
+  badgeText: {
+    ...Typography.caption1,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
-  statusValue: {
+
+  planTitle: {
+    ...Typography.title2,
+    fontWeight: '600',
+    marginBottom: Spacing.sm,
+  },
+  expiryText: {
+    ...Typography.subheadline,
+    marginBottom: Spacing.sm,
+  },
+  freeText: {
+    ...Typography.subheadline,
+    marginBottom: Spacing.sm,
+  },
+
+  primaryButton: {
+    marginTop: Spacing.sm,
+  },
+  secondaryButton: {
+    width: '100%',
+  },
+
+  statusBadge: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+    marginTop: Spacing.sm,
+  },
+  statusText: {
     ...Typography.body,
     fontWeight: '600',
   },
-  infoRow: {
+
+  // ===== Section Container =====
+  sectionContainer: {
+    paddingHorizontal: Spacing.lg,
+  },
+  sectionLabel: {
+    ...Typography.caption1,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+
+  // ===== Info Item =====
+  infoItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
   },
   infoLabel: {
     ...Typography.body,
+    fontWeight: '500',
   },
   infoValue: {
     ...Typography.body,
-    fontWeight: '500',
+    fontWeight: '400',
   },
 });

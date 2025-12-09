@@ -173,7 +173,7 @@ describe('SettingsScreen', () => {
 
     // Given: A user has a free subscription
     // When: The screen is rendered
-    // Then: The subscription status should show "Free"
+    // Then: The subscription status should show "Free Plan"
     it('should display free subscription status', () => {
       mockIsPremium = false;
       mockSubscription = {
@@ -185,12 +185,12 @@ describe('SettingsScreen', () => {
 
       renderWithSafeArea(<SettingsScreen />);
 
-      expect(screen.getByText('Free')).toBeTruthy();
+      expect(screen.getByText('Free Plan')).toBeTruthy();
     });
 
     // Given: A user has a premium subscription
     // When: The screen is rendered
-    // Then: The subscription status should show "Premium"
+    // Then: The subscription status should show premium indicator
     it('should display premium subscription status', () => {
       mockIsPremium = true;
       mockSubscription = {
@@ -202,7 +202,7 @@ describe('SettingsScreen', () => {
 
       renderWithSafeArea(<SettingsScreen />);
 
-      expect(screen.getByText('Premium')).toBeTruthy();
+      expect(screen.getByText("You're Premium")).toBeTruthy();
     });
   });
 
@@ -627,7 +627,8 @@ describe('SettingsScreen', () => {
 
       renderWithSafeArea(<SettingsScreen />);
 
-      expect(screen.getByText('Expires:')).toBeTruthy();
+      // Check for "Expires" text followed by date (format varies by locale)
+      expect(screen.getByText(/Expires/)).toBeTruthy();
       // Date format depends on locale, just check the label is shown
       expect(screen.getByText(/12\/31\/2025|31\/12\/2025|2025/)).toBeTruthy();
     });
@@ -646,7 +647,7 @@ describe('SettingsScreen', () => {
 
       renderWithSafeArea(<SettingsScreen />);
 
-      expect(screen.queryByText('Expires:')).toBeNull();
+      expect(screen.queryByText(/^Expires/)).toBeNull();
     });
 
     // Given: Subscription is null (initial loading state)
@@ -659,7 +660,7 @@ describe('SettingsScreen', () => {
       renderWithSafeArea(<SettingsScreen />);
 
       expect(screen.getByText('Settings')).toBeTruthy();
-      expect(screen.getByText('Free')).toBeTruthy();
+      expect(screen.getByText('Free Plan')).toBeTruthy();
     });
   });
 
