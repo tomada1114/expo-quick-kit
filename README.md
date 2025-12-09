@@ -183,6 +183,14 @@ eas build --platform android
 
 詳細は [docs/SETUP.md](./docs/SETUP.md) の「Development Build」を参照。
 
+## 機能開発ガイド
+
+新しい機能を追加する際は、以下のドキュメントを参照してください：
+
+- [FEATURE_DEVELOPMENT.md](./docs/FEATURE_DEVELOPMENT.md) — 機能開発の標準パターン（フォルダ構成、コンポーネント、テスト）
+- [DATABASE_OPERATIONS.md](./docs/DATABASE_OPERATIONS.md) — SQLite と Drizzle ORM の使用方法
+- [API_INTEGRATION.md](./docs/API_INTEGRATION.md) — 外部 API との連携（TanStack Query）
+
 ## サブスクリプション・課金システム
 
 このテンプレートは **RevenueCat** を使用したサブスクリプション機能が統合されています。
@@ -254,8 +262,20 @@ services/               # 外部 API ラッパー
 
 ## ドキュメント
 
+### セットアップと基本
+
 - [SETUP.md](./docs/SETUP.md) — セットアップ手順、初期化、トラブルシューティング
 - [ARCHITECTURE.md](./docs/ARCHITECTURE.md) — フォルダ構成、レイヤー設計
-- [CONVENTIONS.md](./docs/CONVENTIONS.md) — コーディング規約
-- [TESTING.md](./docs/TESTING.md) — テスト方針
-- [REVENUECAT_SETUP.md](./docs/REVENUECAT_SETUP.md) — サブスクリプション統合
+
+### 機能開発
+
+- [FEATURE_DEVELOPMENT.md](./docs/FEATURE_DEVELOPMENT.md) — 新しい機能開発のパターン（推奨される構造、テスト方法）
+- [DATABASE_OPERATIONS.md](./docs/DATABASE_OPERATIONS.md) — SQLite と Drizzle ORM の実装ガイド
+- [API_INTEGRATION.md](./docs/API_INTEGRATION.md) — 外部 API との連携パターン（TanStack Query）
+
+### その他
+
+- [CONVENTIONS.md](./docs/CONVENTIONS.md) — コーディング規約、ネーミング
+- [TESTING.md](./docs/TESTING.md) — テスト方針、テスト作成のベストプラクティス
+- [REVENUECAT_SETUP.md](./docs/REVENUECAT_SETUP.md) — サブスクリプション・課金統合ガイド
+- [lib/README.md](./lib/README.md) — ユーティリティモジュール（validation, date, secure-storage など）

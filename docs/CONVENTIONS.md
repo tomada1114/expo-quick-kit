@@ -12,12 +12,14 @@ All files and directories use **kebab-case**:
 ✅ Good
 components/themed-text.tsx
 hooks/use-color-scheme.ts
-features/_example/components/item-list.tsx
+features/posts/components/post-card.tsx
+services/api-client.ts
 
 ❌ Bad
 components/ThemedText.tsx
 hooks/useColorScheme.ts
-features/_example/components/ItemList.tsx
+features/posts/components/PostCard.tsx
+services/apiClient.ts
 ```
 
 ### React Components
@@ -87,18 +89,29 @@ import { Button, Card, ThemedText } from '@/components';
 features/
 └── feature-name/
     ├── components/
-    │   ├── feature-component.tsx
+    │   ├── component-a.tsx
+    │   ├── component-b.tsx
     │   └── index.ts
     ├── hooks/
     │   ├── use-feature-hook.ts
     │   └── index.ts
     ├── services/
-    │   ├── api.ts
-    │   ├── query-keys.ts
+    │   ├── api.ts              # External API calls
+    │   ├── repository.ts       # Database operations
+    │   ├── query-keys.ts       # TanStack Query keys
     │   └── index.ts
-    ├── types.ts
-    └── index.ts
+    ├── store/                  # Optional: Feature-specific state
+    │   ├── store.ts
+    │   └── index.ts
+    ├── types.ts                # Feature-specific types
+    ├── index.ts                # Main export
+    └── __tests__/              # Tests alongside code
+        ├── components.test.tsx
+        ├── hooks.test.ts
+        └── repository.test.ts
 ```
+
+See [FEATURE_DEVELOPMENT.md](./FEATURE_DEVELOPMENT.md) for detailed feature structure and best practices.
 
 ## Import Order
 
