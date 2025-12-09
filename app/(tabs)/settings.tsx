@@ -151,7 +151,12 @@ export default function SettingsScreen() {
       <View
         style={[
           styles.premiumCard,
-          { backgroundColor: colors.background.secondary },
+          {
+            backgroundColor: isPremium ? colors.semantic.info : colors.background.secondary,
+            opacity: isPremium ? 0.08 : 1,
+            borderWidth: isPremium ? 1.5 : 0,
+            borderColor: isPremium ? colors.primary : 'transparent',
+          },
         ]}
       >
         {/* Premium Badge - Animated */}
@@ -160,7 +165,7 @@ export default function SettingsScreen() {
             style={[
               styles.premiumBadge,
               {
-                backgroundColor: colors.semantic.success,
+                backgroundColor: colors.primary,
                 transform: [{ scale: scaleAnim }],
               },
             ]}
@@ -170,7 +175,7 @@ export default function SettingsScreen() {
         )}
 
         {/* Plan Title */}
-        <ThemedText style={styles.planTitle}>
+        <ThemedText style={[styles.planTitle, { color: colors.text.primary }]}>
           {isPremium ? "You're Premium" : 'Free Plan'}
         </ThemedText>
 
@@ -207,12 +212,10 @@ export default function SettingsScreen() {
           <View
             style={[
               styles.statusBadge,
-              { backgroundColor: colors.background.tertiary },
+              { backgroundColor: colors.primary, opacity: 0.15 },
             ]}
           >
-            <ThemedText
-              style={[styles.statusText, { color: colors.semantic.success }]}
-            >
+            <ThemedText style={[styles.statusText, { color: colors.primary }]}>
               Active Subscription
             </ThemedText>
           </View>
@@ -307,6 +310,7 @@ const styles = StyleSheet.create({
     padding: Spacing.xl,
     borderRadius: BorderRadius.lg,
     ...Shadows.md,
+    overflow: 'hidden' as const,
   },
 
   premiumBadge: {
