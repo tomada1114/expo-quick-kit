@@ -9,10 +9,16 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE": "@EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE"
+      }
     },
     "production": {
-      "distribution": "store"
+      "distribution": "store",
+      "env": {
+        "EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE": "@EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE"
+      }
     }
   },
   "submit": {
@@ -21,10 +27,6 @@
         "appleId": "your-apple-id@example.com",
         "ascAppId": "1234567890",
         "appleTeamId": "ABCDE12345"
-      },
-      "android": {
-        "serviceAccountKeyPath": "./service-account.json",
-        "track": "internal"
       }
     }
   }

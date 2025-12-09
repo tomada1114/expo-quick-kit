@@ -32,12 +32,16 @@ pnpm install
 
 # 2. 環境変数を設定
 cp .env.example .env.local
+# .env.local を編集して、RevenueCat API キーを追加
 
 # 3. 開発サーバーを起動
 pnpm start
 
 # iOS シミュレータで開く
 pnpm ios
+
+# iOS 実機で開く
+pnpm ios --device
 
 # Android エミュレータで開く
 pnpm android
@@ -66,6 +70,64 @@ pnpm check              # 全チェック実行
 pnpm test               # Jest テスト
 pnpm db:generate        # Drizzle マイグレーション
 ```
+
+## 環境変数設定
+
+このプロジェクトは **RevenueCat API キー** を環境変数で管理しています。ローカル開発と本番ビルドで異なる方法で設定します。
+
+### ローカル開発（iOS 実機テスト）
+
+1. **環境ファイルを作成**:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. **`.env.local` に API キーを追加**:
+   ```
+   # .env.local
+   EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE=appl_xxxxxx
+   ```
+
+   `appl_xxxxxx` は RevenueCat ダッシュボードから取得できます。
+
+3. **実機で実行**:
+   ```bash
+   pnpm ios --device
+   ```
+
+   Expo CLI が自動的に `.env.local` を読み込み、環境変数をアプリに注入します。
+
+### 本番ビルド（App Store 提出）
+
+App Store に提出する際は、**EAS Secrets** を使用して API キーを安全に管理します。
+
+1. **EAS Secret を作成**（初回のみ）:
+   ```bash
+   eas secret:create \
+     --scope project \
+     --name EXPO_PUBLIC_REVENUE_CAT_API_KEY_APPLE \
+     --value "appl_xxxxxx"
+   ```
+
+   `.env.local` から API キーをコピーして、上記コマンドで安全に EAS に登録します。
+
+2. **設定を確認**:
+   ```bash
+   eas secret:list
+   ```
+
+3. **本番ビルド**:
+   ```bash
+   eas build --platform ios --profile production
+   ```
+
+   EAS Build は自動的に Secret から API キーを取得し、ビルドに注入します。
+
+### セキュリティ
+
+- ✅ **`.env.local` は Git に含まれません** （`.gitignore` で除外）
+- ✅ **API キーが GitHub に上がることはありません**
+- ✅ **本番ビルドは暗号化された EAS Secrets を使用**
 
 ## 開発ビルド（Development Build）
 
