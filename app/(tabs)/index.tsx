@@ -114,14 +114,6 @@ export default function HomeScreen() {
                 },
               ]}
             >
-              {/* Feature accent line */}
-              <View
-                style={[
-                  styles.featureAccent,
-                  { backgroundColor: colors.primary },
-                ]}
-              />
-
               <ThemedText
                 style={[styles.featureTitle, { color: colors.text.primary }]}
               >
@@ -200,13 +192,6 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     ...Shadows.sm,
-  },
-
-  featureAccent: {
-    width: 3,
-    height: 24,
-    borderRadius: BorderRadius.sm,
-    marginBottom: Spacing.md,
   },
 
   featureTitle: {
