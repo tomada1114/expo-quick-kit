@@ -41,9 +41,7 @@ const features: FeatureItem[] = [
 export default function HomeScreen() {
   const { colors } = useThemedColors();
   const { top } = useSafeAreaInsets();
-  const [fadeAnims] = useState(
-    features.map(() => new Animated.Value(0))
-  );
+  const [fadeAnims] = useState(features.map(() => new Animated.Value(0)));
 
   // Animate feature cards on mount with staggered effect
   useEffect(() => {
