@@ -91,6 +91,17 @@ describe('TabLayout', () => {
       expect(indexScreenCall[0].options.title).toBe('Home');
     });
 
+    it('should configure settings screen with Settings title', () => {
+      render(<TabLayout />);
+
+      const settingsScreenCall = mockTabsScreen.mock.calls.find(
+        (call) => call[0].name === 'settings'
+      );
+
+      expect(settingsScreenCall).toBeTruthy();
+      expect(settingsScreenCall[0].options.title).toBe('Settings');
+    });
+
     it('should not configure explore screen (removed from boilerplate)', () => {
       render(<TabLayout />);
 
@@ -100,6 +111,17 @@ describe('TabLayout', () => {
 
       // Explore tab has been removed from the boilerplate
       expect(exploreScreenCall).toBeFalsy();
+    });
+
+    it('should not configure demo screen (removed from boilerplate)', () => {
+      render(<TabLayout />);
+
+      const demoScreenCall = mockTabsScreen.mock.calls.find(
+        (call) => call[0].name === 'demo'
+      );
+
+      // Demo tab has been removed from the boilerplate
+      expect(demoScreenCall).toBeFalsy();
     });
   });
 
@@ -234,6 +256,9 @@ describe('TabLayout', () => {
   });
 
   describe('Tab Icons', () => {
+    // Given: Home tab is configured
+    // When: Rendering the TabLayout
+    // Then: Home tab should have house.fill icon
     it('should configure Home tab with house.fill icon', () => {
       render(<TabLayout />);
 
@@ -248,27 +273,6 @@ describe('TabLayout', () => {
       const iconFn = indexScreenCall[0].options.tabBarIcon;
       const iconElement = iconFn({ color: '#007AFF' });
       expect(iconElement.props.name).toBe('house.fill');
-      expect(iconElement.props.size).toBe(28);
-    });
-
-    // Given: Demo tab is configured
-    // When: Rendering the TabLayout
-    // Then: Demo tab should have flask.fill icon
-    it('should configure Demo tab with flask.fill icon', () => {
-      render(<TabLayout />);
-
-      const demoScreenCall = mockTabsScreen.mock.calls.find(
-        (call) => call[0].name === 'demo'
-      );
-
-      expect(demoScreenCall).toBeTruthy();
-      expect(demoScreenCall[0].options.title).toBe('Demo');
-      expect(demoScreenCall[0].options.tabBarIcon).toBeDefined();
-
-      // Render the icon function to verify it produces correct icon
-      const iconFn = demoScreenCall[0].options.tabBarIcon;
-      const iconElement = iconFn({ color: '#007AFF' });
-      expect(iconElement.props.name).toBe('flask.fill');
       expect(iconElement.props.size).toBe(28);
     });
 
@@ -318,6 +322,17 @@ describe('TabLayout', () => {
 
       // Explore tab has been removed from the boilerplate
       expect(exploreScreenCall).toBeFalsy();
+    });
+
+    it('should not have Demo tab icon (removed from boilerplate)', () => {
+      render(<TabLayout />);
+
+      const demoScreenCall = mockTabsScreen.mock.calls.find(
+        (call) => call[0].name === 'demo'
+      );
+
+      // Demo tab has been removed from the boilerplate
+      expect(demoScreenCall).toBeFalsy();
     });
   });
 });
