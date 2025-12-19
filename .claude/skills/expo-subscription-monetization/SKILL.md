@@ -5,36 +5,36 @@ description: Implement subscription monetization in Expo apps using RevenueCat w
 
 # Expo Subscription Monetization with RevenueCat
 
-RevenueCat + Expo/React Native でサブスクリプション課金を実装するためのスキル。Clean Architecture と DDD パターンに基づいた完全な実装テンプレートを提供。
+A skill for implementing subscription billing in Expo/React Native apps using RevenueCat. Provides complete implementation templates based on Clean Architecture and DDD patterns.
 
 ## When to Use This Skill
 
-- Expo/React Native アプリにサブスクリプション課金を追加したい
-- RevenueCat SDK の統合方法を知りたい
-- 月額/年額プランの実装パターンが必要
-- 機能制限（Feature Gating）を実装したい
-- Free/Premium ティアの利用制限を設定したい
-- 購入フロー・復元フローを実装したい
-- サブスクリプションのテスト方法を知りたい
+- Adding subscription billing to Expo/React Native apps
+- Learning how to integrate RevenueCat SDK
+- Implementing monthly/yearly subscription plans
+- Implementing feature gating
+- Setting up usage limits for Free/Premium tiers
+- Implementing purchase and restore flows
+- Learning how to test subscriptions
 
 ## Architecture Overview
 
 ```
 subscription/
-├── core/               # コア機能
-│   ├── types.ts        # 型定義（Subscription, UsageLimits, etc.）
-│   ├── config.ts       # ビジネスロジック設定（FREE/PREMIUM制限）
-│   ├── sdk.ts          # RevenueCat SDK 初期化
-│   ├── repository.ts   # SDK ラッパー（CustomerInfo → Subscription変換）
-│   └── service.ts      # アプリケーションサービス
+├── core/               # Core functionality
+│   ├── types.ts        # Type definitions (Subscription, UsageLimits, etc.)
+│   ├── config.ts       # Business logic config (FREE/PREMIUM limits)
+│   ├── sdk.ts          # RevenueCat SDK initialization
+│   ├── repository.ts   # SDK wrapper (CustomerInfo → Subscription conversion)
+│   └── service.ts      # Application service
 ├── providers/          # React Context
 │   └── RevenueCatProvider.tsx
 ├── hooks/              # React Hooks
-│   ├── useRevenueCat.ts    # 低レベルアクセス
-│   └── useSubscription.ts  # メインAPI
+│   ├── useRevenueCat.ts    # Low-level access
+│   └── useSubscription.ts  # Main API
 ├── components/         # UI
 │   └── Paywall.tsx
-└── mocks/              # テスト用
+└── mocks/              # For testing
     └── react-native-purchases.ts
 ```
 
@@ -44,7 +44,7 @@ subscription/
 
 ```bash
 pnpm add react-native-purchases react-native-purchases-ui
-npx expo install expo-dev-client  # Expo の場合
+npx expo install expo-dev-client  # Required for Expo
 ```
 
 ### 2. Set Environment Variables
@@ -101,9 +101,9 @@ interface Subscription {
 
 ```typescript
 interface UsageLimits {
-  maxItems: number; // 例: 最大アイテム数
-  maxExports: number; // 例: 月間エクスポート数
-  hasAds: boolean; // 広告表示フラグ
+  maxItems: number; // e.g., maximum number of items
+  maxExports: number; // e.g., monthly export limit
+  hasAds: boolean; // ad display flag
 }
 
 // Free tier
@@ -126,15 +126,15 @@ const PREMIUM_TIER_LIMITS: UsageLimits = {
 ```typescript
 const {
   // Status
-  isPremium, // boolean: プレミアムユーザーか
-  isFree, // boolean: 無料ユーザーか
-  usageLimits, // UsageLimits: 現在の制限
-  subscription, // Subscription: 詳細情報
+  isPremium, // boolean: is premium user
+  isFree, // boolean: is free user
+  usageLimits, // UsageLimits: current limits
+  subscription, // Subscription: detailed info
 
   // Loading
-  loading, // boolean: 初期ロード中
-  purchaseLoading, // boolean: 購入処理中
-  restoreLoading, // boolean: 復元処理中
+  loading, // boolean: initial loading
+  purchaseLoading, // boolean: purchase in progress
+  restoreLoading, // boolean: restore in progress
 
   // Error
   error, // string | null
@@ -260,10 +260,10 @@ function Settings() {
 
 ### 1. Modify UsageLimits Type
 
-アプリの機能に合わせて `types.ts` を変更:
+Modify `types.ts` according to your app's features:
 
 ```typescript
-// AI アプリの例
+// Example: AI app
 interface UsageLimits {
   maxRequestsPerDay: number;
   maxTokensPerRequest: number;
@@ -271,7 +271,7 @@ interface UsageLimits {
   hasPriorityProcessing: boolean;
 }
 
-// プロジェクト管理アプリの例
+// Example: Project management app
 interface UsageLimits {
   maxProjects: number;
   maxTeamMembers: number;
@@ -300,7 +300,7 @@ export const PREMIUM_TIER_LIMITS: UsageLimits = {
 
 ### 3. Multiple Tiers
 
-3つ以上のプランがある場合:
+For apps with 3 or more plans:
 
 ```typescript
 // types.ts
@@ -346,40 +346,40 @@ describe('Subscription', () => {
 
 ### "RevenueCat API key is missing"
 
-- `.env.local` に `EXPO_PUBLIC_REVENUE_CAT_API_KEY_*` を設定
-- Metro を再起動: `npx expo start --clear`
+- Set `EXPO_PUBLIC_REVENUE_CAT_API_KEY_*` in `.env.local`
+- Restart Metro: `npx expo start --clear`
 
 ### "No current offering available"
 
-- RevenueCat Dashboard で Offerings を設定
-- Products を Entitlements に紐付け
-- Sandbox テスターでテスト
+- Configure Offerings in RevenueCat Dashboard
+- Link Products to Entitlements
+- Test with Sandbox tester
 
-### iOS Simulator で購入できない
+### Cannot purchase on iOS Simulator
 
-- 実機でテスト、または StoreKit Configuration File を使用
-- Sandbox テスターアカウントを設定
+- Test on physical device, or use StoreKit Configuration File
+- Set up Sandbox tester account
 
 ## Template Files
 
-実装テンプレートは `templates/` ディレクトリを参照:
+See `templates/` directory for implementation templates:
 
-- [templates/types.ts](templates/types.ts) - 型定義
-- [templates/config.ts](templates/config.ts) - 設定
-- [templates/sdk.ts](templates/sdk.ts) - SDK初期化
-- [templates/repository.ts](templates/repository.ts) - リポジトリ
-- [templates/service.ts](templates/service.ts) - サービス
+- [templates/types.ts](templates/types.ts) - Type definitions
+- [templates/config.ts](templates/config.ts) - Configuration
+- [templates/sdk.ts](templates/sdk.ts) - SDK initialization
+- [templates/repository.ts](templates/repository.ts) - Repository
+- [templates/service.ts](templates/service.ts) - Service
 - [templates/RevenueCatProvider.tsx](templates/RevenueCatProvider.tsx) - Provider
-- [templates/useRevenueCat.ts](templates/useRevenueCat.ts) - Hook (低レベル)
-- [templates/useSubscription.ts](templates/useSubscription.ts) - Hook (メイン)
+- [templates/useRevenueCat.ts](templates/useRevenueCat.ts) - Hook (low-level)
+- [templates/useSubscription.ts](templates/useSubscription.ts) - Hook (main)
 - [templates/Paywall.tsx](templates/Paywall.tsx) - Paywall UI
-- [templates/mocks.ts](templates/mocks.ts) - テストモック
+- [templates/mocks.ts](templates/mocks.ts) - Test mocks
 
-詳細は [references/](references/) ディレクトリを参照:
+See [references/](references/) directory for detailed documentation:
 
-- `references/revenuecat-setup.md` - RevenueCat ダッシュボード設定
-- `references/architecture-patterns.md` - Clean Architecture パターン
-- `references/feature-gating.md` - 機能制限パターン
+- `references/revenuecat-setup.md` - RevenueCat Dashboard setup
+- `references/architecture-patterns.md` - Clean Architecture patterns
+- `references/feature-gating.md` - Feature gating patterns
 
 ## AI Assistant Instructions
 
