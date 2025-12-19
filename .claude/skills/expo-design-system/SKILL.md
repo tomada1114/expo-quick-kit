@@ -7,6 +7,8 @@ description: Design system based on Apple Human Interface Guidelines. Instantly 
 
 A minimal and functional design system based on Apple Human Interface Guidelines. Quickly set up Expo/React Native apps.
 
+> **Note:** For UX patterns (navigation flows, gestures, forms, loading states), use the `mobile-ux-design` skill instead.
+
 ---
 
 ## When to Use This Skill
