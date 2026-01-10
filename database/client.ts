@@ -7,6 +7,7 @@
 import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
 import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
 import { openDatabaseSync, SQLiteDatabase } from 'expo-sqlite';
+import { eq } from 'drizzle-orm';
 import migrations from '../drizzle/migrations';
 import * as schema from './schema';
 
@@ -122,4 +123,69 @@ export function resetDatabaseState(): void {
   isInitialized = false;
   expoDb = null;
   drizzleDb = null;
+}
+
+/**
+ * Get all purchases that unlock a specific feature
+ *
+ * Task 11.3: Query purchases by feature using purchase_features junction table
+ *
+ * Process:
+ * 1. Query purchase_features table for matching featureId
+ * 2. Join with purchases table to get purchase details
+ * 3. Return all matching purchase records
+ *
+ * Given/When/Then:
+ * - Given: Feature unlocked by multiple purchases
+ * - When: getPurchasesByFeature is called with valid featureId
+ * - Then: Returns all purchases that unlock the feature
+ *
+ * - Given: Feature with no associated purchases
+ * - When: getPurchasesByFeature is called
+ * - Then: Returns empty array
+ *
+ * - Given: Database error occurs
+ * - When: Query fails
+ * - Then: Throws DatabaseError or returns error result
+ *
+ * @param featureId - Feature identifier to query
+ * @returns Array of purchases that unlock the feature, or empty array if none found
+ * @throws Error if database is not initialized
+ *
+ * @example
+ * ```typescript
+ * import { getPurchasesByFeature } from '@/database/client';
+ *
+ * const purchases = getPurchasesByFeature('premium_unlock');
+ * purchases.forEach(p => {
+ *   console.log(`Purchase ${p.transactionId} unlocks premium_unlock`);
+ * });
+ * ```
+ */
+export function getPurchasesByFeature(
+  featureId: string
+): (typeof schema.purchases.$inferSelect)[] {
+  if (!drizzleDb) {
+    throw new DatabaseInitError(
+      'Database not initialized. Call initializeDatabase() first.'
+    );
+  }
+
+  const { purchases: purchasesTable, purchaseFeatures } = schema;
+
+  // Query: SELECT purchases.* FROM purchases
+  //        INNER JOIN purchase_features ON purchases.id = purchase_features.purchase_id
+  //        WHERE purchase_features.feature_id = featureId
+  const results = drizzleDb
+    .select()
+    .from(purchasesTable)
+    .innerJoin(
+      purchaseFeatures,
+      purchasesTable.id === purchaseFeatures.purchaseId
+    )
+    .where(eq(purchaseFeatures.featureId, featureId))
+    .all();
+
+  // Extract just the purchase records from the join results
+  return results.map((result) => result.purchases);
 }
